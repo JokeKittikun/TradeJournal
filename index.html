@@ -4,6 +4,28 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Trade Journal</title>
+<meta name="description" content="บันทึกเทรด BTC Futures ตามกรอบราคา M30 / H1 ช่วงตลาด US เปิด พร้อมกราฟสด คำนวณ TP / SL / Leverage อัตโนมัติ แยกหลายพอร์ต และสรุปผลการเทรด">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0d1117">
+<link rel="canonical" href="https://jokekittikun.github.io/TradeJournal/">
+<!-- แชร์ลิงก์ (Facebook / LINE / Messenger / Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Trade Journal">
+<meta property="og:locale" content="th_TH">
+<meta property="og:title" content="Trade Journal — บันทึกเทรด BTC Futures">
+<meta property="og:description" content="บันทึกเทรด BTC Futures ตามกรอบราคา M30 / H1 ช่วงตลาด US เปิด พร้อมกราฟสด คำนวณ TP / SL / Leverage อัตโนมัติ แยกหลายพอร์ต และสรุปผลการเทรด">
+<meta property="og:url" content="https://jokekittikun.github.io/TradeJournal/">
+<meta property="og:image" content="https://jokekittikun.github.io/TradeJournal/og-image.png">
+<meta property="og:image:secure_url" content="https://jokekittikun.github.io/TradeJournal/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Trade Journal — โลโก้ Bitcoin และชื่อแอป">
+<!-- X (Twitter) -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Trade Journal — บันทึกเทรด BTC Futures">
+<meta name="twitter:description" content="บันทึกเทรด BTC Futures ตามกรอบราคา M30 / H1 ช่วงตลาด US เปิด พร้อมกราฟสด คำนวณ TP / SL / Leverage อัตโนมัติ แยกหลายพอร์ต และสรุปผลการเทรด">
+<meta name="twitter:image" content="https://jokekittikun.github.io/TradeJournal/og-image.png">
 <link rel="icon" href="favicon.ico?v=3" sizes="any">
 <link rel="icon" href="favicon.svg?v=3" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png?v=3" type="image/png" sizes="32x32">
@@ -77,19 +99,60 @@ body.syncing #syncBtn .ic{animation:spin 1s linear infinite}
 .roleB.super_admin{background:rgba(247,166,0,.16);color:var(--accent)}.roleB.admin{background:rgba(58,160,255,.14);color:#3aa0ff}
 .pmItem .cnt{margin-left:auto;background:var(--red);color:#fff;border-radius:99px;font:600 10.5px/16px 'JetBrains Mono',monospace;padding:0 6px}
 .pendBox{margin-top:14px;padding:12px 14px;border-radius:10px;background:rgba(247,166,0,.08);border:1px solid rgba(247,166,0,.3);font-size:13px;line-height:1.6}
-.admModal{max-width:760px;max-height:calc(100vh - 32px);overflow:auto}
-.admTools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
-.admTools input{flex:1;min-width:160px}
-.admTools .seg{width:auto}
-.admList{display:flex;flex-direction:column;gap:6px}
-.uRow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
-.uRow .em{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.uRow .meta{font-size:11.5px;color:var(--muted);grid-column:1 / 2}
-.uRow .acts{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;grid-row:1 / span 2;grid-column:2}
-.uRow select{width:auto;padding:4px 6px;font-size:12px}
-.stB{display:inline-block;font:600 10.5px 'IBM Plex Sans Thai',sans-serif;padding:1px 7px;border-radius:99px;margin-left:6px;vertical-align:1px}
-.stB.pending{background:rgba(247,166,0,.16);color:var(--accent)}.stB.active{background:rgba(34,197,94,.14);color:var(--green)}.stB.disabled{background:rgba(239,68,68,.14);color:var(--red)}
-@media (max-width:560px){ .uRow{grid-template-columns:minmax(0,1fr)} .uRow .acts{grid-row:auto;grid-column:auto;justify-content:flex-start} }
+.modal.admModal{max-width:900px;max-height:calc(100vh - 32px);overflow:auto;padding:0}
+.admHead{display:flex;align-items:center;gap:12px;padding:18px 20px 14px;position:sticky;top:0;background:var(--panel);z-index:2;border-bottom:1px solid var(--line)}
+.admIc{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(247,166,0,.12);color:var(--accent);flex:none}
+.admTitle{font-weight:600;font-size:16px;line-height:1.2}
+.admSub{font-size:12px;color:var(--muted);margin-top:2px}
+.admBar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:14px 20px 10px}
+.admTabs{display:flex;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:3px;flex-wrap:wrap}
+.admTab{border:0;background:none;color:var(--muted);font:500 12.5px 'IBM Plex Sans Thai',sans-serif;padding:5px 11px;border-radius:7px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.admTab:hover{color:var(--text)}
+.admTab.on{background:var(--panel2);color:var(--text);box-shadow:0 0 0 1px var(--line) inset}
+.admTab .n{font:600 11px 'JetBrains Mono',monospace;color:var(--muted);background:var(--panel2);border-radius:99px;padding:0 6px;min-width:18px;text-align:center}
+.admTab.on .n{background:var(--bg)}
+.admTab.hot .n{background:var(--accent);color:#111}
+.admSearch{flex:1;min-width:180px;display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:0 10px;color:var(--muted)}
+.admSearch:focus-within{border-color:var(--accent)}
+.admSearch input{border:0;background:none;padding:8px 0;outline:none}
+.admCols,.uRow{display:grid;grid-template-columns:minmax(0,1fr) 100px 90px 104px 86px minmax(110px,auto);gap:12px;align-items:center}
+.admCols{padding:6px 20px;font-size:11px;color:var(--muted);text-transform:none;letter-spacing:.2px;border-bottom:1px solid var(--line)}
+.admList{display:flex;flex-direction:column}
+.uRow{padding:12px 20px;border-bottom:1px solid var(--line);position:relative}
+.uRow:hover{background:rgba(255,255,255,.015)}
+.uRow.pending{background:rgba(247,166,0,.04)}
+.uRow.pending::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+.uRow.disabled .uWho{opacity:.6}
+.uWho{display:flex;align-items:center;gap:10px;min-width:0}
+.uAv{width:34px;height:34px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font:600 14px 'IBM Plex Sans Thai',sans-serif;text-transform:uppercase;background:var(--panel2);color:var(--muted)}
+.uAv.super_admin{background:rgba(247,166,0,.16);color:var(--accent)}.uAv.admin{background:rgba(58,160,255,.14);color:#3aa0ff}.uAv.user{background:rgba(139,152,168,.14);color:#c5ceda}
+.uEm{font-weight:600;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uEm .me{font-weight:500;color:var(--muted);font-size:12px}
+.uSub{font-size:11.5px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill{display:inline-flex;align-items:center;gap:5px;font:600 11px 'IBM Plex Sans Thai',sans-serif;padding:2px 9px;border-radius:99px;white-space:nowrap}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.pending{background:rgba(247,166,0,.14);color:var(--accent)}.pill.active{background:rgba(34,197,94,.12);color:var(--green)}.pill.disabled{background:rgba(239,68,68,.12);color:var(--red)}
+.rolePill{font:600 11px 'IBM Plex Sans Thai',sans-serif;padding:2px 9px;border-radius:99px;background:var(--panel2);color:var(--muted);white-space:nowrap}
+.rolePill.super_admin{background:rgba(247,166,0,.14);color:var(--accent)}.rolePill.admin{background:rgba(58,160,255,.14);color:#3aa0ff}
+.roleSel{width:auto;max-width:110px;padding:4px 8px;font-size:12px;border-radius:7px}
+.uData{font-size:12px;line-height:1.35}.uData .mono{font-weight:600}.uData .s{color:var(--muted);font-size:11px}
+.uSeen{font-size:12px;color:var(--muted);white-space:nowrap}
+.uActs{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.uActs .btn{white-space:nowrap}
+.btn.ghostDanger{background:none;color:var(--red);border-color:rgba(239,68,68,.35)}
+.btn.ghostDanger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
+.admEmpty{padding:36px 20px;text-align:center;color:var(--muted);font-size:13px}
+@media (max-width:760px){
+  .admCols{display:none}
+  .uRow{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"who acts" "tags tags" "data seen";gap:8px 10px}
+  .uWho{grid-area:who}.uActs{grid-area:acts}
+  .uTags{grid-area:tags;display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding-left:44px}
+  .uData{grid-area:data;padding-left:44px;color:var(--muted)}
+  .uRole,.uStat{display:contents}
+  .uSeen{grid-area:seen;font-size:11px;text-align:right}
+}
+@media (min-width:761px){ .uTags{display:contents} }
+@media (max-width:460px){ .uRow{grid-template-areas:"who who" "tags tags" "data seen" "acts acts"} .uActs{justify-content:flex-start;padding-left:44px} }
 .shAdd{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px}
 .shAdd select{width:auto}
 @media (max-width:420px){ .shAdd{grid-template-columns:minmax(0,1fr) auto} .shAdd .btn{grid-column:1 / -1} }
@@ -618,13 +681,19 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
 </div></div>
 
 <div class="overlay" id="admBox"><div class="modal admModal">
-  <div class="emHead" style="position:static;padding:0;margin-bottom:10px"><b style="display:flex;align-items:center;gap:8px"><i data-ic="users" data-sz="16"></i> จัดการผู้ใช้</b><span class="hint" id="adm_sum" style="margin:0"></span><div class="spacer"></div><button class="btn sm icon" onclick="closeAdmin()" title="ปิด"><i data-ic="x" data-sz="16"></i></button></div>
-  <div class="admTools">
-    <input type="search" id="adm_q" placeholder="ค้นหาอีเมล…" oninput="renderAdmin()">
-    <div class="seg" id="adm_f"><button data-f="">ทั้งหมด</button><button data-f="pending">รออนุมัติ</button><button data-f="active">ใช้งาน</button><button data-f="disabled">ระงับ</button></div>
+  <div class="admHead">
+    <div class="admIc"><i data-ic="users" data-sz="18"></i></div>
+    <div style="min-width:0"><div class="admTitle">จัดการผู้ใช้</div><div class="admSub">อนุมัติการเข้าใช้งาน กำหนดบทบาท และระงับบัญชี</div></div>
+    <div class="spacer"></div>
+    <button class="btn sm icon" onclick="closeAdmin()" title="ปิด"><i data-ic="x" data-sz="16"></i></button>
   </div>
+  <div class="admBar">
+    <div class="admTabs" id="adm_f" role="tablist"></div>
+    <label class="admSearch"><i data-ic="search" data-sz="14"></i><input type="search" id="adm_q" placeholder="ค้นหาอีเมล" oninput="renderAdmin()" aria-label="ค้นหาอีเมล"></label>
+  </div>
+  <div class="admCols" aria-hidden="true"><span>ผู้ใช้</span><span>บทบาท</span><span>สถานะ</span><span>ข้อมูล</span><span>ใช้ล่าสุด</span><span style="text-align:right">จัดการ</span></div>
   <div id="adm_list" class="admList"></div>
-  <div class="hint" id="adm_msg" style="margin:8px 0 0;min-height:16px"></div>
+  <div class="hint" id="adm_msg" style="margin:10px 0 0;min-height:16px"></div>
 </div></div>
 
 <div class="overlay" id="shareBox"><div class="modal" style="max-width:460px">
@@ -660,6 +729,7 @@ const ICONS = {
   'settings':'<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
   'pencil':'<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
   'chevron-down':'<path d="m6 9 6 6 6-6"/>',
+  'search':'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
   'users':'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
   'share-2':'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/>',
   'log-out':'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
@@ -3256,36 +3326,48 @@ let ADMIN_USERS = [], ADMIN_FILTER = '';
 async function openAdmin(){
   if (!isAdminRole()) return;
   $('admBox').classList.add('on'); $('adm_msg').textContent = '';
-  $('adm_list').innerHTML = '<div class="hint" style="margin:0"><span class="spin sm"></span>กำลังโหลด…</div>';
+  $('adm_list').innerHTML = '<div class="admEmpty"><span class="spin sm"></span>กำลังโหลดรายชื่อผู้ใช้…</div>';
   try{ ADMIN_USERS = await apiRaw('adminUsers'); renderAdmin(); }
   catch(e){ $('adm_list').innerHTML = '<div class="neg">'+esc(e.message||String(e))+'</div>'; }
 }
 function closeAdmin(){ $('admBox').classList.remove('on'); }
-document.querySelectorAll('#adm_f button').forEach(b=>b.addEventListener('click', ()=>{ ADMIN_FILTER = b.dataset.f; renderAdmin(); }));
 const fmtDate = v => v ? new Date(v).toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'2-digit'}) : '–';
+const ago = v => {
+  if (!v) return 'ยังไม่เคย';
+  const m = Math.floor((Date.now() - new Date(v).getTime())/60000);
+  if (m < 2) return 'เมื่อสักครู่'; if (m < 60) return m+' นาทีก่อน';
+  const h = Math.floor(m/60); if (h < 24) return h+' ชม.ก่อน';
+  const d = Math.floor(h/24); if (d < 30) return d+' วันก่อน';
+  return fmtDate(v);
+};
 function renderAdmin(){
-  const q = ($('adm_q').value||'').trim().toLowerCase();
-  document.querySelectorAll('#adm_f button').forEach(b=>b.classList.toggle('on', b.dataset.f===ADMIN_FILTER));
-  const pend = ADMIN_USERS.filter(u=>u.status==='pending').length;
-  ADMIN_PENDING = pend; paintProfile();
-  $('adm_sum').textContent = `${ADMIN_USERS.length} บัญชี${pend ? ' · รออนุมัติ '+pend : ''}`;
+  const q = ($('adm_q').value||'').trim().toLowerCase(), cnt = {'':ADMIN_USERS.length, pending:0, active:0, disabled:0};
+  ADMIN_USERS.forEach(u=>{ cnt[u.status] = (cnt[u.status]||0) + 1; });
+  ADMIN_PENDING = cnt.pending; paintProfile();
+  $('adm_f').innerHTML = [['','ทั้งหมด'],['pending','รออนุมัติ'],['active','ใช้งาน'],['disabled','ระงับ']].map(([f,l])=>
+    `<button class="admTab ${ADMIN_FILTER===f?'on':''} ${f==='pending'&&cnt.pending?'hot':''}" role="tab" aria-selected="${ADMIN_FILTER===f}" onclick="ADMIN_FILTER='${f}';renderAdmin()">${l}<span class="n">${cnt[f]||0}</span></button>`).join('');
   const list = ADMIN_USERS.filter(u=>(!ADMIN_FILTER || u.status===ADMIN_FILTER) && (!q || (u.email||'').toLowerCase().includes(q)));
   const me = SB_USER && SB_USER.id;
   $('adm_list').innerHTML = list.length ? list.map(u=>{
     const self = u.id===me, sup = u.role==='super_admin', canManage = !self && !sup && (isSuper() || u.role==='user');
-    const btn = (label, fn, cls) => `<button class="btn sm ${cls||''}" onclick="${fn}">${label}</button>`;
     const acts = [];
     if (canManage){
-      if (u.status!=='active') acts.push(btn(u.status==='pending' ? 'อนุมัติ' : 'เปิดใช้งาน', `setUserStatus('${u.id}','active')`, 'primary'));
-      if (u.status!=='disabled') acts.push(btn('ระงับ', `setUserStatus('${u.id}','disabled')`, 'danger'));
+      if (u.status==='pending') acts.push(`<button class="btn sm primary" onclick="setUserStatus('${u.id}','active')">${ic('check',13,2.5)} อนุมัติ</button>`, `<button class="btn sm ghostDanger" onclick="setUserStatus('${u.id}','disabled')">ปฏิเสธ</button>`);
+      else if (u.status==='active') acts.push(`<button class="btn sm ghostDanger" onclick="setUserStatus('${u.id}','disabled')">ระงับ</button>`);
+      else acts.push(`<button class="btn sm" onclick="setUserStatus('${u.id}','active')">เปิดใช้งาน</button>`);
     }
-    if (isSuper() && !self && !sup) acts.push(`<select onchange="setUserRole('${u.id}', this.value)" title="บทบาท"><option value="user" ${u.role==='user'?'selected':''}>ผู้ใช้</option><option value="admin" ${u.role==='admin'?'selected':''}>Admin</option></select>`);
-    if (isSuper() && !self && +u.ports>0) acts.push(btn(ic('eye',13)+' ดูพอร์ต', `viewUser('${u.id}','${esc(u.email)}')`));
-    return `<div class="uRow">
-      <div class="em">${esc(u.email)}${self?' <span class="hint" style="margin:0">(คุณ)</span>':''}<span class="stB ${u.status}">${STATUS_TH[u.status]||u.status}</span> <span class="roleB ${u.role}" style="margin:0">${ROLE_TH[u.role]||u.role}</span></div>
-      <div class="acts">${acts.join('')}</div>
-      <div class="meta">สมัคร ${fmtDate(u.created_at)} · ใช้ล่าสุด ${fmtDate(u.last_seen_at)} · ${u.ports} พอร์ต · ${u.trades} ไม้${u.last_trade ? ' · เทรดล่าสุด '+fmtDate(u.last_trade) : ''}</div>
-    </div>`; }).join('') : '<div class="pEmpty">ไม่มีผู้ใช้ในรายการนี้</div>';
+    if (isSuper() && !self && +u.ports>0) acts.unshift(`<button class="btn sm icon" title="ดูพอร์ต (อ่านอย่างเดียว)" onclick="viewUser('${u.id}','${esc(u.email)}')">${ic('eye',15)}</button>`);
+    const role = (isSuper() && !self && !sup)
+      ? `<select class="roleSel" onchange="setUserRole('${u.id}', this.value)" aria-label="บทบาท"><option value="user" ${u.role==='user'?'selected':''}>ผู้ใช้</option><option value="admin" ${u.role==='admin'?'selected':''}>Admin</option></select>`
+      : `<span class="rolePill ${u.role}">${ROLE_TH[u.role]||u.role}</span>`;
+    return `<div class="uRow ${u.status}">
+      <div class="uWho"><div class="uAv ${u.role}">${esc((u.email||'?')[0])}</div><div style="min-width:0"><div class="uEm" title="${esc(u.email)}">${esc(u.email)}${self?' <span class="me">(คุณ)</span>':''}</div><div class="uSub">สมัคร ${fmtDate(u.created_at)}${u.approved_at && u.status==='active' ? ' · อนุมัติ '+fmtDate(u.approved_at) : ''}</div></div></div>
+      <div class="uTags"><div class="uRole">${role}</div><div class="uStat"><span class="pill ${u.status}">${STATUS_TH[u.status]||u.status}</span></div></div>
+      <div class="uData"><span class="mono">${u.ports}</span> พอร์ต · <span class="mono">${u.trades}</span> ไม้${u.last_trade ? `<div class="s">เทรดล่าสุด ${fmtDate(u.last_trade)}</div>` : ''}</div>
+      <div class="uSeen" title="${u.last_seen_at ? new Date(u.last_seen_at).toLocaleString('th-TH') : ''}">${ago(u.last_seen_at)}</div>
+      <div class="uActs">${acts.join('')}</div>
+    </div>`; }).join('')
+    : `<div class="admEmpty">${q ? 'ไม่พบอีเมลที่ค้นหา' : ADMIN_FILTER==='pending' ? 'ไม่มีผู้ใช้ที่รออนุมัติ' : 'ไม่มีผู้ใช้ในรายการนี้'}</div>`;
 }
 async function setUserStatus(id, st){
   const u = ADMIN_USERS.find(x=>x.id===id);

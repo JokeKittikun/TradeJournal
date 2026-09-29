@@ -65,6 +65,45 @@ main.wrap{padding-top:14px;padding-bottom:calc(64px + env(safe-area-inset-bottom
 .view{display:none}.view.on{display:block}
 /* กำลังอัปเดตข้อมูลเบื้องหลัง: ไอคอนรีเฟรชหมุน */
 body.syncing #syncBtn .ic{animation:spin 1s linear infinite}
+/* โปรไฟล์ / จัดการผู้ใช้ / แชร์ / อ่านอย่างเดียว */
+.profBtn{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--panel2);color:var(--muted);border-radius:99px;padding:2px 7px 2px 2px;cursor:pointer;position:relative;font:inherit}
+.profBtn:hover{border-color:#3b4756;color:var(--text)}
+.avatar{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(247,166,0,.16);color:var(--accent);font:600 12px 'IBM Plex Sans Thai',sans-serif;text-transform:uppercase}
+.pdot{position:absolute;top:-2px;left:18px;min-width:15px;height:15px;padding:0 4px;border-radius:99px;background:var(--red);color:#fff;font:600 10px/15px 'JetBrains Mono',monospace;text-align:center}
+.pdot[hidden]{display:none}
+.pmHead{padding:8px 10px 10px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.pmHead .em{font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.roleB{display:inline-block;font:600 10.5px 'IBM Plex Sans Thai',sans-serif;padding:1px 7px;border-radius:99px;margin-top:4px;background:var(--panel2);color:var(--muted)}
+.roleB.super_admin{background:rgba(247,166,0,.16);color:var(--accent)}.roleB.admin{background:rgba(58,160,255,.14);color:#3aa0ff}
+.pmItem .cnt{margin-left:auto;background:var(--red);color:#fff;border-radius:99px;font:600 10.5px/16px 'JetBrains Mono',monospace;padding:0 6px}
+.pendBox{margin-top:14px;padding:12px 14px;border-radius:10px;background:rgba(247,166,0,.08);border:1px solid rgba(247,166,0,.3);font-size:13px;line-height:1.6}
+.admModal{max-width:760px;max-height:calc(100vh - 32px);overflow:auto}
+.admTools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.admTools input{flex:1;min-width:160px}
+.admTools .seg{width:auto}
+.admList{display:flex;flex-direction:column;gap:6px}
+.uRow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.uRow .em{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uRow .meta{font-size:11.5px;color:var(--muted);grid-column:1 / 2}
+.uRow .acts{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;grid-row:1 / span 2;grid-column:2}
+.uRow select{width:auto;padding:4px 6px;font-size:12px}
+.stB{display:inline-block;font:600 10.5px 'IBM Plex Sans Thai',sans-serif;padding:1px 7px;border-radius:99px;margin-left:6px;vertical-align:1px}
+.stB.pending{background:rgba(247,166,0,.16);color:var(--accent)}.stB.active{background:rgba(34,197,94,.14);color:var(--green)}.stB.disabled{background:rgba(239,68,68,.14);color:var(--red)}
+@media (max-width:560px){ .uRow{grid-template-columns:minmax(0,1fr)} .uRow .acts{grid-row:auto;grid-column:auto;justify-content:flex-start} }
+.shAdd{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px}
+.shAdd select{width:auto}
+@media (max-width:420px){ .shAdd{grid-template-columns:minmax(0,1fr) auto} .shAdd .btn{grid-column:1 / -1} }
+.shList{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.shRow{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:7px 10px}
+.shRow .em{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.shRow select{width:auto;padding:3px 6px;font-size:12px}
+.pSec{font-size:12px;color:var(--muted);font-weight:600;margin:14px 0 6px;letter-spacing:.2px}
+.accB{font:600 10.5px 'IBM Plex Sans Thai',sans-serif;padding:1px 7px;border-radius:99px;background:rgba(58,160,255,.14);color:#3aa0ff}
+.pOwner{font-size:11px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.viewAs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:rgba(58,160,255,.1);border:1px solid rgba(58,160,255,.35);color:#9cc4ff;margin-bottom:10px;font-size:13px}
+body.ro #saveBtn,body.ro #clearBtn,body.ro #drawBar,body.ro #drawDel,body.ro .homeNew{display:none!important}
+.roNote{display:none;padding:10px 14px;border-radius:10px;background:rgba(58,160,255,.1);border:1px solid rgba(58,160,255,.35);color:#9cc4ff;font-size:13px;margin-bottom:12px}
+body.ro .roNote{display:block}
 /* พอร์ต */
 .portChip{display:inline-flex;align-items:center;gap:5px;max-width:200px;padding:4px 9px;border:1px solid rgba(247,166,0,.45);background:rgba(247,166,0,.1);color:var(--accent);border-radius:99px;font:inherit;font-size:12px;font-weight:500;cursor:pointer;min-width:64px;flex:0 1 auto}
 .portChip[hidden]{display:none}
@@ -90,7 +129,8 @@ body.syncing #syncBtn .ic{animation:spin 1s linear infinite}
 .pCard .pMeta{font-size:11.5px;color:var(--muted);margin-top:2px}
 .pEmpty{color:var(--muted);text-align:center;padding:18px 8px}
 .tabs.noport .tab:not([data-view=home]){opacity:.35}
-@media (max-width:480px){ .top .btn .bl{display:none} .top .btn .ic{margin-right:0} .portChip{max-width:130px} }
+@media (max-width:360px){ .top .logo > span{display:none} }
+@media (max-width:480px){ .top .guideBtn{display:none!important} .top .btn .bl{display:none} .top .btn .ic{margin-right:0} .portChip{max-width:130px} }
 /* หน้าแรก */
 #v-home{max-width:720px;margin:0 auto}
 .homeNew{width:100%;display:flex;align-items:center;justify-content:center;padding:11px;font-size:14px;margin-bottom:12px;border-radius:10px}
@@ -277,12 +317,12 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
   <div class="wrap">
     <div class="top">
       <div class="logo" onclick="hardReload()" title="Hard reload (ข้ามแคช)" style="cursor:pointer"><svg width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#F7931A"/><g transform="translate(32 32) translate(-34 -30)" fill="#fff"><path d="M24 16h12.5c5 0 8.5 2.9 8.5 7.2 0 3-1.7 5.1-4.2 6 3.3.8 5.4 3.3 5.4 6.8 0 4.9-3.8 8-9.6 8H24zm6.2 11.5h5.4c2.3 0 3.7-1.2 3.7-3.1s-1.4-3-3.7-3h-5.4zm0 11.6h6.2c2.6 0 4.1-1.3 4.1-3.4s-1.5-3.4-4.1-3.4h-6.2z"/><rect x="27" y="11" width="3.4" height="7" rx="1"/><rect x="33.4" y="11" width="3.4" height="7" rx="1"/><rect x="27" y="42" width="3.4" height="7" rx="1"/><rect x="33.4" y="42" width="3.4" height="7" rx="1"/></g></svg> <span>Trade <b>Journal</b></span></div>
-      <span class="demo" id="demoTag" hidden onclick="openSettings()" style="cursor:pointer">โหมดตัวอย่าง · กดเพื่อเชื่อม Google Sheet</span>
+      <span class="demo" id="demoTag" hidden>โหมดตัวอย่าง · กดเพื่อเชื่อม Google Sheet</span>
       <div class="spacer"></div>
       <div class="portDD"><button class="portChip" id="portChip" hidden onclick="togglePortMenu()" title="สลับพอร์ต" aria-haspopup="menu"><i data-ic="chart-pie"></i><span id="portName"></span><i data-ic="chevron-down" data-sz="12"></i></button><div class="portMenu" id="portMenu" role="menu" hidden></div></div>
-      <a class="btn sm" href="guide.html" title="คู่มือการใช้งาน"><i data-ic="circle-help"></i><span class="bl">คู่มือ</span></a>
+      <a class="btn sm guideBtn" href="guide.html" title="คู่มือการใช้งาน"><i data-ic="circle-help"></i><span class="bl">คู่มือ</span></a>
       <button class="btn sm" id="syncBtn" onclick="hardReload()" title="Hard reload (ข้ามแคช)"><i data-ic="refresh-cw"></i><span class="bl">รีเฟรช</span></button>
-      <button class="btn sm" onclick="openSettings()" title="ตั้งค่าการเชื่อมต่อ"><i data-ic="settings"></i><span class="bl">ตั้งค่า</span></button>
+      <div class="portDD profDD"><button class="profBtn" id="profBtn" onclick="toggleProfMenu()" title="บัญชีและการจัดการ" aria-haspopup="menu"><span class="avatar" id="profAvatar">?</span><span class="pdot" id="profDot" hidden></span><i data-ic="chevron-down" data-sz="12"></i></button><div class="portMenu profMenu" id="profMenu" role="menu" hidden></div></div>
     </div>
     <div class="kpis">
       <div class="kpi"><div class="l">Balance</div><div class="v mono" id="kBal">–</div></div>
@@ -294,6 +334,7 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
 </header>
 
 <main class="wrap">
+  <div class="roNote" id="roNote"></div>
   <div id="verWarn" class="hint" style="display:none;margin:0 0 12px;padding:10px 14px;border-radius:10px;background:#3a1d1d;border:1px solid #7f2d2d;color:#ffb4b4;font-size:13px"></div>
   <!-- ============ FORM ============ -->
   <!-- ============ HOME ============ -->
@@ -538,6 +579,11 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
     <button class="btn primary" id="g_btn" style="width:100%;margin-top:8px;padding:10px" onclick="authSubmit()">เข้าสู่ระบบ</button>
     <div class="authLinks"><a id="g_toggle" onclick="authMode(AUTH_MODE==='signup'?'login':'signup')">ยังไม่มีบัญชี? สมัครสมาชิก</a><a id="g_forgot" onclick="authMode(AUTH_MODE==='forgot'?'login':'forgot')">ลืมรหัสผ่าน</a></div>
   </div>
+  <div id="g_pending" hidden>
+    <div class="pendBox" id="g_pmsg"></div>
+    <button class="btn primary" id="g_pbtn" style="width:100%;margin-top:12px;padding:10px" onclick="recheckProfile()">ตรวจสอบอีกครั้ง</button>
+    <div class="authLinks"><span class="hint" style="margin:0" id="g_pemail"></span><a onclick="disconnect()">ออกจากระบบ</a></div>
+  </div>
   <div id="g_reset" hidden>
     <div class="field" style="margin-top:14px"><label>ตั้งรหัสผ่านใหม่</label><input id="g_newpw" type="password" autocomplete="new-password" placeholder="อย่างน้อย 6 ตัวอักษร"></div>
     <div class="hint" id="g_rmsg" style="min-height:18px"></div>
@@ -546,25 +592,6 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
 </div></div>
 <div id="loadMsg" role="status" aria-live="polite"><span class="spin"></span><span id="loadTxt">กำลังโหลด…</span></div>
 <div class="toast" id="toast"></div>
-<div class="overlay" id="setBox"><div class="modal" style="max-width:480px">
-  <h3 style="margin:0 0 6px">บัญชี</h3>
-  <div class="hint" style="margin:0 0 4px">เข้าสู่ระบบด้วย <b id="s_email" style="color:var(--text)">–</b></div>
-  <div class="hint" style="margin:0 0 4px">ข้อมูลพอร์ตและไม้เก็บใน Supabase · แต่ละบัญชีเห็นเฉพาะข้อมูลของตัวเอง</div>
-  <div style="height:1px;background:var(--line);margin:14px 0"></div>
-  <h3 style="margin:0 0 6px">นำเข้าข้อมูลจาก Google Sheet</h3>
-  <div class="hint" style="margin:0 0 10px">ดึงทุกพอร์ต ทุกไม้ และเส้นที่วาด จาก Google Sheet เดิม (Apps Script) เข้าบัญชีนี้ · ข้อมูลใน Google Sheet ไม่ถูกลบ</div>
-  <div class="field"><label>Password ของ Apps Script เดิม</label><input id="s_key" type="password" autocomplete="off"></div>
-  <details style="margin-bottom:8px"><summary class="hint" style="cursor:pointer;margin:0">ขั้นสูง: URL ของ Apps Script</summary>
-    <div class="field" style="margin-top:8px"><label>Apps Script Web app URL</label><input id="s_url" placeholder="https://script.google.com/macros/s/.../exec"></div>
-  </details>
-  <div class="hint" id="s_msg" style="white-space:pre-line"></div>
-  <div class="actions">
-    <button class="btn danger" onclick="disconnect()">ออกจากระบบ</button>
-    <div class="spacer"></div>
-    <button class="btn" onclick="closeSettings()">ปิด</button>
-    <button class="btn primary" id="s_btn" onclick="runImport()">นำเข้าข้อมูล</button>
-  </div>
-</div></div>
 <div class="overlay" id="editModal"><div class="modal editModal">
   <div class="emHead"><b><i data-ic="pencil" data-sz="16"></i> แก้ไขไม้</b> <span class="hint" id="emTxt" style="margin:0"></span><div class="spacer"></div><button class="btn sm icon" onclick="closeEdit()" title="ปิด"><i data-ic="x" data-sz="16"></i></button></div>
   <div id="emBody"></div>
@@ -590,6 +617,37 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
   <div class="actions"><button class="btn" id="qe_full" style="margin-right:auto">แก้ไขทั้งหมด</button><button class="btn" onclick="closeQuickEdit()">ยกเลิก</button><button class="btn primary" id="qe_btn" onclick="saveQuickEdit()">บันทึก</button></div>
 </div></div>
 
+<div class="overlay" id="admBox"><div class="modal admModal">
+  <div class="emHead" style="position:static;padding:0;margin-bottom:10px"><b style="display:flex;align-items:center;gap:8px"><i data-ic="users" data-sz="16"></i> จัดการผู้ใช้</b><span class="hint" id="adm_sum" style="margin:0"></span><div class="spacer"></div><button class="btn sm icon" onclick="closeAdmin()" title="ปิด"><i data-ic="x" data-sz="16"></i></button></div>
+  <div class="admTools">
+    <input type="search" id="adm_q" placeholder="ค้นหาอีเมล…" oninput="renderAdmin()">
+    <div class="seg" id="adm_f"><button data-f="">ทั้งหมด</button><button data-f="pending">รออนุมัติ</button><button data-f="active">ใช้งาน</button><button data-f="disabled">ระงับ</button></div>
+  </div>
+  <div id="adm_list" class="admList"></div>
+  <div class="hint" id="adm_msg" style="margin:8px 0 0;min-height:16px"></div>
+</div></div>
+
+<div class="overlay" id="shareBox"><div class="modal" style="max-width:460px">
+  <div class="emHead" style="position:static;padding:0;margin-bottom:6px"><b style="display:flex;align-items:center;gap:8px"><i data-ic="share-2" data-sz="16"></i> แชร์พอร์ต <span id="sh_name" style="color:var(--accent)"></span></b><div class="spacer"></div><button class="btn sm icon" onclick="closeShare()" title="ปิด"><i data-ic="x" data-sz="16"></i></button></div>
+  <div class="hint" style="margin:0 0 12px">ให้ผู้ใช้อื่นเข้าถึงพอร์ตนี้ด้วยอีเมลที่เขาสมัครไว้ (ต้องได้รับอนุมัติแล้ว)</div>
+  <div class="shAdd">
+    <input type="email" id="sh_email" placeholder="อีเมลผู้ใช้" autocomplete="off">
+    <select id="sh_perm"><option value="view">ดูอย่างเดียว</option><option value="edit">แก้ไขได้</option></select>
+    <button class="btn primary" id="sh_btn" onclick="addShare()">แชร์</button>
+  </div>
+  <div class="hint" id="sh_msg" style="margin:6px 0 0;min-height:16px"></div>
+  <div id="sh_list" class="shList"></div>
+</div></div>
+
+<div class="overlay" id="expBox"><div class="modal" style="max-width:420px">
+  <div class="emHead" style="position:static;padding:0;margin-bottom:12px"><b style="display:flex;align-items:center;gap:8px"><i data-ic="download" data-sz="16"></i> ดาวน์โหลดข้อมูล</b><div class="spacer"></div><button class="btn sm icon" onclick="closeExport()" title="ปิด"><i data-ic="x" data-sz="16"></i></button></div>
+  <div class="field"><label>ข้อมูล</label><div class="seg" id="ex_scope"><button data-v="cur">พอร์ตนี้</button><button data-v="all">ทุกพอร์ต</button></div></div>
+  <div class="field"><label>รูปแบบไฟล์</label><div class="seg" id="ex_fmt"><button data-v="xlsx">Excel (.xlsx)</button><button data-v="csv">CSV</button></div></div>
+  <div class="hint" id="ex_desc" style="margin:4px 0 0"></div>
+  <div class="hint" id="ex_msg" style="margin:8px 0 0;min-height:16px"></div>
+  <div class="actions"><button class="btn" onclick="closeExport()">ปิด</button><button class="btn primary" id="ex_btn" onclick="runExport()"><i data-ic="download"></i>ดาวน์โหลด</button></div>
+</div></div>
+
 <div class="overlay" id="confirmBox"><div class="modal">
   <div id="confirmTxt" style="margin-bottom:16px"></div>
   <div class="actions"><button class="btn" onclick="closeConfirm(false)">ยกเลิก</button><button class="btn primary" style="background:var(--red);border-color:var(--red);color:#fff" onclick="closeConfirm(true)">ลบ</button></div>
@@ -602,6 +660,12 @@ const ICONS = {
   'settings':'<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
   'pencil':'<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
   'chevron-down':'<path d="m6 9 6 6 6-6"/>',
+  'users':'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  'share-2':'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m15.41 6.51-6.82 3.98"/>',
+  'log-out':'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
+  'download':'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>',
+  'eye':'<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
+  'arrow-left':'<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
   'circle-help':'<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
   'chart-pie':'<path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>',
   'chevron-right':'<path d="m9 18 6-6-6-6"/>',
@@ -634,8 +698,9 @@ const SB_KEY = 'sb_publishable_viCpipJBFjw_LnccufMRuQ_scGZAmuU';
 const USE_SB = true;          // false = กลับไปใช้ Google Sheet (Apps Script) แบบเดิม
 const SB_VERSION = 99;        // ให้ผ่านการเช็กเวอร์ชัน Code.gs เดิมทั้งหมด
 const sb = (USE_SB && window.supabase) ? window.supabase.createClient(SB_URL, SB_KEY, {auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:true}}) : null;
-let SB_USER = null;
-const OLD_CFG = getCfg();     // การเชื่อม Apps Script เดิม (ใช้ตอนนำเข้าข้อมูล)
+let SB_USER = null, SB_PROFILE = null, ADMIN_PENDING = 0;
+let VIEW_AS = null;   // Super Admin กำลังดูพอร์ตของผู้ใช้อื่น {id, email} (อ่านอย่างเดียว)
+const OLD_CFG = getCfg();     // การเชื่อม Apps Script เดิม (ใช้เมื่อ USE_SB = false)
 let CFG = USE_SB ? null : OLD_CFG;
 // ---------- พอร์ต (1 พอร์ต = 1 ชีต) ----------
 let PORT = (()=>{ try{ return localStorage.getItem('tjPort'); }catch(e){ return null; } })();   // sheetId ของพอร์ตที่เลือก
@@ -668,7 +733,7 @@ document.addEventListener('keydown', e=>{ if (e.key==='Escape' && $('portMenu') 
 const CACHE_KEY = 'tjCache';
 function cacheGet(){ try{ const c = JSON.parse(localStorage.getItem(CACHE_KEY)||'null'); return (c && CFG && c.url===CFG.url) ? c : null; }catch(e){ return null; } }
 function cacheSave(){
-  if (!CFG || DEMO) return;
+  if (!CFG || DEMO || VIEW_AS) return;
   try{
     const c = cacheGet() || {url:CFG.url, data:{}};
     c.legacy = LEGACY; c.ports = LEGACY ? null : PORTS;
@@ -682,6 +747,7 @@ function paintPort(){
   const p = curPort();
   if ($('portChip')){ $('portChip').hidden = !p; $('portName').textContent = p ? p.name : ''; }
   const t = document.querySelector('.tabs'); if (t) t.classList.toggle('noport', !p);
+  if (typeof paintRO==='function') paintRO();
 }
 const DEMO = /[?&]demo\b/.test(location.search);   // โหมดตัวอย่างใช้ได้เฉพาะเปิดด้วย ?demo (ไว้ทดสอบ)
 function paintMode(){ document.getElementById('demoTag').hidden = !!CFG || !DEMO; }
@@ -725,8 +791,12 @@ function sbToRow(d){
 function sbFromRow(r){ const d = {}; Object.entries(SB_COLS).forEach(([k,c])=>{ d[k] = r[c]==null ? '' : r[c]; }); return d; }
 // ตัวต่อฐานข้อมูล (แยกไว้ เพื่อทดสอบด้วยฐานข้อมูลจำลองได้)
 const SBDB = {
-  ports: ()=> sbq(sb.from('portfolios').select('id,name,start_capital,sort,created_at').order('sort').order('created_at')),
-  async rows(pid, cols){ const out=[]; for (let a=0;;a+=1000){ let q = sb.from('trades').select(cols||'*').order('seq').range(a, a+999); if (pid) q = q.eq('portfolio_id', pid); const part = await sbq(q); out.push(...part); if (part.length < 1000) return out; } },
+  ports: uid => sbq(sb.from('portfolios').select('id,user_id,name,start_capital,sort,created_at').eq('user_id', uid || (SB_USER && SB_USER.id)).order('sort').order('created_at')),
+  portsByIds: ids => ids.length ? sbq(sb.from('portfolios').select('id,user_id,name,start_capital,sort,created_at').in('id', ids).order('created_at')) : Promise.resolve([]),
+  portOne: pid => sbq(sb.from('portfolios').select('id,user_id,name,start_capital,sort,created_at').eq('id', pid).maybeSingle()),
+  myShares: () => sbq(sb.rpc('my_shared_ports')),
+  rpc: (fn, args) => sbq(sb.rpc(fn, args || {})),
+  async rows(pid, cols){ if (Array.isArray(pid) && !pid.length) return []; const out=[]; for (let a=0;;a+=1000){ let q = sb.from('trades').select(cols||'*').order('seq').range(a, a+999); if (Array.isArray(pid)) q = q.in('portfolio_id', pid); else if (pid) q = q.eq('portfolio_id', pid); const part = await sbq(q); out.push(...part); if (part.length < 1000) return out; } },
   insertTrades: rows => sbq(sb.from('trades').insert(rows).select('id')),
   updateTrade: (id, row) => sbq(sb.from('trades').update(row).eq('id', id)),
   deleteTrade: id => sbq(sb.from('trades').delete().eq('id', id)),
@@ -763,10 +833,18 @@ function sbSummary(port, rows){
   return {id:port.id, name:port.name, capital:num(port.start_capital), balance:bal, trades:d.trades.length, closed:c.length, wins:c.filter(t=>t.diff>0).length, losses:c.filter(t=>t.diff<0).length};
 }
 async function sbPorts(){
-  const [ports, lite] = await Promise.all([SBDB.ports(), SBDB.rows(null, 'portfolio_id,date,capital,bal')]);
-  return ports.map(p=>sbSummary(p, lite.filter(r=>r.portfolio_id===p.id)));
+  const uid = VIEW_AS ? VIEW_AS.id : SB_USER.id;
+  const [own, shares] = await Promise.all([SBDB.ports(uid), VIEW_AS ? [] : SBDB.myShares()]);
+  const meta = {}; shares.forEach(x=>{ meta[x.portfolio_id] = x; });
+  const shared = await SBDB.portsByIds(shares.map(x=>x.portfolio_id));
+  const all = own.concat(shared);
+  const lite = await SBDB.rows(all.map(p=>p.id), 'portfolio_id,date,capital,bal');
+  return all.map(p=>Object.assign(sbSummary(p, lite.filter(r=>r.portfolio_id===p.id)), {
+    access: VIEW_AS ? 'view' : (p.user_id===SB_USER.id ? 'owner' : meta[p.id].permission),
+    owner: VIEW_AS ? VIEW_AS.email : (meta[p.id] ? meta[p.id].owner_email : ''),
+  }));
 }
-async function sbPort(pid){ const ps = await SBDB.ports(); const p = ps.find(x=>x.id===pid); if (!p) throw new Error('ไม่พบพอร์ตนี้ (อาจถูกลบไปแล้ว)'); return p; }
+async function sbPort(pid){ const p = await SBDB.portOne(pid); if (!p) throw new Error('ไม่พบพอร์ตนี้ (อาจถูกลบไปแล้ว)'); return p; }
 async function sbTrades(pid, skipDraw){
   const [p, rows, draw] = await Promise.all([sbPort(pid), SBDB.rows(pid), skipDraw ? null : SBDB.getDraw(pid)]);
   const out = sbBuild(p, rows); if (!skipDraw) out.draw = draw; out._rows = rows; return out;
@@ -809,7 +887,7 @@ async function sbCall(fn, a){
       const name = String(a[0]||'').trim(), cap = +a[1];
       if (!name) throw new Error('ใส่ชื่อพอร์ต');
       if (!(cap>0)) throw new Error('ทุนเริ่มต้นต้องมากกว่า 0');
-      const ps = await SBDB.ports();
+      const ps = await SBDB.ports(SB_USER.id);
       if (ps.some(p=>p.name.toLowerCase()===name.toLowerCase())) throw new Error('มีพอร์ตชื่อ "'+name+'" อยู่แล้ว');
       const p = await SBDB.insertPort({name, start_capital:cap, sort: ps.length ? Math.max(...ps.map(x=>x.sort||0))+1 : 0});
       const data = sbBuild(p, []); data.draw = [];
@@ -818,17 +896,23 @@ async function sbCall(fn, a){
     case 'renamePort': {
       const pid = a[0], name = String(a[1]||'').trim();
       if (!name) throw new Error('ใส่ชื่อพอร์ต');
-      const ps = await SBDB.ports();
+      const ps = await SBDB.ports(SB_USER.id);
       if (ps.some(p=>p.id!==pid && p.name.toLowerCase()===name.toLowerCase())) throw new Error('มีพอร์ตชื่อ "'+name+'" อยู่แล้ว');
       await SBDB.updatePort(pid, {name});
       return {version:SB_VERSION, ports: await sbPorts()};
     }
     case 'deletePort': {
-      const ps = await SBDB.ports();
+      const ps = await SBDB.ports(SB_USER.id);
       if (ps.length <= 1) throw new Error('ต้องมีอย่างน้อย 1 พอร์ต — ลบพอร์ตสุดท้ายไม่ได้');
       await SBDB.deletePort(a[0]);
       return {ok:true, removed:a[0], version:SB_VERSION};
     }
+    case 'shareList':  return SBDB.rpc('portfolio_share_list', {pid:a[0]});
+    case 'share':      await SBDB.rpc('share_portfolio', {pid:a[0], target_email:a[1], perm:a[2]}); return SBDB.rpc('portfolio_share_list', {pid:a[0]});
+    case 'unshare':    await SBDB.rpc('unshare_portfolio', {pid:a[0], target:a[1]}); return SBDB.rpc('portfolio_share_list', {pid:a[0]});
+    case 'adminUsers': return SBDB.rpc('admin_list_users');
+    case 'setStatus':  await SBDB.rpc('admin_set_status', {target:a[0], new_status:a[1]}); return SBDB.rpc('admin_list_users');
+    case 'setRole':    await SBDB.rpc('admin_set_role', {target:a[0], new_role:a[1]}); return SBDB.rpc('admin_list_users');
     case 'saveDrawings': await SBDB.saveDraw(a[1] || PORT, Array.isArray(a[0]) ? a[0] : []); return {ok:true};
   }
   throw new Error('ไม่รู้จักคำสั่ง '+fn);
@@ -864,12 +948,15 @@ function api(fn, ...args){
   if (API_MSG[fn]){ setLoading(true, API_MSG[fn]); p.then(()=>setLoading(false), ()=>setLoading(false)); }
   return p;
 }
+// เรียกคำสั่งของพอร์ตที่ระบุ (ไม่ใช่พอร์ตที่เลือกอยู่) เช่น ดาวน์โหลดข้อมูลทุกพอร์ต
+function apiFor(port, fn, ...args){ const keep = PORT; PORT = port==null ? null : String(port); try{ return apiRaw(fn, ...args); } finally { PORT = keep; } }
 function apiRaw(fn, ...args){
   if (PORT_FNS.includes(fn) && !LEGACY && PORT!=null){ args = [...args]; while (args.length < PORT_POS[fn]) args.push(''); args.splice(PORT_POS[fn], 0, PORT); }   // ส่งพอร์ตที่เลือกไปด้วยเสมอ
   if (CFG) return remote(CFG, fn, args);
   if (!DEMO) return Promise.reject(new Error('ยังไม่ได้เชื่อม Google Sheet'));
   return new Promise((res, rej)=>setTimeout(()=>{
     if (fn==='listPorts') return res(demoList());
+    if (fn==='getTrades' && args[0]!=null){ const dp = DEMO_PORTS.find(x=>x.id===String(args[0])); if (dp) return res(demoTrades(dp.store)); }
     if (fn==='boot'){ const o = demoList(); o.data = (args[0]!=null && DEMO_PORTS.some(p=>p.id===String(args[0]))) ? demoTrades(DEMO_PORTS.find(p=>p.id===String(args[0])).store) : null; return res(o); }
     if (fn==='addPort'){ const n=String(args[0]||'').trim(); if(!n) return rej(new Error('ใส่ชื่อพอร์ต')); if (DEMO_PORTS.some(p=>p.name.toLowerCase()===n.toLowerCase())) return rej(new Error('มีชีตชื่อ "'+n+'" อยู่แล้ว'));
       const id = String(Date.now()%1e6); DEMO_PORTS.push({id, name:n, store:{capital:+args[1], rows:[]}}); const o = demoList(); o.added = id; return res(o); }
@@ -1125,6 +1212,7 @@ function restoreForm(d){
   Object.assign(seg, d.seg); KEEP = d.KEEP; CAP_MANUAL = !!d.capManual; LEV_MANUAL = !!d.levManual; paintSeg(); recalc();
 }
 function editTrade(row){
+  if (roBlock()) return;
   const t = DATA.trades.find(x=>x.row===row); if(!t) return;
   if (EDIT_ROW==null) DRAFT = snapForm();
   EDIT_ROW = row; EDIT_ORIG = t.date;
@@ -1156,6 +1244,7 @@ function closeEdit(){
 document.addEventListener('keydown', e=>{ if (e.key==='Escape' && $('editModal').classList.contains('on')) closeEdit(); });
 
 async function save(){
+  if (roBlock()) return;
   const d = readForm();
   if (!d.date) return toast('กรุณาเลือกวันที่', true);
   if (!d.mode) return toast('เลือก Auto หรือ Manual ก่อน', true);
@@ -1198,7 +1287,8 @@ function tradePayload(t){
 let QE = null;   // {row, kind}
 function openQuickEdit(row, kind){
   const t = DATA.trades.find(x=>x.row===row); if (!t) return;
-  if (t._pending) return toast('ไม้นี้กำลังบันทึกลง Sheet — รอสักครู่', true);
+  if (t._pending) return toast('ไม้นี้กำลังบันทึก — รอสักครู่', true);
+  if (roBlock()) return;
   const sd = side(t);
   if (kind==='entry' && !sd.mode){ editTrade(row); return; }   // ยังไม่ได้เลือกฝั่ง → เปิดฟอร์มเต็ม
   QE = {row, kind};
@@ -1353,6 +1443,7 @@ let _confirmRes;
 function askConfirm(txt){ $('confirmTxt').textContent=txt; $('confirmBox').classList.add('on'); return new Promise(r=>_confirmRes=r); }
 function closeConfirm(v){ $('confirmBox').classList.remove('on'); _confirmRes&&_confirmRes(v); }
 async function delTrade(row){
+  if (roBlock()) return;
   const t = DATA.trades.find(x=>x.row===row);
   if (!await askConfirm(`ลบไม้ ${t.date} ไม้ที่ ${t.n} ออกจาก Sheet? (แถว ${row})`)) return;
   const fp = fpOf(t), before = fpCount(DATA.trades, fp);
@@ -1400,7 +1491,7 @@ function renderList(){
       <td class="qe" onclick="openQuickEdit(${t.row},'entry')" title="แตะเพื่อแก้ราคาเข้า">${f2(side(t).entry)}</td><td class="pos">${f2(side(t).tp)}</td><td class="neg">${f2(side(t).sl)}</td>
       <td class="qe" onclick="openQuickEdit(${t.row},'bal')" title="แตะเพื่อแก้ Balance">${num(t.bal)!=null?fN(t.bal):'<span class="qeAdd">+ ใส่</span>'}</td><td class="${cls(t.diff)}">${pct(t.diff)}</td>
       <td>${t.result?`<span class="badge ${t.result}">${t.result}</span>`:autoBadge(t)}</td>
-      <td style="white-space:nowrap">${t._pending ? '<span class="hint" style="margin:0"><span class="spin sm"></span>กำลังบันทึก…</span>' : `<button class="btn sm" onclick="viewTradeChart(${t.row})" title="ดูกราฟวันนั้น">ดูกราฟ</button> <button class="btn sm" onclick="editTrade(${t.row})">แก้ไข</button> <button class="btn sm danger" onclick="delTrade(${t.row})">ลบ</button>`}</td>
+      <td style="white-space:nowrap">${t._pending ? '<span class="hint" style="margin:0"><span class="spin sm"></span>กำลังบันทึก…</span>' : `<button class="btn sm" onclick="viewTradeChart(${t.row})" title="ดูกราฟวันนั้น">ดูกราฟ</button>${isRO() ? '' : ` <button class="btn sm" onclick="editTrade(${t.row})">แก้ไข</button> <button class="btn sm danger" onclick="delTrade(${t.row})">ลบ</button>`}`}</td>
     </tr>`).join('') : `<tr><td colspan="11" class="empty">ยังไม่มีรายการ</td></tr>`;
 }
 let chart;
@@ -2160,7 +2251,7 @@ const DRAW_TOOLS = [
   ['measure',ic('ruler',16,1.75),'วัดระยะ (Δ ราคา / % / จำนวนแท่ง)'],['undo',ic('undo-2',16,1.75),'ย้อนกลับ'],['clear',ic('trash-2',16,1.75),'ลบที่เลือก / ลบทั้งหมด'],
 ];
 function saveDraw(){
-  if (DRAW_PORT==null) return;
+  if (DRAW_PORT==null || isRO()) return;   // อ่านอย่างเดียว: ไม่บันทึกเส้นที่วาด
   try{ localStorage.setItem(drawKey(DRAW_PORT), JSON.stringify(DRAW.items)); }catch(e){}
   DRAW_DIRTY = true; clearTimeout(DRAW_TIMER); DRAW_TIMER = setTimeout(pushDraw, 1200);
 }
@@ -2726,59 +2817,92 @@ loadChPrefs();
 
 loadMktPrefs(); window.__chKey=SRC()+'|'+$('mktStart').value; fillChartDays(); loadMarket();
 
-function openSettings(){ $('s_email').textContent = SB_USER ? SB_USER.email : '–'; $('s_url').value = OLD_CFG ? OLD_CFG.url : DEFAULT_URL; $('s_key').value = OLD_CFG ? OLD_CFG.key : ''; $('s_msg').textContent=''; $('setBox').classList.add('on'); }
-// ---------- นำเข้าข้อมูลจาก Google Sheet (Apps Script เดิม) เข้าบัญชี Supabase ----------
-// อ่านไม้จาก Sheet → แถวในตาราง trades (เก็บทุนเฉพาะไม้ที่กำหนดเอง ส่วนที่เหลือคำนวณต่อเนื่องเหมือนในชีต)
-function sheetToRows(d, pid){
-  let prevBal = null, prevCap = null;
-  return d.trades.map((t,i)=>{
-    const x = Object.assign({}, t);
-    if (x.ret==='' || x.ret==null){ if (num(x.retest)!=null && x.aPos) x.ret = x.retest; }   // ชีตรุ่นเก่า: ราคารีเทสอยู่ในช่องสูตร
-    const auto = i===0 ? null : (prevBal!=null ? prevBal : prevCap);
-    x.capital = (i>0 && num(t.cap)!=null && (auto==null || Math.abs(t.cap-auto) > 1e-9)) ? +t.cap : '';
-    prevBal = num(t.bal); prevCap = num(t.cap);
-    return Object.assign(sbToRow(x), {portfolio_id:pid});
-  });
+// ---------- ดาวน์โหลดข้อมูล (Excel / CSV) ----------
+// คอลัมน์เหมือนชีตเดิม (รวมช่องคำนวณ เช่น TP/SL, Diff, Result)
+const EXPORT_COLS = [
+  ['Date','date'],['ไม้ที่','n'],['ทุน','cap'],['M30 กรอบบน','t30'],['M30 กรอบล่าง','b30'],['ระยะวิ่ง M30','r30'],
+  ['H1 กรอบบน','t1'],['H1 กรอบล่าง','b1'],['ระยะวิ่ง H1','r1'],['Risk %','risk'],
+  ['Lev M30 Long','lL30'],['Lev M30 Short','lS30'],['Lev H1 Long','lL1'],['Lev H1 Short','lS1'],
+  ['Auto Position','aPos'],['ราคาเบรก','brk'],['Auto TF','aTf'],['ราคารีเทส','ret'],['ราคาเฉลี่ย','avg'],['TP','tp'],['SL','sl'],
+  ['Manual Position','mPos'],['Manual TF','mTf'],['ราคาเปิด (Manual)','open'],['Manual TP','mTp'],['Manual SL','mSl'],
+  ['Liq. Price','liq'],['ระยะถึง Liq.','liqDist'],['Balance','bal'],['Diff %','diff'],['Result','result'],
+  ['หมายเหตุ','note'],['Leverage ที่ใช้จริง','lev'],['Bias','bias'],['ราคาเฉลี่ยจริง','avgReal'],
+];
+let EX = {scope:'cur', fmt:'xlsx'};
+function paintExport(){
+  document.querySelectorAll('#ex_scope button').forEach(b=>b.classList.toggle('on', b.dataset.v===EX.scope));
+  document.querySelectorAll('#ex_fmt button').forEach(b=>b.classList.toggle('on', b.dataset.v===EX.fmt));
+  const p = curPort(), n = PORTS.length;
+  $('ex_scope').querySelector('[data-v=cur]').disabled = !p;
+  $('ex_desc').textContent = (EX.scope==='cur' ? (p ? 'พอร์ต "'+p.name+'"' : 'ยังไม่ได้เลือกพอร์ต') : n+' พอร์ต')
+    + (EX.fmt==='xlsx' ? ' · 1 ชีตต่อพอร์ต + ชีต "สรุป"' : ' · ไฟล์เดียว มีคอลัมน์ "พอร์ต" · เปิดใน Excel / Numbers ได้ ภาษาไทยไม่เพี้ยน');
 }
-async function runImport(){
-  if (!USE_SB || !CFG || !CFG.sb) return;
-  const oc = {url:$('s_url').value.trim(), key:$('s_key').value.trim()}, out = $('s_msg'), log = t => { out.textContent = t; };
-  if (!/^https:\/\/script\.google\.com\/.+\/exec$/.test(oc.url)) return out.innerHTML = '<span class="neg">URL ต้องขึ้นต้นด้วย https://script.google.com/ และลงท้ายด้วย /exec</span>';
-  if (!oc.key) return out.innerHTML = '<span class="neg">ใส่ Password ของ Apps Script เดิม</span>';
-  const b = $('s_btn'); btnBusy(b, true, 'กำลังนำเข้า…');
-  const lines = [];
+document.querySelectorAll('#ex_scope button').forEach(b=>b.addEventListener('click', ()=>{ if (!b.disabled){ EX.scope = b.dataset.v; paintExport(); } }));
+document.querySelectorAll('#ex_fmt button').forEach(b=>b.addEventListener('click', ()=>{ EX.fmt = b.dataset.v; paintExport(); }));
+function openExport(){ if (!curPort()) EX.scope = 'all'; $('ex_msg').textContent = ''; paintExport(); $('expBox').classList.add('on'); }
+function closeExport(){ $('expBox').classList.remove('on'); }
+const exVal = (t, k) => {
+  const v = t[k];
+  if (v===undefined || v===null || v==='') return '';
+  if (k==='diff') return num(v)!=null ? +(v*100).toFixed(4) : '';
+  if (k==='date' || k==='note' || k==='result' || /Pos$|Tf$/.test(k) || k==='bias') return String(v);
+  return num(v)!=null ? +(+v).toFixed(8) : String(v);
+};
+const loadXLSX = () => window.XLSX ? Promise.resolve() : new Promise((res, rej)=>{   // โหลดไลบรารี Excel เฉพาะตอนกดดาวน์โหลด
+  const sc = document.createElement('script'); sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  sc.onload = res; sc.onerror = ()=>rej(new Error('โหลดไลบรารี Excel ไม่ได้ — เช็กอินเทอร์เน็ต')); document.head.appendChild(sc);
+});
+function saveBlob(blob, name){
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+async function runExport(){
+  const ports = EX.scope==='cur' ? [curPort()].filter(Boolean) : PORTS.slice();
+  if (!ports.length) return $('ex_msg').innerHTML = '<span class="neg">ยังไม่มีพอร์ต</span>';
+  const b = $('ex_btn'); btnBusy(b, true, 'กำลังเตรียมไฟล์…'); $('ex_msg').textContent = '';
   try{
-    log('กำลังอ่านรายชื่อพอร์ตจาก Google Sheet…');
-    let src;
-    try{ src = (await remote(oc, 'listPorts', [])).ports; }
-    catch(e){ if (!/ไม่รู้จักคำสั่ง|ต้องใช้ POST/.test(e.message||'')) throw e; src = [{id:null, name:'Data'}]; }   // Code.gs รุ่นเก่า = พอร์ตเดียว
-    const mine = await SBDB.ports(), taken = new Set(mine.map(p=>p.name.toLowerCase()));
-    let sort = mine.length ? Math.max(...mine.map(x=>x.sort||0))+1 : 0, okAll = true;
-    for (const sp of src){
-      log(lines.concat('กำลังนำเข้า "'+sp.name+'"…').join('\n'));
-      const d = await remote(oc, 'getTrades', sp.id!=null ? [sp.id] : []);
-      let name = sp.name; while (taken.has(name.toLowerCase())) name += ' (นำเข้า)'; taken.add(name.toLowerCase());
-      const cap = num(d.capital)!=null ? +d.capital : (d.trades[0] && num(d.trades[0].cap)) || 1;
-      const port = await SBDB.insertPort({name, start_capital:cap, sort:sort++});
-      const rows = sheetToRows(d, port.id);
-      for (let i=0; i<rows.length; i+=200) await SBDB.insertTrades(rows.slice(i, i+200));   // ส่งทีละ 200 ไม้ ลำดับเดิม
-      if (Array.isArray(d.draw) && d.draw.length) await SBDB.saveDraw(port.id, d.draw);
-      // ตรวจ: จำนวนไม้ + Balance สุดท้าย ต้องตรงกับใน Sheet
-      const chk = await sbTrades(port.id, true), lastBal = arr => { let v=null; arr.forEach(t=>{ if (num(t.bal)!=null) v=+t.bal; }); return v; };
-      const ok = chk.trades.length===d.trades.length && lastBal(chk.trades)===lastBal(d.trades);
-      okAll = okAll && ok;
-      lines.push((ok?'✓ ':'⚠ ')+'"'+name+'": '+chk.trades.length+' ไม้ · Balance $'+fN(lastBal(chk.trades) ?? cap)+(ok?'':' (ไม่ตรงกับใน Sheet — แจ้งผู้ดูแล)'));
-      log(lines.join('\n'));
+    // ข้อมูลไม้ของแต่ละพอร์ต (พอร์ตปัจจุบันใช้ข้อมูลที่โหลดอยู่แล้ว)
+    const sets = [];
+    for (const p of ports){
+      $('ex_msg').textContent = 'กำลังอ่าน "'+p.name+'"…';
+      const d = (String(p.id)===PORT && DATA && DATA.trades) ? DATA : await (LEGACY ? apiRaw('getTrades') : apiFor(p.id, 'getTrades', true));
+      sets.push({p, trades: d.trades.filter(t=>!t._pending), capital: d.capital});
     }
-    lines.push(okAll ? '\nนำเข้าเรียบร้อย ข้อมูลตรงกับ Google Sheet ทุกพอร์ต' : '\nนำเข้าแล้ว แต่มีบางพอร์ตไม่ตรง — ตรวจดูก่อนใช้งาน');
-    log(lines.join('\n'));
-    toast(okAll ? 'นำเข้าข้อมูลเรียบร้อย' : 'นำเข้าแล้ว แต่มีบางพอร์ตไม่ตรง', !okAll);
-    await bootFetch(false); showView('home');
-  }catch(e){ lines.push('\nนำเข้าไม่สำเร็จ: '+niceErr(e.message||String(e))); log(lines.join('\n')); }
+    const stamp = new Date(Date.now()+7*3600e3).toISOString().slice(0,10);
+    const base = 'TradeJournal_' + (ports.length===1 ? ports[0].name.replace(/[\\/:*?"<>|\[\]]+/g,'-') + '_' : '') + stamp;
+    if (EX.fmt==='csv'){
+      const q = v => { const x = String(v); return /[",\n]/.test(x) ? '"'+x.replace(/"/g,'""')+'"' : x; };
+      const lines = [['พอร์ต', ...EXPORT_COLS.map(c=>c[0])].map(q).join(',')];
+      sets.forEach(({p, trades})=>trades.forEach(t=>lines.push([p.name, ...EXPORT_COLS.map(c=>exVal(t, c[1]))].map(q).join(','))));
+      saveBlob(new Blob(['﻿' + lines.join('\r\n')], {type:'text/csv;charset=utf-8'}), base + '.csv');   // BOM → Excel อ่านภาษาไทยถูก
+    } else {
+      $('ex_msg').textContent = 'กำลังสร้างไฟล์ Excel…';
+      await loadXLSX();
+      const wb = XLSX.utils.book_new(), used = new Set();
+      const sheetName = n => { let x = String(n).replace(/[\\/:*?\[\]]/g,'-').slice(0,31) || 'Sheet'; let y = x, i = 2; while (used.has(y.toLowerCase())) y = x.slice(0,28)+' ('+(i++)+')'; used.add(y.toLowerCase()); return y; };
+      // ชีตสรุป
+      const sum = [['พอร์ต','เจ้าของ','ทุนเริ่มต้น','Balance','ผลตอบแทน %','ไม้ทั้งหมด','ปิดแล้ว','Win','Loss','Win rate %']];
+      sets.forEach(({p, trades, capital})=>{
+        const c = trades.filter(t=>num(t.diff)!=null), w = c.filter(t=>t.diff>0).length, l = c.filter(t=>t.diff<0).length;
+        let bal = num(capital); trades.forEach(t=>{ if (num(t.bal)!=null) bal = +t.bal; });
+        sum.push([p.name, p.access && p.access!=='owner' ? (p.owner||'') : (SB_USER ? SB_USER.email : ''), num(capital)??'', bal??'', (capital && bal!=null) ? +((bal/capital-1)*100).toFixed(2) : '', trades.length, c.length, w, l, (w+l) ? +(w/(w+l)*100).toFixed(1) : '']);
+      });
+      const ws0 = XLSX.utils.aoa_to_sheet(sum); ws0['!cols'] = sum[0].map((h,i)=>({wch: i<2 ? 22 : 12}));
+      XLSX.utils.book_append_sheet(wb, ws0, sheetName('สรุป'));
+      // 1 ชีตต่อพอร์ต
+      sets.forEach(({p, trades})=>{
+        const aoa = [EXPORT_COLS.map(c=>c[0]), ...trades.map(t=>EXPORT_COLS.map(c=>exVal(t, c[1])))];
+        const ws = XLSX.utils.aoa_to_sheet(aoa); ws['!cols'] = EXPORT_COLS.map(c=>({wch: Math.max(9, c[0].length+2)})); ws['!freeze'] = {xSplit:0, ySplit:1};
+        XLSX.utils.book_append_sheet(wb, ws, sheetName(p.name));
+      });
+      XLSX.writeFile(wb, base + '.xlsx');
+    }
+    const n = sets.reduce((a,x)=>a+x.trades.length, 0);
+    $('ex_msg').innerHTML = '<span class="pos">ดาวน์โหลดแล้ว · '+sets.length+' พอร์ต · '+n+' ไม้</span>';
+  }catch(e){ $('ex_msg').innerHTML = '<span class="neg">ดาวน์โหลดไม่ได้: '+esc(e.message||String(e))+'</span>'; }
   btnBusy(b, false);
 }
-function closeSettings(){ $('setBox').classList.remove('on'); }
-async function disconnect(){ cacheClear(); if (USE_SB && sb){ try{ await sb.auth.signOut(); }catch(e){} SB_USER = null; } else setCfg(null); CFG=null; paintMode(); closeSettings(); PORTS=[]; LEGACY=false; DATA={trades:[],capital:null}; paintPort(); renderAll(); showGate(); }
+async function disconnect(){ toggleProfMenu(false); closeExport(); cacheClear(); VIEW_AS = null; if (USE_SB && sb){ try{ await sb.auth.signOut(); }catch(e){} SB_USER = null; SB_PROFILE = null; AUTH_MODE = 'login'; } else setCfg(null); CFG=null; paintMode(); PORTS=[]; LEGACY=false; DATA={trades:[],capital:null}; paintPort(); renderAll(); showGate(); }
 
 async function hardReload(){
   try{
@@ -2839,14 +2963,20 @@ function renderPorts(){
   paintPort();
   $('addPortBtn').hidden = LEGACY;
   $('portNote').innerHTML = LEGACY ? ic('triangle-alert',12)+' Code.gs ยังเป็นเวอร์ชันเก่า — อัปเดตเป็น version 7 เพื่อเพิ่ม/เปลี่ยนชื่อพอร์ตได้' : (PORT==null && PORTS.length ? 'แตะพอร์ตเพื่อเลือก แล้วเริ่มบันทึกไม้' : '');
-  $('portList').innerHTML = PORTS.length ? PORTS.map(p=>{
+  const card = p=>{
     const on = String(p.id)===PORT, cap = num(p.capital), bal = num(p.balance);
-    const ret = (cap && bal!=null) ? bal/cap-1 : null, wl = (p.wins||0)+(p.losses||0);
+    const ret = (cap && bal!=null) ? bal/cap-1 : null, wl = (p.wins||0)+(p.losses||0), own = !p.access || p.access==='owner';
     return `<div class="pCard ${on?'on':''}" onclick="selectPort('${esc(p.id)}')">
-      <div class="pTop"><b class="pName">${esc(p.name)}</b>${on?'<span class="badge open">ใช้งานอยู่</span>':''}<span style="flex:1"></span>${LEGACY?'':`<button class="btn sm icon" title="เปลี่ยนชื่อ" onclick="event.stopPropagation();openPortForm('${esc(p.id)}')">${ic('pencil',13)}</button>`}</div>
+      <div class="pTop"><b class="pName">${esc(p.name)}</b>${on?'<span class="badge open">ใช้งานอยู่</span>':''}${!own ? `<span class="accB">${p.access==='edit'?'แก้ไขได้':'ดูอย่างเดียว'}</span>` : ''}<span style="flex:1"></span>${LEGACY||!own||VIEW_AS?'':`<button class="btn sm icon" title="เปลี่ยนชื่อ" onclick="event.stopPropagation();openPortForm('${esc(p.id)}')">${ic('pencil',13)}</button>`}</div>
+      ${!own && p.owner && !VIEW_AS ? `<div class="pOwner">ของ ${esc(p.owner)}</div>` : ''}
       <div class="pBal mono">${bal!=null?'$'+fN(bal):'–'}</div>
       <div class="pMeta">${p.trades!=null?`<span class="${cls(ret)}">${pct(ret)}</span> · ${p.trades} ไม้ · Win ${wl?fN(p.wins/wl*100,1)+'%':'–'}`:'แตะเพื่อเปิด'}</div>
-    </div>`; }).join('') : '<div class="pEmpty">ยังไม่มีพอร์ต · กด "เพิ่มพอร์ต"</div>';
+    </div>`; };
+  const mine = PORTS.filter(p=>!p.access || p.access==='owner' || VIEW_AS), shared = VIEW_AS ? [] : PORTS.filter(p=>p.access && p.access!=='owner');
+  $('addPortBtn').hidden = LEGACY || !!VIEW_AS;
+  $('portList').innerHTML = (VIEW_AS ? `<div class="viewAs" style="grid-column:1 / -1">${ic('eye',14)} พอร์ตของ <b>${esc(VIEW_AS.email)}</b> · อ่านอย่างเดียว<span style="flex:1"></span><button class="btn sm" onclick="exitViewAs()">${ic('arrow-left',13)} กลับไปพอร์ตของฉัน</button></div>` : '')
+    + (mine.length ? mine.map(card).join('') : `<div class="pEmpty">${VIEW_AS ? 'ผู้ใช้นี้ยังไม่มีพอร์ต' : 'ยังไม่มีพอร์ต · กด "เพิ่มพอร์ต"'}</div>`)
+    + (shared.length ? `<div class="pSec" style="grid-column:1 / -1">แชร์ให้ฉัน</div>` + shared.map(card).join('') : '');
 }
 // ฟอร์มเพิ่ม / เปลี่ยนชื่อพอร์ต
 let PF_EDIT = null;
@@ -2927,6 +3057,7 @@ async function load(){
     const {data:{session}} = await sb.auth.getSession();
     if (!session) return showGate();
     sbSignedIn(session.user);
+    if (!(await loadProfile())) return;   // ยังไม่อนุมัติ / ถูกระงับ → หน้ารอ
   }
   if (!CFG && !DEMO) return showGate();
   const c = cacheGet();
@@ -2965,6 +3096,7 @@ function setLoading(on, txt){
 const niceErr = m => /API key|รหัสลับ/.test(m) ? 'Password ไม่ถูกต้อง' : m;
 const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbzwEw7U5_ta95nQDziW8Jblt07HbEtsopRKBsd-zt3l4VIC15KczrG2VXHgaJHFxyEt/exec';   // URL ของ Apps Script (ไม่ใช่ความลับ)
 function showGate(msg){
+  if (AUTH_MODE==='pending') AUTH_MODE = 'login';
   authMode(AUTH_MODE==='reset' ? 'reset' : 'login');
   if (msg) $('g_msg').innerHTML = '<span class="neg">'+esc(msg)+'</span>';
   $('gate').classList.add('on'); document.body.classList.add('gated');
@@ -2976,13 +3108,13 @@ let AUTH_MODE = 'login';
 const APP_URL = () => location.origin + location.pathname;   // ลิงก์ในอีเมลยืนยัน/รีเซ็ตรหัส กลับมาหน้านี้
 function authMode(m){
   AUTH_MODE = m;
-  $('g_login').hidden = m==='reset'; $('g_reset').hidden = m!=='reset';
+  $('g_login').hidden = m==='reset' || m==='pending'; $('g_reset').hidden = m!=='reset'; $('g_pending').hidden = m!=='pending';
   $('g_pwWrap').hidden = m==='forgot';
   $('g_pw').autocomplete = m==='signup' ? 'new-password' : 'current-password';
   $('g_btn').textContent = {login:'เข้าสู่ระบบ', signup:'สมัครสมาชิก', forgot:'ส่งลิงก์ตั้งรหัสผ่านใหม่'}[m] || 'เข้าสู่ระบบ';
   $('g_toggle').textContent = m==='signup' ? 'มีบัญชีแล้ว? เข้าสู่ระบบ' : 'ยังไม่มีบัญชี? สมัครสมาชิก';
   $('g_forgot').textContent = m==='forgot' ? 'กลับไปเข้าสู่ระบบ' : 'ลืมรหัสผ่าน';
-  $('g_sub').textContent = {signup:'สร้างบัญชีใหม่ · พอร์ตของคุณแยกจากผู้ใช้อื่น', forgot:'ใส่อีเมลที่สมัครไว้ เราจะส่งลิงก์ตั้งรหัสผ่านใหม่ให้', reset:'ตั้งรหัสผ่านใหม่สำหรับบัญชีของคุณ'}[m] || 'เข้าสู่ระบบเพื่อจัดการพอร์ตของคุณ';
+  $('g_sub').textContent = {pending:'สถานะบัญชี', signup:'สร้างบัญชีใหม่ · พอร์ตของคุณแยกจากผู้ใช้อื่น', forgot:'ใส่อีเมลที่สมัครไว้ เราจะส่งลิงก์ตั้งรหัสผ่านใหม่ให้', reset:'ตั้งรหัสผ่านใหม่สำหรับบัญชีของคุณ'}[m] || 'เข้าสู่ระบบเพื่อจัดการพอร์ตของคุณ';
   $('g_msg').textContent = '';
 }
 const authErr = e => {
@@ -3004,10 +3136,12 @@ async function authSubmit(){
   try{
     if (AUTH_MODE==='login'){
       const {data, error} = await sb.auth.signInWithPassword({email, password:pw}); if (error) throw error;
-      btnBusy(b, false); $('g_pw').value = ''; sbSignedIn(data.user); hideGate(); await load(); toast('เข้าสู่ระบบแล้ว');
+      btnBusy(b, false); $('g_pw').value = ''; sbSignedIn(data.user);
+      if (!(await loadProfile())) return;
+      hideGate(); await load(); toast('เข้าสู่ระบบแล้ว');
     } else if (AUTH_MODE==='signup'){
       const {data, error} = await sb.auth.signUp({email, password:pw, options:{emailRedirectTo: APP_URL()}}); if (error) throw error;
-      if (data.session){ btnBusy(b, false); sbSignedIn(data.user); hideGate(); await load(); toast('สมัครสมาชิกเรียบร้อย'); }
+      if (data.session){ btnBusy(b, false); sbSignedIn(data.user); if (await loadProfile()){ hideGate(); await load(); toast('สมัครสมาชิกเรียบร้อย'); } }
       else { authMode('login'); $('g_email').value = email; msg('<span class="pos">สมัครแล้ว — เปิดลิงก์ยืนยันในอีเมล '+esc(email)+' แล้วกลับมาเข้าสู่ระบบ</span>'); }
     } else {
       const {error} = await sb.auth.resetPasswordForEmail(email, {redirectTo: APP_URL()}); if (error) throw error;
@@ -3023,10 +3157,188 @@ async function authSetNewPassword(){
   try{
     const {data, error} = await sb.auth.updateUser({password:pw}); if (error) throw error;
     $('g_newpw').value = ''; AUTH_MODE = 'login'; btnBusy(b, false);
-    sbSignedIn(data.user); hideGate(); await load(); toast('ตั้งรหัสผ่านใหม่แล้ว');
+    sbSignedIn(data.user); if (!(await loadProfile())) return; hideGate(); await load(); toast('ตั้งรหัสผ่านใหม่แล้ว');
   }catch(e){ msg('<span class="neg">'+esc(authErr(e))+'</span>'); }
   btnBusy(b, false);
 }
+// ---------- โปรไฟล์ + สถานะบัญชี ----------
+
+const ROLE_TH = {super_admin:'Super Admin', admin:'Admin', user:'ผู้ใช้'};
+const STATUS_TH = {pending:'รออนุมัติ', active:'ใช้งาน', disabled:'ระงับ'};
+function isAdminRole(){ return !!(SB_PROFILE && SB_PROFILE.status==='active' && (SB_PROFILE.role==='admin' || SB_PROFILE.role==='super_admin')); }
+function isSuper(){ return !!(SB_PROFILE && SB_PROFILE.status==='active' && SB_PROFILE.role==='super_admin'); }
+async function loadProfile(){
+  try{ SB_PROFILE = await SBDB.rpc('touch_me'); }
+  catch(e){ showGate('โหลดข้อมูลบัญชีไม่ได้: '+(e.message||e)); return false; }
+  paintProfile();
+  if (!SB_PROFILE || SB_PROFILE.status!=='active'){ showPending(); return false; }
+  if (isAdminRole()) refreshPendingCount();
+  return true;
+}
+function showPending(){
+  const st = SB_PROFILE ? SB_PROFILE.status : 'pending';
+  AUTH_MODE = 'pending'; authMode('pending');
+  $('g_pmsg').innerHTML = st==='disabled'
+    ? '<b>บัญชีนี้ถูกระงับการใช้งาน</b><br>ติดต่อผู้ดูแลระบบหากคิดว่าเป็นความผิดพลาด'
+    : '<b>สมัครสมาชิกเรียบร้อย · รอผู้ดูแลอนุมัติ</b><br>เมื่อได้รับอนุมัติแล้ว กด "ตรวจสอบอีกครั้ง" เพื่อเริ่มใช้งาน';
+  $('g_pemail').textContent = SB_USER ? SB_USER.email : '';
+  $('gate').classList.add('on'); document.body.classList.add('gated');
+}
+async function recheckProfile(){
+  const b = $('g_pbtn'); btnBusy(b, true, 'กำลังตรวจสอบ…');
+  const ok = await loadProfile(); btnBusy(b, false);
+  if (ok){ AUTH_MODE = 'login'; hideGate(); await load(); toast('บัญชีได้รับอนุมัติแล้ว'); }
+  else toast('ยังไม่ได้รับอนุมัติ', true);
+}
+function paintProfile(){
+  const em = (SB_USER && SB_USER.email) || '';
+  $('profAvatar').textContent = em ? em[0] : '?';
+  $('profDot').hidden = !(isAdminRole() && ADMIN_PENDING>0); $('profDot').textContent = ADMIN_PENDING;
+}
+async function refreshPendingCount(){
+  try{ const us = await SBDB.rpc('admin_list_users'); ADMIN_PENDING = us.filter(u=>u.status==='pending').length; ADMIN_USERS = us; paintProfile(); }catch(e){}
+}
+// เมนูโปรไฟล์ (มุมขวาบน)
+function placeMenu(m, anchor){
+  const c = anchor.getBoundingClientRect(), w = m.offsetWidth, hb = m.offsetParent ? m.offsetParent.getBoundingClientRect() : {left:0};
+  const left = Math.max(8, Math.min(c.right - w, innerWidth - 8 - w));
+  m.style.left = (left - hb.left)+'px'; m.style.right = 'auto';
+}
+function toggleProfMenu(force){
+  const m = $('profMenu'), open = force!=null ? force : m.hidden;
+  if (open){
+    togglePortMenu(false);
+    const p = curPort(), item = (icn, label, fn, extra) => `<button class="pmItem" role="menuitem" onclick="toggleProfMenu(false);${fn}"><span class="ck">${ic(icn,14)}</span><span class="nm" style="font-weight:500">${label}</span>${extra||''}</button>`;
+    m.innerHTML = `<div class="pmHead"><div class="em">${esc(SB_USER ? SB_USER.email : (DEMO ? 'โหมดตัวอย่าง' : ''))}</div>${SB_PROFILE ? `<span class="roleB ${SB_PROFILE.role}">${ROLE_TH[SB_PROFILE.role]||SB_PROFILE.role}</span>` : ''}</div>`
+      + (isAdminRole() ? item('users','จัดการผู้ใช้','openAdmin()', ADMIN_PENDING ? `<span class="cnt">${ADMIN_PENDING}</span>` : '') : '')
+      + (VIEW_AS ? item('arrow-left','กลับไปพอร์ตของฉัน','exitViewAs()') : '')
+      + (p && p.access==='owner' && !VIEW_AS ? item('share-2','แชร์พอร์ต "'+esc(p.name)+'"',`openShare()`) : '')
+      + item('download','ดาวน์โหลดข้อมูล','openExport()')
+      + item('circle-help','คู่มือการใช้งาน',"location.href='guide.html'")
+      + '<div class="pmSep"></div>' + item('log-out','ออกจากระบบ','disconnect()');
+  }
+  m.hidden = !open;
+  if (open) placeMenu(m, $('profBtn'));
+}
+document.addEventListener('click', e=>{ if ($('profMenu') && !$('profMenu').hidden && !e.target.closest('.profDD')) toggleProfMenu(false); });
+document.addEventListener('keydown', e=>{ if (e.key==='Escape' && $('profMenu') && !$('profMenu').hidden) toggleProfMenu(false); });
+
+// ---------- อ่านอย่างเดียว (พอร์ตที่แชร์แบบดูอย่างเดียว / Super Admin ดูพอร์ตคนอื่น) ----------
+function isRO(){ const p = curPort(); return !!VIEW_AS || !!(p && p.access==='view'); }
+function paintRO(){
+  const ro = isRO(), p = curPort();
+  document.body.classList.toggle('ro', ro);
+  $('roNote').innerHTML = !ro ? '' : VIEW_AS
+    ? ic('eye',13)+' กำลังดูพอร์ตของ <b>'+esc(VIEW_AS.email)+'</b> แบบอ่านอย่างเดียว · <a onclick="exitViewAs()" style="cursor:pointer;color:var(--accent)">กลับไปพอร์ตของฉัน</a>'
+    : ic('eye',13)+' พอร์ต "'+esc(p ? p.name : '')+'" ของ '+esc(p && p.owner || '')+' แชร์ให้คุณแบบดูอย่างเดียว';
+}
+function roBlock(){ if (isRO()){ toast('พอร์ตนี้เปิดแบบอ่านอย่างเดียว', true); return true; } return false; }
+
+// ---------- Super Admin: ดูพอร์ตของผู้ใช้อื่น (อ่านอย่างเดียว) ----------
+let VIEW_PREV = null;
+async function viewUser(id, email){
+  if (!isSuper()) return;
+  closeAdmin();
+  if (!VIEW_AS) VIEW_PREV = PORT;
+  VIEW_AS = {id, email}; PORT = null; PORTS = []; DATA = {trades:[], capital:null};
+  setLoading(true, 'กำลังโหลดพอร์ตของ '+email+'…');
+  try{ await bootFetch(true); showView('home'); toast('กำลังดูพอร์ตของ '+email); }
+  catch(e){ toast('โหลดไม่ได้: '+(e.message||e), true); }
+  setLoading(false); paintRO();
+}
+async function exitViewAs(){
+  VIEW_AS = null; PORT = VIEW_PREV; VIEW_PREV = null; PORTS = []; DATA = {trades:[], capital:null};
+  setLoading(true, 'กำลังโหลดพอร์ตของคุณ…');
+  try{ await bootFetch(true); showView('home'); }catch(e){ toast('โหลดไม่ได้: '+(e.message||e), true); }
+  setLoading(false); paintRO();
+}
+
+// ---------- จัดการผู้ใช้ (Admin / Super Admin) ----------
+let ADMIN_USERS = [], ADMIN_FILTER = '';
+async function openAdmin(){
+  if (!isAdminRole()) return;
+  $('admBox').classList.add('on'); $('adm_msg').textContent = '';
+  $('adm_list').innerHTML = '<div class="hint" style="margin:0"><span class="spin sm"></span>กำลังโหลด…</div>';
+  try{ ADMIN_USERS = await apiRaw('adminUsers'); renderAdmin(); }
+  catch(e){ $('adm_list').innerHTML = '<div class="neg">'+esc(e.message||String(e))+'</div>'; }
+}
+function closeAdmin(){ $('admBox').classList.remove('on'); }
+document.querySelectorAll('#adm_f button').forEach(b=>b.addEventListener('click', ()=>{ ADMIN_FILTER = b.dataset.f; renderAdmin(); }));
+const fmtDate = v => v ? new Date(v).toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'2-digit'}) : '–';
+function renderAdmin(){
+  const q = ($('adm_q').value||'').trim().toLowerCase();
+  document.querySelectorAll('#adm_f button').forEach(b=>b.classList.toggle('on', b.dataset.f===ADMIN_FILTER));
+  const pend = ADMIN_USERS.filter(u=>u.status==='pending').length;
+  ADMIN_PENDING = pend; paintProfile();
+  $('adm_sum').textContent = `${ADMIN_USERS.length} บัญชี${pend ? ' · รออนุมัติ '+pend : ''}`;
+  const list = ADMIN_USERS.filter(u=>(!ADMIN_FILTER || u.status===ADMIN_FILTER) && (!q || (u.email||'').toLowerCase().includes(q)));
+  const me = SB_USER && SB_USER.id;
+  $('adm_list').innerHTML = list.length ? list.map(u=>{
+    const self = u.id===me, sup = u.role==='super_admin', canManage = !self && !sup && (isSuper() || u.role==='user');
+    const btn = (label, fn, cls) => `<button class="btn sm ${cls||''}" onclick="${fn}">${label}</button>`;
+    const acts = [];
+    if (canManage){
+      if (u.status!=='active') acts.push(btn(u.status==='pending' ? 'อนุมัติ' : 'เปิดใช้งาน', `setUserStatus('${u.id}','active')`, 'primary'));
+      if (u.status!=='disabled') acts.push(btn('ระงับ', `setUserStatus('${u.id}','disabled')`, 'danger'));
+    }
+    if (isSuper() && !self && !sup) acts.push(`<select onchange="setUserRole('${u.id}', this.value)" title="บทบาท"><option value="user" ${u.role==='user'?'selected':''}>ผู้ใช้</option><option value="admin" ${u.role==='admin'?'selected':''}>Admin</option></select>`);
+    if (isSuper() && !self && +u.ports>0) acts.push(btn(ic('eye',13)+' ดูพอร์ต', `viewUser('${u.id}','${esc(u.email)}')`));
+    return `<div class="uRow">
+      <div class="em">${esc(u.email)}${self?' <span class="hint" style="margin:0">(คุณ)</span>':''}<span class="stB ${u.status}">${STATUS_TH[u.status]||u.status}</span> <span class="roleB ${u.role}" style="margin:0">${ROLE_TH[u.role]||u.role}</span></div>
+      <div class="acts">${acts.join('')}</div>
+      <div class="meta">สมัคร ${fmtDate(u.created_at)} · ใช้ล่าสุด ${fmtDate(u.last_seen_at)} · ${u.ports} พอร์ต · ${u.trades} ไม้${u.last_trade ? ' · เทรดล่าสุด '+fmtDate(u.last_trade) : ''}</div>
+    </div>`; }).join('') : '<div class="pEmpty">ไม่มีผู้ใช้ในรายการนี้</div>';
+}
+async function setUserStatus(id, st){
+  const u = ADMIN_USERS.find(x=>x.id===id);
+  if (st==='disabled' && !await askConfirm(`ระงับบัญชี ${u ? u.email : ''}? (เข้าใช้งานไม่ได้จนกว่าจะเปิดใช้งานอีกครั้ง · ข้อมูลไม่ถูกลบ)`)) return;
+  $('adm_msg').textContent = '';
+  try{ ADMIN_USERS = await apiRaw('setStatus', id, st); renderAdmin(); toast((u ? u.email+' · ' : '')+(STATUS_TH[st]||st)); }
+  catch(e){ $('adm_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
+}
+async function setUserRole(id, role){
+  $('adm_msg').textContent = '';
+  try{ ADMIN_USERS = await apiRaw('setRole', id, role); renderAdmin(); toast('เปลี่ยนบทบาทเป็น '+(ROLE_TH[role]||role)+' แล้ว'); }
+  catch(e){ $('adm_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; renderAdmin(); }
+}
+
+// ---------- แชร์พอร์ต (เจ้าของพอร์ต) ----------
+let SHARE_PID = null, SHARES = [];
+async function openShare(){
+  const p = curPort(); if (!p || p.access!=='owner') return;
+  SHARE_PID = p.id; $('sh_name').textContent = p.name; $('sh_email').value = ''; $('sh_msg').textContent = '';
+  $('sh_list').innerHTML = '<div class="hint" style="margin:0"><span class="spin sm"></span>กำลังโหลด…</div>';
+  $('shareBox').classList.add('on'); setTimeout(()=>$('sh_email').focus(), 50);
+  try{ SHARES = await apiRaw('shareList', SHARE_PID); renderShares(); }
+  catch(e){ $('sh_list').innerHTML = '<div class="neg">'+esc(e.message||String(e))+'</div>'; }
+}
+function closeShare(){ $('shareBox').classList.remove('on'); }
+const PERM_TH = {view:'ดูอย่างเดียว', edit:'แก้ไขได้'};
+function renderShares(){
+  $('sh_list').innerHTML = SHARES.length ? SHARES.map(x=>`<div class="shRow"><span class="em">${esc(x.email)}</span>
+      <select onchange="changeShare('${esc(x.email)}', this.value)"><option value="view" ${x.permission==='view'?'selected':''}>ดูอย่างเดียว</option><option value="edit" ${x.permission==='edit'?'selected':''}>แก้ไขได้</option></select>
+      <button class="btn sm icon danger" title="ยกเลิกการแชร์" onclick="removeShare('${x.user_id}','${esc(x.email)}')">${ic('x',14)}</button></div>`).join('')
+    : '<div class="hint" style="margin:6px 0 0">ยังไม่ได้แชร์ให้ใคร</div>';
+}
+async function addShare(){
+  const email = $('sh_email').value.trim(), perm = $('sh_perm').value;
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return $('sh_msg').innerHTML = '<span class="neg">ใส่อีเมลให้ถูกต้อง</span>';
+  const b = $('sh_btn'); btnBusy(b, true, 'กำลังแชร์…'); $('sh_msg').textContent = '';
+  try{ SHARES = await apiRaw('share', SHARE_PID, email, perm); renderShares(); $('sh_email').value = ''; $('sh_msg').innerHTML = '<span class="pos">แชร์ให้ '+esc(email)+' ('+PERM_TH[perm]+') แล้ว</span>'; }
+  catch(e){ $('sh_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
+  btnBusy(b, false);
+}
+async function changeShare(email, perm){
+  try{ SHARES = await apiRaw('share', SHARE_PID, email, perm); renderShares(); toast('เปลี่ยนสิทธิ์ของ '+email+' เป็น '+PERM_TH[perm]); }
+  catch(e){ $('sh_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
+}
+async function removeShare(uid, email){
+  if (!await askConfirm(`ยกเลิกการแชร์พอร์ตนี้กับ ${email}?`)) return;
+  try{ SHARES = await apiRaw('unshare', SHARE_PID, uid); renderShares(); toast('ยกเลิกการแชร์กับ '+email+' แล้ว'); }
+  catch(e){ $('sh_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
+}
+$('sh_email').addEventListener('keydown', e=>{ if (e.key==='Enter') addShare(); });
+
 function sbSignedIn(user){
   SB_USER = user;
   CFG = {sb:true, url: SB_URL+'#'+user.id, key:''};   // แคชในเครื่องแยกตามบัญชี

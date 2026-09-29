@@ -902,9 +902,7 @@ async function sbCall(fn, a){
       return {version:SB_VERSION, ports: await sbPorts()};
     }
     case 'deletePort': {
-      const ps = await SBDB.ports(SB_USER.id);
-      if (ps.length <= 1) throw new Error('ต้องมีอย่างน้อย 1 พอร์ต — ลบพอร์ตสุดท้ายไม่ได้');
-      await SBDB.deletePort(a[0]);
+      await SBDB.deletePort(a[0]);   // Supabase ลบพอร์ตสุดท้ายได้ (ข้อจำกัดเดิมมาจาก Google Sheet ที่ลบชีตสุดท้ายไม่ได้)
       return {ok:true, removed:a[0], version:SB_VERSION};
     }
     case 'shareList':  return SBDB.rpc('portfolio_share_list', {pid:a[0]});
@@ -2984,7 +2982,7 @@ let PF_DEL = false;   // โหมดยืนยันการลบพอร�
 function openPortForm(id){
   PF_EDIT = id==null ? null : String(id); PF_DEL = false;
   $('pf_btn').style.cssText = ''; $('pf_name').placeholder = 'เช่น BTC หลัก, ทดลองระบบใหม่';
-  $('pf_del').hidden = !PF_EDIT || PORTS.length <= 1;
+  $('pf_del').hidden = !PF_EDIT || (!USE_SB && PORTS.length <= 1);   // Google Sheet เดิม: ต้องเหลืออย่างน้อย 1 พอร์ต
   const p = PF_EDIT ? PORTS.find(x=>String(x.id)===PF_EDIT) : null;
   $('pf_title').textContent = p ? 'เปลี่ยนชื่อพอร์ต' : 'เพิ่มพอร์ต';
   $('pf_btn').textContent = p ? 'บันทึกชื่อ' : 'สร้างพอร์ต';

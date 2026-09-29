@@ -40,6 +40,7 @@ header{position:sticky;top:0;z-index:25;background:rgba(13,17,23,.92);backdrop-f
 .spacer{flex:1}
 .btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:6px 12px;border-radius:8px;cursor:pointer;font:inherit;font-weight:500}
 .btn:hover{border-color:#3b4756}
+a.btn{text-decoration:none;display:inline-block}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#111;font-weight:600}
 .btn.danger{color:var(--red)}
 .btn.sm{padding:4px 9px;font-size:12px}
@@ -276,6 +277,7 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
       <span class="demo" id="demoTag" hidden onclick="openSettings()" style="cursor:pointer">โหมดตัวอย่าง · กดเพื่อเชื่อม Google Sheet</span>
       <div class="spacer"></div>
       <div class="portDD"><button class="portChip" id="portChip" hidden onclick="togglePortMenu()" title="สลับพอร์ต" aria-haspopup="menu"><i data-ic="chart-pie"></i><span id="portName"></span><i data-ic="chevron-down" data-sz="12"></i></button><div class="portMenu" id="portMenu" role="menu" hidden></div></div>
+      <a class="btn sm" href="guide.html" title="คู่มือการใช้งาน"><i data-ic="circle-help"></i><span class="bl">คู่มือ</span></a>
       <button class="btn sm" id="syncBtn" onclick="hardReload()" title="Hard reload (ข้ามแคช)"><i data-ic="refresh-cw"></i><span class="bl">รีเฟรช</span></button>
       <button class="btn sm" onclick="openSettings()" title="ตั้งค่าการเชื่อมต่อ"><i data-ic="settings"></i><span class="bl">ตั้งค่า</span></button>
     </div>
@@ -586,6 +588,7 @@ const ICONS = {
   'settings':'<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
   'pencil':'<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
   'chevron-down':'<path d="m6 9 6 6 6-6"/>',
+  'circle-help':'<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
   'chart-pie':'<path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>',
   'chevron-right':'<path d="m9 18 6-6-6-6"/>',
   'circle-plus':'<circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/>',

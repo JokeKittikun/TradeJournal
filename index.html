@@ -17,6 +17,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
 <style>
 :root{
   --bg:#0d1117;--panel:#161b22;--panel2:#1c232d;--line:#2a3441;--text:#e6edf3;--muted:#8b98a8;
@@ -40,6 +41,8 @@ header{position:sticky;top:0;z-index:25;background:rgba(13,17,23,.92);backdrop-f
 .spacer{flex:1}
 .btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:6px 12px;border-radius:8px;cursor:pointer;font:inherit;font-weight:500}
 .btn:hover{border-color:#3b4756}
+.authLinks{display:flex;justify-content:space-between;gap:10px;margin-top:12px;font-size:12.5px}
+.authLinks a{color:var(--accent);cursor:pointer}
 a.btn{text-decoration:none;display:inline-block}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#111;font-weight:600}
 .btn.danger{color:var(--red)}
@@ -526,29 +529,40 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
 <div class="overlay gate" id="gate"><div class="modal" style="max-width:420px">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
     <svg width="34" height="34" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#F7931A"/><g transform="translate(32 32) translate(-34 -30)" fill="#fff"><path d="M24 16h12.5c5 0 8.5 2.9 8.5 7.2 0 3-1.7 5.1-4.2 6 3.3.8 5.4 3.3 5.4 6.8 0 4.9-3.8 8-9.6 8H24zm6.2 11.5h5.4c2.3 0 3.7-1.2 3.7-3.1s-1.4-3-3.7-3h-5.4zm0 11.6h6.2c2.6 0 4.1-1.3 4.1-3.4s-1.5-3.4-4.1-3.4h-6.2z"/><rect x="27" y="11" width="3.4" height="7" rx="1"/><rect x="33.4" y="11" width="3.4" height="7" rx="1"/><rect x="27" y="42" width="3.4" height="7" rx="1"/><rect x="33.4" y="42" width="3.4" height="7" rx="1"/></g></svg>
-    <div><div style="font-weight:600;font-size:16px">Trade <span style="color:var(--accent)">Journal</span></div><div class="hint" style="margin:0">เชื่อมต่อระบบก่อนเริ่มใช้งาน</div></div>
+    <div><div style="font-weight:600;font-size:16px">Trade <span style="color:var(--accent)">Journal</span></div><div class="hint" style="margin:0" id="g_sub">เข้าสู่ระบบเพื่อจัดการพอร์ตของคุณ</div></div>
   </div>
-  <div class="field" style="margin-top:14px"><label>Password</label><input id="g_key" type="password" autocomplete="current-password" placeholder="ใส่ Password"></div>
-  <details id="g_adv" style="margin-bottom:6px"><summary class="hint" style="cursor:pointer;margin:0">ขั้นสูง: เปลี่ยน URL ของ Apps Script</summary>
-    <div class="field" style="margin-top:8px"><label>Apps Script Web app URL</label><input id="g_url" placeholder="https://script.google.com/macros/s/.../exec"></div>
-  </details>
-  <div class="hint" id="g_msg" style="min-height:18px"></div>
-  <button class="btn primary" id="g_btn" style="width:100%;margin-top:8px;padding:10px" onclick="gateConnect()">เชื่อมต่อ</button>
+  <div id="g_login">
+    <div class="field" style="margin-top:14px"><label>อีเมล</label><input id="g_email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com"></div>
+    <div class="field" id="g_pwWrap"><label>รหัสผ่าน</label><input id="g_pw" type="password" autocomplete="current-password" placeholder="อย่างน้อย 6 ตัวอักษร"></div>
+    <div class="hint" id="g_msg" style="min-height:18px"></div>
+    <button class="btn primary" id="g_btn" style="width:100%;margin-top:8px;padding:10px" onclick="authSubmit()">เข้าสู่ระบบ</button>
+    <div class="authLinks"><a id="g_toggle" onclick="authMode(AUTH_MODE==='signup'?'login':'signup')">ยังไม่มีบัญชี? สมัครสมาชิก</a><a id="g_forgot" onclick="authMode(AUTH_MODE==='forgot'?'login':'forgot')">ลืมรหัสผ่าน</a></div>
+  </div>
+  <div id="g_reset" hidden>
+    <div class="field" style="margin-top:14px"><label>ตั้งรหัสผ่านใหม่</label><input id="g_newpw" type="password" autocomplete="new-password" placeholder="อย่างน้อย 6 ตัวอักษร"></div>
+    <div class="hint" id="g_rmsg" style="min-height:18px"></div>
+    <button class="btn primary" id="g_rbtn" style="width:100%;margin-top:8px;padding:10px" onclick="authSetNewPassword()">บันทึกรหัสผ่านใหม่</button>
+  </div>
 </div></div>
 <div id="loadMsg" role="status" aria-live="polite"><span class="spin"></span><span id="loadTxt">กำลังโหลด…</span></div>
 <div class="toast" id="toast"></div>
 <div class="overlay" id="setBox"><div class="modal" style="max-width:480px">
-  <h3 style="margin:0 0 6px">เชื่อมต่อ Google Sheet</h3>
-  <div class="hint" style="margin:0 0 14px">ค่าเหล่านี้เก็บไว้ในเบราว์เซอร์เครื่องนี้เท่านั้น ไม่ได้อยู่ในโค้ดบน GitHub</div>
-  <div class="field"><label>Password</label><input id="s_key" type="password" autocomplete="current-password"></div>
-  <details style="margin-bottom:8px"><summary class="hint" style="cursor:pointer;margin:0">ขั้นสูง: เปลี่ยน URL ของ Apps Script</summary>
+  <h3 style="margin:0 0 6px">บัญชี</h3>
+  <div class="hint" style="margin:0 0 4px">เข้าสู่ระบบด้วย <b id="s_email" style="color:var(--text)">–</b></div>
+  <div class="hint" style="margin:0 0 4px">ข้อมูลพอร์ตและไม้เก็บใน Supabase · แต่ละบัญชีเห็นเฉพาะข้อมูลของตัวเอง</div>
+  <div style="height:1px;background:var(--line);margin:14px 0"></div>
+  <h3 style="margin:0 0 6px">นำเข้าข้อมูลจาก Google Sheet</h3>
+  <div class="hint" style="margin:0 0 10px">ดึงทุกพอร์ต ทุกไม้ และเส้นที่วาด จาก Google Sheet เดิม (Apps Script) เข้าบัญชีนี้ · ข้อมูลใน Google Sheet ไม่ถูกลบ</div>
+  <div class="field"><label>Password ของ Apps Script เดิม</label><input id="s_key" type="password" autocomplete="off"></div>
+  <details style="margin-bottom:8px"><summary class="hint" style="cursor:pointer;margin:0">ขั้นสูง: URL ของ Apps Script</summary>
     <div class="field" style="margin-top:8px"><label>Apps Script Web app URL</label><input id="s_url" placeholder="https://script.google.com/macros/s/.../exec"></div>
   </details>
-  <div class="hint" id="s_msg"></div>
+  <div class="hint" id="s_msg" style="white-space:pre-line"></div>
   <div class="actions">
-    <button class="btn danger" onclick="disconnect()">ยกเลิกการเชื่อม</button>
+    <button class="btn danger" onclick="disconnect()">ออกจากระบบ</button>
     <div class="spacer"></div>
     <button class="btn" onclick="closeSettings()">ปิด</button>
+    <button class="btn primary" id="s_btn" onclick="runImport()">นำเข้าข้อมูล</button>
   </div>
 </div></div>
 <div class="overlay" id="editModal"><div class="modal editModal">
@@ -613,7 +627,16 @@ document.querySelectorAll('i[data-ic]').forEach(el=>{ el.outerHTML = ic(el.datas
 /* การเชื่อมต่อเก็บใน localStorage ของเครื่องนี้ */
 function getCfg(){ try{ return JSON.parse(localStorage.getItem('tjConn')||'null'); }catch(e){ return null; } }
 function setCfg(c){ try{ c ? localStorage.setItem('tjConn', JSON.stringify(c)) : localStorage.removeItem('tjConn'); }catch(e){} }
-let CFG = getCfg();
+/* ================= Supabase (ระบบบัญชี + ฐานข้อมูล) ================= */
+// URL และ publishable key ของโปรเจกต์ — ใส่ในหน้าเว็บได้ (ไม่ใช่ความลับ) · ข้อมูลปลอดภัยด้วย Row Level Security ในฐานข้อมูล
+const SB_URL = 'https://awglhvdmmatfpcfencfi.supabase.co';
+const SB_KEY = 'sb_publishable_viCpipJBFjw_LnccufMRuQ_scGZAmuU';
+const USE_SB = true;          // false = กลับไปใช้ Google Sheet (Apps Script) แบบเดิม
+const SB_VERSION = 99;        // ให้ผ่านการเช็กเวอร์ชัน Code.gs เดิมทั้งหมด
+const sb = (USE_SB && window.supabase) ? window.supabase.createClient(SB_URL, SB_KEY, {auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:true}}) : null;
+let SB_USER = null;
+const OLD_CFG = getCfg();     // การเชื่อม Apps Script เดิม (ใช้ตอนนำเข้าข้อมูล)
+let CFG = USE_SB ? null : OLD_CFG;
 // ---------- พอร์ต (1 พอร์ต = 1 ชีต) ----------
 let PORT = (()=>{ try{ return localStorage.getItem('tjPort'); }catch(e){ return null; } })();   // sheetId ของพอร์ตที่เลือก
 let PORTS = [];         // [{id,name,capital,balance,trades,closed,wins,losses}]
@@ -665,6 +688,7 @@ function paintMode(){ document.getElementById('demoTag').hidden = !!CFG || !DEMO
 paintMode();
 
 async function remote(cfg, fn, args){
+  if (cfg && cfg.sb) return sbCall(fn, args || []);
   let r;
   // คำสั่งอ่านอย่างเดียวใช้ GET (เสถียรกว่า POST กับ Apps Script)
   if (fn==='getTrades' || fn==='listPorts' || fn==='boot') r = await fetch(`${cfg.url}?action=${fn}&key=${encodeURIComponent(cfg.key)}${args.length?'&args='+encodeURIComponent(JSON.stringify(args)):''}`);
@@ -674,6 +698,140 @@ async function remote(cfg, fn, args){
   let j; try{ j = await r.json(); }catch(e){ throw new Error('ตอบกลับไม่ใช่ JSON — เช็กว่า Deploy เป็น Web app และตั้ง Who has access = Anyone'); }
   if (!j.ok) throw new Error(j.error);
   return j.data;
+}
+
+// ---------- ชั้นข้อมูล Supabase: ให้ผลลัพธ์รูปแบบเดียวกับ Code.gs (หน้าเว็บส่วนอื่นไม่ต้องเปลี่ยน) ----------
+// ช่องในฟอร์ม → คอลัมน์ในตาราง trades
+const SB_COLS = {date:'date', capital:'capital', t30:'t30', b30:'b30', t1:'t1', b1:'b1', risk:'risk',
+  aPos:'a_pos', aTf:'a_tf', brk:'brk', ret:'ret', mPos:'m_pos', mTf:'m_tf', open:'open',
+  liq:'liq', bal:'bal', note:'note', lev:'lev', bias:'bias', avgReal:'avg_real'};
+const SB_TEXT = new Set(['date','aPos','aTf','mPos','mTf','note','bias']);
+function sbErr(e){
+  const m = (e && (e.message || e.error_description)) || String(e);
+  if (e && e.code==='23505') return new Error('มีพอร์ตชื่อนี้อยู่แล้ว');
+  if (/JWT|not authenticated|Auth session missing/i.test(m)) return new Error('หมดเวลาเข้าสู่ระบบ — กรุณาเข้าสู่ระบบใหม่');
+  if (/Failed to fetch|NetworkError|Load failed/i.test(m)){ const x = new Error('เชื่อมต่อ Supabase ไม่ได้ — เช็กอินเทอร์เน็ต'); x.status = 0; return x; }
+  return new Error(m);
+}
+const sbq = async q => { const {data, error} = await q; if (error) throw sbErr(error); return data; };
+function sbToRow(d){
+  const r = {};
+  Object.entries(SB_COLS).forEach(([k,c])=>{
+    const v = d[k];
+    r[c] = (v===undefined || v===null || v==='') ? null : (SB_TEXT.has(k) ? String(v) : (isNaN(+v) ? null : +v));
+  });
+  return r;
+}
+function sbFromRow(r){ const d = {}; Object.entries(SB_COLS).forEach(([k,c])=>{ d[k] = r[c]==null ? '' : r[c]; }); return d; }
+// ตัวต่อฐานข้อมูล (แยกไว้ เพื่อทดสอบด้วยฐานข้อมูลจำลองได้)
+const SBDB = {
+  ports: ()=> sbq(sb.from('portfolios').select('id,name,start_capital,sort,created_at').order('sort').order('created_at')),
+  async rows(pid, cols){ const out=[]; for (let a=0;;a+=1000){ let q = sb.from('trades').select(cols||'*').order('seq').range(a, a+999); if (pid) q = q.eq('portfolio_id', pid); const part = await sbq(q); out.push(...part); if (part.length < 1000) return out; } },
+  insertTrades: rows => sbq(sb.from('trades').insert(rows).select('id')),
+  updateTrade: (id, row) => sbq(sb.from('trades').update(row).eq('id', id)),
+  deleteTrade: id => sbq(sb.from('trades').delete().eq('id', id)),
+  insertPort: row => sbq(sb.from('portfolios').insert(row).select('id,name,start_capital,sort,created_at').single()),
+  updatePort: (id, patch) => sbq(sb.from('portfolios').update(patch).eq('id', id)),
+  deletePort: id => sbq(sb.from('portfolios').delete().eq('id', id)),
+  getDraw: async pid => { const r = await sbq(sb.from('drawings').select('items').eq('portfolio_id', pid).maybeSingle()); return r && Array.isArray(r.items) ? r.items : []; },
+  saveDraw: (pid, items) => sbq(sb.from('drawings').upsert({portfolio_id:pid, items}, {onConflict:'portfolio_id'})),
+};
+// แถวในฐานข้อมูล → ไม้แบบเดียวกับ getTrades ของ Code.gs (เลขแถว 4,5,… · ทุนต่อเนื่อง · ช่องคำนวณ)
+function sbBuild(port, rows){
+  const trades = [], cnt = {}; let prevBal = null, prevCap = null;
+  rows.forEach((r,i)=>{
+    const d = sbFromRow(r);
+    cnt[d.date] = (cnt[d.date]||0) + 1;
+    // ทุน: ไม้แรก = ทุนเริ่มต้นของพอร์ต · ไม้ถัดไป = กำหนดเอง > Balance ไม้ก่อนหน้า > ทุนไม้ก่อนหน้า (เหมือนสูตรช่อง C ในชีต)
+    const cap = i===0 ? num(port.start_capital) : (num(d.capital)!=null ? +d.capital : (prevBal!=null ? prevBal : prevCap));
+    const c = compute(Object.assign({}, d));
+    const t = Object.assign({row:4+i, n:cnt[d.date], cap, _id:r.id}, d, c);
+    t.capital = i===0 ? '' : d.capital;
+    t.retest = d.ret;
+    const liqBase = num(d.avgReal)!=null ? +d.avgReal : (c.avg!=null ? c.avg : num(d.open));
+    t.liqDist = (num(d.liq)!=null && liqBase!=null) ? d.liq - liqBase : '';
+    t.diff = (num(d.bal)!=null && cap) ? (d.bal - cap)/cap : '';
+    t.result = t.diff==='' ? '' : (t.diff<0 ? 'Loss' : t.diff>0 ? 'Win' : 'BE');
+    prevBal = num(d.bal); prevCap = cap;
+    trades.push(t);
+  });
+  return {trades, capital: num(port.start_capital), version: SB_VERSION, port:{id:port.id, name:port.name}};
+}
+function sbSummary(port, rows){
+  const d = sbBuild(port, rows), c = d.trades.filter(t=>num(t.diff)!=null);
+  let bal = num(port.start_capital); d.trades.forEach(t=>{ if (num(t.bal)!=null) bal = +t.bal; });
+  return {id:port.id, name:port.name, capital:num(port.start_capital), balance:bal, trades:d.trades.length, closed:c.length, wins:c.filter(t=>t.diff>0).length, losses:c.filter(t=>t.diff<0).length};
+}
+async function sbPorts(){
+  const [ports, lite] = await Promise.all([SBDB.ports(), SBDB.rows(null, 'portfolio_id,date,capital,bal')]);
+  return ports.map(p=>sbSummary(p, lite.filter(r=>r.portfolio_id===p.id)));
+}
+async function sbPort(pid){ const ps = await SBDB.ports(); const p = ps.find(x=>x.id===pid); if (!p) throw new Error('ไม่พบพอร์ตนี้ (อาจถูกลบไปแล้ว)'); return p; }
+async function sbTrades(pid, skipDraw){
+  const [p, rows, draw] = await Promise.all([sbPort(pid), SBDB.rows(pid), skipDraw ? null : SBDB.getDraw(pid)]);
+  const out = sbBuild(p, rows); if (!skipDraw) out.draw = draw; out._rows = rows; return out;
+}
+// หาแถวในฐานข้อมูลจากเลขแถวแบบชีต + เช็กว่ายังเป็นไม้เดิม (กันแก้/ลบผิดไม้)
+function sbPick(data, row, expectDate){
+  const t = data.trades[row-4];
+  if (!t) throw new Error('ไม่พบไม้ที่ต้องการ (อาจถูกลบไปแล้ว)');
+  if (expectDate && String(t.date)!==String(expectDate)) throw new Error('ไม้ในแถว '+row+' เปลี่ยนไปแล้ว — กดรีเฟรชแล้วลองใหม่');
+  return t;
+}
+async function sbCall(fn, a){
+  switch (fn){
+    case 'boot': {
+      const ports = await sbPorts(), pid = a[0];
+      const data = (pid && ports.some(p=>p.id===pid)) ? await sbTrades(pid) : null;
+      return {version:SB_VERSION, ports, data};
+    }
+    case 'listPorts': return {version:SB_VERSION, ports: await sbPorts()};
+    case 'getTrades': return sbTrades(a[0] || (PORT||''), a[1]);
+    case 'addTrade': {
+      const d = a[0], pid = a[1] || PORT, cur = await sbTrades(pid, true), row = sbToRow(d);
+      if (!cur.trades.length){ if (num(d.capital)>0) await SBDB.updatePort(pid, {start_capital:+d.capital}); row.capital = null; }
+      await SBDB.insertTrades([Object.assign(row, {portfolio_id:pid})]);
+      return sbTrades(pid, true);
+    }
+    case 'updateTrade': {
+      const r = a[0], d = a[1], pid = a[2] || PORT, cur = await sbTrades(pid, true), t = sbPick(cur, r, d && d._orig), row = sbToRow(d);
+      if (r===4){ if (num(d.capital)>0) await SBDB.updatePort(pid, {start_capital:+d.capital}); row.capital = null; }
+      await SBDB.updateTrade(t._id, row);
+      return sbTrades(pid, true);
+    }
+    case 'deleteTrade': {
+      const r = a[0], pid = a[1] || PORT, cur = await sbTrades(pid, true), t = sbPick(cur, r, a[2]);
+      await SBDB.deleteTrade(t._id);
+      return sbTrades(pid, true);
+    }
+    case 'setCapital': { const v = +a[0], pid = a[1] || PORT; if (!(v>0)) throw new Error('ทุนเริ่มต้นต้องมากกว่า 0'); await SBDB.updatePort(pid, {start_capital:v}); return sbTrades(pid, true); }
+    case 'addPort': {
+      const name = String(a[0]||'').trim(), cap = +a[1];
+      if (!name) throw new Error('ใส่ชื่อพอร์ต');
+      if (!(cap>0)) throw new Error('ทุนเริ่มต้นต้องมากกว่า 0');
+      const ps = await SBDB.ports();
+      if (ps.some(p=>p.name.toLowerCase()===name.toLowerCase())) throw new Error('มีพอร์ตชื่อ "'+name+'" อยู่แล้ว');
+      const p = await SBDB.insertPort({name, start_capital:cap, sort: ps.length ? Math.max(...ps.map(x=>x.sort||0))+1 : 0});
+      const data = sbBuild(p, []); data.draw = [];
+      return {version:SB_VERSION, ports: await sbPorts(), added:p.id, data};
+    }
+    case 'renamePort': {
+      const pid = a[0], name = String(a[1]||'').trim();
+      if (!name) throw new Error('ใส่ชื่อพอร์ต');
+      const ps = await SBDB.ports();
+      if (ps.some(p=>p.id!==pid && p.name.toLowerCase()===name.toLowerCase())) throw new Error('มีพอร์ตชื่อ "'+name+'" อยู่แล้ว');
+      await SBDB.updatePort(pid, {name});
+      return {version:SB_VERSION, ports: await sbPorts()};
+    }
+    case 'deletePort': {
+      const ps = await SBDB.ports();
+      if (ps.length <= 1) throw new Error('ต้องมีอย่างน้อย 1 พอร์ต — ลบพอร์ตสุดท้ายไม่ได้');
+      await SBDB.deletePort(a[0]);
+      return {ok:true, removed:a[0], version:SB_VERSION};
+    }
+    case 'saveDrawings': await SBDB.saveDraw(a[1] || PORT, Array.isArray(a[0]) ? a[0] : []); return {ok:true};
+  }
+  throw new Error('ไม่รู้จักคำสั่ง '+fn);
 }
 
 // โหมดตัวอย่าง: ใช้ข้อมูลจำลองเมื่อเปิดไฟล์นอก Apps Script
@@ -1420,7 +1578,7 @@ async function mexcFetchAll(urls){
       MEXC_DIRECT = true; return res;
     }catch(e){ if (MEXC_DIRECT===true) throw e; MEXC_DIRECT = false; }
   }
-  if (!CFG) throw new Error('ต้องเชื่อม Google Sheet ก่อน (ใช้ Apps Script ดึงราคา MEXC)');
+  if (!CFG || CFG.sb) throw new Error('ดึงราคา MEXC ไม่ได้ในตอนนี้ — ลองใหม่อีกครั้ง หรือสลับไปใช้ Binance');
   try{ return await apiRaw('proxyGetMany', urls); }
   catch(e){
     if (/ไม่รู้จักคำสั่ง/.test(e.message||'')) throw new Error('อัปเดต Code.gs เวอร์ชันล่าสุดใน Apps Script แล้ว Deploy เป็น New version ก่อน');
@@ -2568,9 +2726,59 @@ loadChPrefs();
 
 loadMktPrefs(); window.__chKey=SRC()+'|'+$('mktStart').value; fillChartDays(); loadMarket();
 
-function openSettings(){ $('s_url').value = CFG?CFG.url:DEFAULT_URL; $('s_key').value = CFG?CFG.key:''; $('s_msg').textContent=''; $('setBox').classList.add('on'); }
+function openSettings(){ $('s_email').textContent = SB_USER ? SB_USER.email : '–'; $('s_url').value = OLD_CFG ? OLD_CFG.url : DEFAULT_URL; $('s_key').value = OLD_CFG ? OLD_CFG.key : ''; $('s_msg').textContent=''; $('setBox').classList.add('on'); }
+// ---------- นำเข้าข้อมูลจาก Google Sheet (Apps Script เดิม) เข้าบัญชี Supabase ----------
+// อ่านไม้จาก Sheet → แถวในตาราง trades (เก็บทุนเฉพาะไม้ที่กำหนดเอง ส่วนที่เหลือคำนวณต่อเนื่องเหมือนในชีต)
+function sheetToRows(d, pid){
+  let prevBal = null, prevCap = null;
+  return d.trades.map((t,i)=>{
+    const x = Object.assign({}, t);
+    if (x.ret==='' || x.ret==null){ if (num(x.retest)!=null && x.aPos) x.ret = x.retest; }   // ชีตรุ่นเก่า: ราคารีเทสอยู่ในช่องสูตร
+    const auto = i===0 ? null : (prevBal!=null ? prevBal : prevCap);
+    x.capital = (i>0 && num(t.cap)!=null && (auto==null || Math.abs(t.cap-auto) > 1e-9)) ? +t.cap : '';
+    prevBal = num(t.bal); prevCap = num(t.cap);
+    return Object.assign(sbToRow(x), {portfolio_id:pid});
+  });
+}
+async function runImport(){
+  if (!USE_SB || !CFG || !CFG.sb) return;
+  const oc = {url:$('s_url').value.trim(), key:$('s_key').value.trim()}, out = $('s_msg'), log = t => { out.textContent = t; };
+  if (!/^https:\/\/script\.google\.com\/.+\/exec$/.test(oc.url)) return out.innerHTML = '<span class="neg">URL ต้องขึ้นต้นด้วย https://script.google.com/ และลงท้ายด้วย /exec</span>';
+  if (!oc.key) return out.innerHTML = '<span class="neg">ใส่ Password ของ Apps Script เดิม</span>';
+  const b = $('s_btn'); btnBusy(b, true, 'กำลังนำเข้า…');
+  const lines = [];
+  try{
+    log('กำลังอ่านรายชื่อพอร์ตจาก Google Sheet…');
+    let src;
+    try{ src = (await remote(oc, 'listPorts', [])).ports; }
+    catch(e){ if (!/ไม่รู้จักคำสั่ง|ต้องใช้ POST/.test(e.message||'')) throw e; src = [{id:null, name:'Data'}]; }   // Code.gs รุ่นเก่า = พอร์ตเดียว
+    const mine = await SBDB.ports(), taken = new Set(mine.map(p=>p.name.toLowerCase()));
+    let sort = mine.length ? Math.max(...mine.map(x=>x.sort||0))+1 : 0, okAll = true;
+    for (const sp of src){
+      log(lines.concat('กำลังนำเข้า "'+sp.name+'"…').join('\n'));
+      const d = await remote(oc, 'getTrades', sp.id!=null ? [sp.id] : []);
+      let name = sp.name; while (taken.has(name.toLowerCase())) name += ' (นำเข้า)'; taken.add(name.toLowerCase());
+      const cap = num(d.capital)!=null ? +d.capital : (d.trades[0] && num(d.trades[0].cap)) || 1;
+      const port = await SBDB.insertPort({name, start_capital:cap, sort:sort++});
+      const rows = sheetToRows(d, port.id);
+      for (let i=0; i<rows.length; i+=200) await SBDB.insertTrades(rows.slice(i, i+200));   // ส่งทีละ 200 ไม้ ลำดับเดิม
+      if (Array.isArray(d.draw) && d.draw.length) await SBDB.saveDraw(port.id, d.draw);
+      // ตรวจ: จำนวนไม้ + Balance สุดท้าย ต้องตรงกับใน Sheet
+      const chk = await sbTrades(port.id, true), lastBal = arr => { let v=null; arr.forEach(t=>{ if (num(t.bal)!=null) v=+t.bal; }); return v; };
+      const ok = chk.trades.length===d.trades.length && lastBal(chk.trades)===lastBal(d.trades);
+      okAll = okAll && ok;
+      lines.push((ok?'✓ ':'⚠ ')+'"'+name+'": '+chk.trades.length+' ไม้ · Balance $'+fN(lastBal(chk.trades) ?? cap)+(ok?'':' (ไม่ตรงกับใน Sheet — แจ้งผู้ดูแล)'));
+      log(lines.join('\n'));
+    }
+    lines.push(okAll ? '\nนำเข้าเรียบร้อย ข้อมูลตรงกับ Google Sheet ทุกพอร์ต' : '\nนำเข้าแล้ว แต่มีบางพอร์ตไม่ตรง — ตรวจดูก่อนใช้งาน');
+    log(lines.join('\n'));
+    toast(okAll ? 'นำเข้าข้อมูลเรียบร้อย' : 'นำเข้าแล้ว แต่มีบางพอร์ตไม่ตรง', !okAll);
+    await bootFetch(false); showView('home');
+  }catch(e){ lines.push('\nนำเข้าไม่สำเร็จ: '+niceErr(e.message||String(e))); log(lines.join('\n')); }
+  btnBusy(b, false);
+}
 function closeSettings(){ $('setBox').classList.remove('on'); }
-function disconnect(){ cacheClear(); CFG=null; setCfg(null); paintMode(); closeSettings(); PORTS=[]; LEGACY=false; DATA={trades:[],capital:null}; paintPort(); renderAll(); showGate(); }
+async function disconnect(){ cacheClear(); if (USE_SB && sb){ try{ await sb.auth.signOut(); }catch(e){} SB_USER = null; } else setCfg(null); CFG=null; paintMode(); closeSettings(); PORTS=[]; LEGACY=false; DATA={trades:[],capital:null}; paintPort(); renderAll(); showGate(); }
 
 async function hardReload(){
   try{
@@ -2714,6 +2922,12 @@ async function submitPortForm(){
 ['pf_name','pf_cap'].forEach(id=>$(id).addEventListener('keydown',e=>{ if (e.key==='Enter') submitPortForm(); }));
 
 async function load(){
+  if (USE_SB && !DEMO){
+    if (!sb) return showGate('โหลดระบบบัญชีไม่ได้ — เช็กอินเทอร์เน็ตแล้วรีเฟรช');
+    const {data:{session}} = await sb.auth.getSession();
+    if (!session) return showGate();
+    sbSignedIn(session.user);
+  }
   if (!CFG && !DEMO) return showGate();
   const c = cacheGet();
   if (c){   // เปิดทันทีจากข้อมูลในเครื่อง แล้วอัปเดตจาก Sheet เบื้องหลัง
@@ -2723,13 +2937,13 @@ async function load(){
     paintPort(); renderAll(); if (EDIT_ROW==null) resetForm(); hideGate(); if (PORT==null) showView('home');
     setSync(true);
     try{ await bootFetch(false); }
-    catch(e){ toast('อัปเดตข้อมูลจาก Sheet ไม่ได้: '+niceErr(e.message||String(e)), true); }
+    catch(e){ toast('อัปเดตข้อมูลไม่ได้: '+niceErr(e.message||String(e)), true); }
     setSync(false); return;
   }
-  setLoading(true, 'กำลังโหลดข้อมูลจาก Google Sheet…');
+  setLoading(true, 'กำลังโหลดข้อมูล…');
   try{ await bootFetch(true); hideGate(); if (PORT==null) showView('home'); }
   catch(e){
-    if (CFG) showGate('เชื่อม Google Sheet ไม่ได้: '+niceErr(e.message||String(e)));
+    if (CFG) showGate('โหลดข้อมูลไม่ได้: '+niceErr(e.message||String(e)));
     else toast('โหลดข้อมูลไม่ได้: '+(e.message||e), true);
   }
   setLoading(false);
@@ -2751,25 +2965,79 @@ function setLoading(on, txt){
 const niceErr = m => /API key|รหัสลับ/.test(m) ? 'Password ไม่ถูกต้อง' : m;
 const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbzwEw7U5_ta95nQDziW8Jblt07HbEtsopRKBsd-zt3l4VIC15KczrG2VXHgaJHFxyEt/exec';   // URL ของ Apps Script (ไม่ใช่ความลับ)
 function showGate(msg){
-  $('g_url').value = CFG ? CFG.url : DEFAULT_URL; $('g_key').value = CFG ? CFG.key : '';
-  $('g_msg').innerHTML = msg ? '<span class="neg">'+msg+'</span>' : '';
+  authMode(AUTH_MODE==='reset' ? 'reset' : 'login');
+  if (msg) $('g_msg').innerHTML = '<span class="neg">'+esc(msg)+'</span>';
   $('gate').classList.add('on'); document.body.classList.add('gated');
-  setTimeout(()=>$('g_key').focus(), 50);
+  setTimeout(()=>{ const i = AUTH_MODE==='reset' ? $('g_newpw') : $('g_email'); i && i.focus(); }, 50);
 }
 function hideGate(){ $('gate').classList.remove('on'); document.body.classList.remove('gated'); }
-async function gateConnect(){
-  const cfg = {url:$('g_url').value.trim(), key:$('g_key').value.trim()};
-  if (!/^https:\/\/script\.google\.com\/.+\/exec$/.test(cfg.url)) { $('g_msg').innerHTML='<span class="neg">URL ต้องขึ้นต้นด้วย https://script.google.com/ และลงท้ายด้วย /exec</span>'; return; }
-  if (!cfg.key) { $('g_msg').innerHTML='<span class="neg">ใส่ Password</span>'; return; }
-  const b=$('g_btn'); btnBusy(b, true, 'กำลังเชื่อมต่อ…'); $('g_msg').textContent='';
+// ---------- เข้าสู่ระบบ / สมัครสมาชิก / ลืมรหัสผ่าน (Supabase Auth) ----------
+let AUTH_MODE = 'login';
+const APP_URL = () => location.origin + location.pathname;   // ลิงก์ในอีเมลยืนยัน/รีเซ็ตรหัส กลับมาหน้านี้
+function authMode(m){
+  AUTH_MODE = m;
+  $('g_login').hidden = m==='reset'; $('g_reset').hidden = m!=='reset';
+  $('g_pwWrap').hidden = m==='forgot';
+  $('g_pw').autocomplete = m==='signup' ? 'new-password' : 'current-password';
+  $('g_btn').textContent = {login:'เข้าสู่ระบบ', signup:'สมัครสมาชิก', forgot:'ส่งลิงก์ตั้งรหัสผ่านใหม่'}[m] || 'เข้าสู่ระบบ';
+  $('g_toggle').textContent = m==='signup' ? 'มีบัญชีแล้ว? เข้าสู่ระบบ' : 'ยังไม่มีบัญชี? สมัครสมาชิก';
+  $('g_forgot').textContent = m==='forgot' ? 'กลับไปเข้าสู่ระบบ' : 'ลืมรหัสผ่าน';
+  $('g_sub').textContent = {signup:'สร้างบัญชีใหม่ · พอร์ตของคุณแยกจากผู้ใช้อื่น', forgot:'ใส่อีเมลที่สมัครไว้ เราจะส่งลิงก์ตั้งรหัสผ่านใหม่ให้', reset:'ตั้งรหัสผ่านใหม่สำหรับบัญชีของคุณ'}[m] || 'เข้าสู่ระบบเพื่อจัดการพอร์ตของคุณ';
+  $('g_msg').textContent = '';
+}
+const authErr = e => {
+  const m = (e && e.message) || String(e);
+  if (/Invalid login credentials/i.test(m)) return 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+  if (/Email not confirmed/i.test(m)) return 'ยังไม่ได้ยืนยันอีเมล — เปิดลิงก์ในอีเมลที่ได้รับก่อน';
+  if (/already registered|already been registered/i.test(m)) return 'อีเมลนี้สมัครไว้แล้ว — เข้าสู่ระบบ หรือกดลืมรหัสผ่าน';
+  if (/Password should be at least/i.test(m)) return 'รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร';
+  if (/rate limit|too many/i.test(m)) return 'ลองบ่อยเกินไป — รอสักครู่แล้วลองใหม่';
+  if (/Failed to fetch|NetworkError|Load failed/i.test(m)) return 'เชื่อมต่อไม่ได้ — เช็กอินเทอร์เน็ต';
+  return m;
+};
+async function authSubmit(){
+  if (!sb) return;
+  const email = $('g_email').value.trim(), pw = $('g_pw').value, msg = t => $('g_msg').innerHTML = t;
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return msg('<span class="neg">ใส่อีเมลให้ถูกต้อง</span>');
+  if (AUTH_MODE!=='forgot' && pw.length < 6) return msg('<span class="neg">รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร</span>');
+  const b = $('g_btn'); btnBusy(b, true, {login:'กำลังเข้าสู่ระบบ…', signup:'กำลังสมัคร…', forgot:'กำลังส่ง…'}[AUTH_MODE]); msg('');
   try{
-    await remote(cfg,'getTrades',[]);
-    CFG=cfg; setCfg(cfg); paintMode(); hideGate(); btnBusy(b, false); await load();
-    toast('เชื่อมต่อสำเร็จ');
-  }catch(e){ $('g_msg').innerHTML='<span class="neg">เชื่อมไม่ได้: '+niceErr(e.message||String(e))+'</span>'; }
+    if (AUTH_MODE==='login'){
+      const {data, error} = await sb.auth.signInWithPassword({email, password:pw}); if (error) throw error;
+      btnBusy(b, false); $('g_pw').value = ''; sbSignedIn(data.user); hideGate(); await load(); toast('เข้าสู่ระบบแล้ว');
+    } else if (AUTH_MODE==='signup'){
+      const {data, error} = await sb.auth.signUp({email, password:pw, options:{emailRedirectTo: APP_URL()}}); if (error) throw error;
+      if (data.session){ btnBusy(b, false); sbSignedIn(data.user); hideGate(); await load(); toast('สมัครสมาชิกเรียบร้อย'); }
+      else { authMode('login'); $('g_email').value = email; msg('<span class="pos">สมัครแล้ว — เปิดลิงก์ยืนยันในอีเมล '+esc(email)+' แล้วกลับมาเข้าสู่ระบบ</span>'); }
+    } else {
+      const {error} = await sb.auth.resetPasswordForEmail(email, {redirectTo: APP_URL()}); if (error) throw error;
+      msg('<span class="pos">ส่งลิงก์ไปที่ '+esc(email)+' แล้ว — เปิดลิงก์ในอีเมลเพื่อตั้งรหัสผ่านใหม่</span>');
+    }
+  }catch(e){ msg('<span class="neg">'+esc(authErr(e))+'</span>'); }
   btnBusy(b, false);
 }
-['g_key','g_url'].forEach(id=>$(id).addEventListener('keydown',e=>{ if(e.key==='Enter') gateConnect(); }));
+async function authSetNewPassword(){
+  const pw = $('g_newpw').value, msg = t => $('g_rmsg').innerHTML = t;
+  if (pw.length < 6) return msg('<span class="neg">รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร</span>');
+  const b = $('g_rbtn'); btnBusy(b, true, 'กำลังบันทึก…');
+  try{
+    const {data, error} = await sb.auth.updateUser({password:pw}); if (error) throw error;
+    $('g_newpw').value = ''; AUTH_MODE = 'login'; btnBusy(b, false);
+    sbSignedIn(data.user); hideGate(); await load(); toast('ตั้งรหัสผ่านใหม่แล้ว');
+  }catch(e){ msg('<span class="neg">'+esc(authErr(e))+'</span>'); }
+  btnBusy(b, false);
+}
+function sbSignedIn(user){
+  SB_USER = user;
+  CFG = {sb:true, url: SB_URL+'#'+user.id, key:''};   // แคชในเครื่องแยกตามบัญชี
+  paintMode();
+}
+if (sb) sb.auth.onAuthStateChange((ev, session)=>{
+  if (ev==='PASSWORD_RECOVERY'){ AUTH_MODE = 'reset'; showGate(); }                  // เปิดลิงก์รีเซ็ตรหัสจากอีเมล
+  else if (ev==='SIGNED_OUT' && CFG && CFG.sb){ CFG = null; SB_USER = null; showGate(); }
+});
+['g_email','g_pw'].forEach(id=>$(id).addEventListener('keydown',e=>{ if (e.key==='Enter') authSubmit(); }));
+$('g_newpw').addEventListener('keydown',e=>{ if (e.key==='Enter') authSetNewPassword(); });
 load();
 </script>
 </body>

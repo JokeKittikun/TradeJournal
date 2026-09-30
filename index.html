@@ -2149,21 +2149,41 @@ function detectOutcome(t){
   const L = sd.pos==='Long', lev = sd.mode==='Auto' ? c.aLev : c.mLev;
   const touch = sd.mode==='Auto' ? (num(c.retest)!=null ? c.retest : num(c.edge)) : entry;          // Auto เข้าที่รีเทส, Manual เข้าที่ราคาเปิด
   const start = sOf(t.date)/1000 + CH_TZ + (sd.tf==='H1'?3600:1800);
-  const bars = CH_BARS.filter(b=>b.time>=start);
-  if (!bars.length) return {state:'wait'};
-  if (bars[0].time - start > 86400) return {state:'nodata'};
+  const bars0 = CH_BARS.filter(b=>b.time>=start);
+  if (!bars0.length) return {state:'wait'};
+  if (bars0[0].time - start > 86400) return {state:'nodata'};
+  // Auto: ออเดอร์รีเทสได้หลังแท่ง M30 ที่ปิดนอกกรอบ (breakout) ปิดแล้วเท่านั้น → ไม่นับราคาที่ชนตอนแท่ง breakout
+  let from = start;
+  if (sd.mode==='Auto'){
+    const bk = breakoutBar(t, L, start);
+    if (bk===undefined) return {state:'noentry'};
+    if (bk) from = bk.time + 1800;
+  }
+  const bars = bars0.filter(b=>b.time>=from);
   let i = bars.findIndex(b=>b.low<=touch && b.high>=touch);
   if (i<0) return {state:'noentry'};
-  const entryTime = bars[i].time;
+  const entryTime = bars[i].time, entryPrice = touch;
   for (; i<bars.length; i++){
     const b=bars[i], hitTP = L ? b.high>=tp : b.low<=tp, hitSL = L ? b.low<=sl : b.high>=sl;
-    if (hitTP && hitSL) return {state:'both', time:b.time, entryTime};
+    if (hitTP && hitSL) return {state:'both', time:b.time, entryTime, entryPrice};
     if (hitTP || hitSL){
       const exit = hitTP ? tp : sl, pnl = (cap!=null && lev) ? cap*lev*(L?1:-1)*(exit-entry)/entry : null;
-      return {state: hitTP?'tp':'sl', time:b.time, entryTime, exit, pnl, lev, bal: pnl!=null ? Math.round((cap+pnl)*100)/100 : null};
+      return {state: hitTP?'tp':'sl', time:b.time, entryTime, entryPrice, exit, pnl, lev, bal: pnl!=null ? Math.round((cap+pnl)*100)/100 : null};
     }
   }
-  return {state:'running', entryTime};
+  return {state:'running', entryTime, entryPrice};
+}
+// แท่ง M30 แรกหลังกรอบของเทรดที่ "ปิด" นอกกรอบตามทิศของเทรด · null = ไม่มีข้อมูลแท่ง 30 นาที (ใช้วิธีเดิม) · undefined = ยังไม่ breakout
+function breakoutBar(t, L, start){
+  const edge = compute(t).edge; if (num(edge)==null) return null;
+  const b30 = bars30(); if (!b30.length) return null;
+  const nowT = Date.now()/1000 + CH_TZ;
+  for (const b of b30){
+    if (b.time < start || b.time >= start + 86400) continue;
+    if (b.time + 1800 > nowT) break;   // แท่งที่ยังไม่ปิด = ยังไม่นับ
+    if (L ? b.close > +edge : b.close < +edge) return b;
+  }
+  return undefined;
 }
 const money = v => (v>=0?'+':'-')+'$'+fN(Math.abs(v),2);
 const tStr = sec => new Date(sec*1000).toISOString().slice(5,16).replace('T',' ');
@@ -2952,24 +2972,26 @@ function drawSaved(){
     if (o && o.time && o.time > a) bb = Math.min(bb, o.time + step);   // กล่องสิ้นสุดที่แท่งที่ชน TP / SL
     if (bb<=a) return;
     const running = open && !(o && o.time) && bb===last;   // เทรดยังไม่จบ → เส้น/พื้นที่ต่อไปทางขวา
+    // หน้าต่างดูกราฟเทรด (Auto): จุดเข้า = ราคาออเดอร์รีเทส ไม่ใช่ราคาเฉลี่ยที่รวมราคาตอน breakout
+    const ePx = (CM_ROW!=null && sd.mode==='Auto') ? (o && num(o.entryPrice)!=null ? +o.entryPrice : (num(compute(t).retest)!=null ? +compute(t).retest : +sd.entry)) : +sd.entry;
     // เส้นประจากจุดเข้า → จุดออก (แบบ TradingView) · ยังไม่จบ = ลากไปถึงราคาล่าสุด
     if (o && o.entryTime){
-      if (o.exit!=null) SAVED_PATHS.push({t1:o.entryTime, p1:+sd.entry, t2:o.time, p2:o.exit, win:o.state==='tp'});
-      else if (o.state==='running'){ const lb=CH_BARS[CH_BARS.length-1]; SAVED_PATHS.push({t1:o.entryTime, p1:+sd.entry, t2:lb.time, p2:lb.close, win:null}); }
+      if (o.exit!=null) SAVED_PATHS.push({t1:o.entryTime, p1:ePx, t2:o.time, p2:o.exit, win:o.state==='tp'});
+      else if (o.state==='running'){ const lb=CH_BARS[CH_BARS.length-1]; SAVED_PATHS.push({t1:o.entryTime, p1:ePx, t2:lb.time, p2:lb.close, win:null}); }
     }
     // พื้นที่ TP (เขียว) / SL (แดง) แบบ Long/Short Position ของ TradingView
-    if (num(sd.tp)!=null) SAVED_BOXES.push({a, b:bb, run:running, p1:+sd.entry, p2:+sd.tp, c: open?'rgba(34,197,94,0.20)':'rgba(34,197,94,0.12)'});
-    if (num(sd.sl)!=null) SAVED_BOXES.push({a, b:bb, run:running, p1:+sd.entry, p2:+sd.sl, c: open?'rgba(239,68,68,0.20)':'rgba(239,68,68,0.12)'});
+    if (num(sd.tp)!=null) SAVED_BOXES.push({a, b:bb, run:running, p1:ePx, p2:+sd.tp, c: open?'rgba(34,197,94,0.20)':'rgba(34,197,94,0.12)'});
+    if (num(sd.sl)!=null) SAVED_BOXES.push({a, b:bb, run:running, p1:ePx, p2:+sd.sl, c: open?'rgba(239,68,68,0.20)':'rgba(239,68,68,0.12)'});
     const alpha = open ? 'ff' : '99';
     const add=(p,color,title,style,w)=>{ if(num(p)==null) return;
       const cm = CM_ROW!=null;   // หน้าต่างดูกราฟเทรด: ไม่มีป้ายบนแกนราคา (TP/SL ไปแสดงที่ต้นเส้นแทน)
       const x = LWC.addLineSeries({color:color+alpha, lineWidth:w, lineStyle:style, priceLineVisible:false, lastValueVisible:open && !cm, title: open && !cm && window.innerWidth>=600 ? title : '', crosshairMarkerVisible:false, priceFormat:{type:'price',precision:2,minMove:0.01}});
       x.setData([{time:a,value:+p},{time:bb,value:+p}]); SAVED_LINES.push(x);
       if (running) SAVED_EXT.push({p:+p, c:color+alpha, w, st: style===LS.Solid?'solid':'dotted'}); };
-    add(sd.entry,'#e6edf3',`${tag} เข้า${res}`,LS.Solid,open?2:1);
+    add(ePx,'#e6edf3',`${tag} เข้า${res}`,LS.Solid,open?2:1);
     add(sd.tp,'#22c55e',`${tag} TP`,LS.Solid,1);
     add(sd.sl,'#ef4444',`${tag} SL`,LS.Solid,1);
-    if (CM_ROW!=null){ CM_LBLS.push({t:a, p:+sd.entry, e:+sd.entry, text:'#'+t.n+' '+f2(sd.entry), c:'#e6edf3', left:true}); if (num(sd.tp)!=null) CM_LBLS.push({t:a, p:+sd.tp, e:+sd.entry, text:'TP '+f2(sd.tp), c:'#22c55e'}); if (num(sd.sl)!=null) CM_LBLS.push({t:a, p:+sd.sl, e:+sd.entry, text:'SL '+f2(sd.sl), c:'#ef4444'}); }
+    if (CM_ROW!=null){ CM_LBLS.push({t:a, p:ePx, e:ePx, text:'#'+t.n+' '+f2(ePx), c:'#e6edf3', left:true}); if (num(sd.tp)!=null) CM_LBLS.push({t:a, p:+sd.tp, e:ePx, text:'TP '+f2(sd.tp), c:'#22c55e'}); if (num(sd.sl)!=null) CM_LBLS.push({t:a, p:+sd.sl, e:ePx, text:'SL '+f2(sd.sl), c:'#ef4444'}); }
     if (sd.mode==='Auto' && num(t.brk)!=null) add(t.brk,'#fbbf24',`${tag} เบรก`,LS.SparseDotted,1);
   });
   placeBoxes();

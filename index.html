@@ -1398,8 +1398,8 @@ function showView(v){
   if (v==='home') renderHome();
   // กราฟโหลดตอนซ่อนอยู่ (กว้าง 0) → เปิดหน้าบันทึกเทรดครั้งแรกให้จัดมุมมองใหม่
   if (v==='form' && !FORM_SEEN){ FORM_SEEN = true; requestAnimationFrame(()=>{ try{
-    if (!CH_ANCHOR && CM_ROW==null && applyChView(loadChView(CH_IV))) refitScale();   // กลับไปตำแหน่งที่เลื่อนไว้
-    else if (typeof resetView==='function') resetView();
+    // กลับไปตำแหน่งที่เลื่อนไว้ (รวมแกนราคา) · ไม่มี = มุมมองเริ่มต้น
+    if (!(!CH_ANCHOR && CM_ROW==null && applyChView(loadChView(CH_IV))) && typeof resetView==='function') resetView();
     armChView();
   }catch(e){} }); }
 }
@@ -2239,8 +2239,52 @@ function saveChView(lr){
     const L = CH_BARS.length - 1, span = lr.to - lr.from, off = lr.to - L;
     const i = Math.max(0, Math.min(L, Math.floor(lr.from))), v = {span};
     if (off >= 0) v.off = off; else { v.t = CH_BARS[i].time; v.frac = lr.from - i; }
+    const y = chYGet(); if (y) v.y = y;
     try{ localStorage.setItem('chView:'+CH_IV, JSON.stringify(v)); }catch(e){}
   }, 300);
+}
+// ---------- แกนราคา (y): จำราคาที่ขอบบน/ล่างของกราฟ ----------
+const CH_SERIES = new Set();   // series ทั้งหมดบนกราฟ (ใช้ล็อกสเกลราคาตอนคืนค่า)
+const chPaneH = () => LWC ? $('chart').clientHeight - LWC.timeScale().height() : 0;
+function chYGet(){
+  const H = chPaneH(); if (!CS || H <= 0) return null;
+  const p0 = CS.coordinateToPrice(0), pH = CS.coordinateToPrice(H);
+  return (p0!=null && pH!=null && p0 > pH) ? {p0, pH} : null;
+}
+// LWC 4.2 ไม่มีคำสั่งตั้งช่วงราคาตรง ๆ → ให้ autoscale ใช้ช่วงที่จำไว้ (series อื่นบนแกนขวาไม่นับ) แล้วปิด autoscale
+function chYSet(y, want){
+  const H = chPaneH(); if (!y || !(y.p0 > y.pH) || H <= 0) return false;
+  want = want || y;
+  const ps = LWC.priceScale('right'), m = ps.options().scaleMargins || {top:0.2, bottom:0.1}, per = y.p0 - y.pH;
+  const max = y.p0 - per*m.top, min = y.pH + per*m.bottom;
+  if (!(max > min)) return false;
+  const old = new Map();
+  CH_SERIES.forEach(s=>{
+    let o; try{ o = s.options(); }catch(e){ return; }
+    if ((o.priceScaleId || 'right') !== 'right') return;
+    old.set(s, o.autoscaleInfoProvider);
+    s.applyOptions({autoscaleInfoProvider: s===CS ? ()=>({priceRange:{minValue:min, maxValue:max}, margins:{above:0, below:0}}) : ()=>null});
+  });
+  ps.applyOptions({autoScale:true});
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    ps.applyOptions({autoScale:false});
+    old.forEach((p,s)=>{ try{ s.applyOptions({autoscaleInfoProvider: p || (base=>base())}); }catch(e){} });
+    placeLabels(); placeBand();
+    // LWC ปัดขอบ (scale margins) ต่างไปเล็กน้อย → วัดผลแล้วแก้อีกครั้งเดียว
+    const a = chYGet(), px = (want.p0 - want.pH) / H;
+    if (y === want && a && (Math.abs(a.p0 - want.p0) > 0.3*px || Math.abs(a.pH - want.pH) > 0.3*px)){
+      const r = (a.p0 - a.pH) / (y.p0 - y.pH), half = (want.p0 - want.pH) / r / 2, mid = (want.p0 + want.pH)/2 - ((a.p0 + a.pH)/2 - (y.p0 + y.pH)/2);
+      chYSet({p0: mid + half, pH: mid - half}, want);
+    }
+  }));
+  return true;
+}
+// ดูแท่งล่าสุดอยู่ (ชิดขวา) แต่ราคาวิ่งออกนอกช่วงที่จำไว้แล้ว → ไม่ใช้ช่วงราคาเดิม
+function chYFits(v){
+  if (!v || !v.y) return false;
+  if (v.off == null) return true;
+  const c = CH_BARS[CH_BARS.length-1].close;
+  return c < v.y.p0 && c > v.y.pH;
 }
 function loadChView(iv){ try{ return JSON.parse(localStorage.getItem('chView:'+iv)||'null'); }catch(e){ return null; } }
 function applyChView(v){
@@ -2253,19 +2297,21 @@ function applyChView(v){
       // ตำแหน่งที่จำไว้เก่ากว่าแท่งที่โหลดมา → ไปขอบซ้ายเพื่อโหลดแท่งเก่าเพิ่ม แล้วค่อยกลับมาที่ตำแหน่งเดิม (ใน prependBars)
       if (OLD.done) return false;
       CH_VIEW_PEND = v;
-      try{ LWC.timeScale().setVisibleLogicalRange({from: 0, to: v.span}); oldCheck(); return true; }catch(e){ CH_VIEW_PEND = null; return false; }
+      try{ LWC.timeScale().setVisibleLogicalRange({from: 0, to: v.span}); refitScale(); oldCheck(); return true; }catch(e){ CH_VIEW_PEND = null; return false; }
     }
     from = barAt(CH_BARS, v.t) + (v.frac||0);
   }
   else return false;
   CH_VIEW_PEND = null;
-  try{ LWC.timeScale().setVisibleLogicalRange({from, to: from + v.span}); return true; }catch(e){ return false; }
+  try{ LWC.timeScale().setVisibleLogicalRange({from, to: from + v.span}); }catch(e){ return false; }
+  if (!(chYFits(v) && chYSet(v.y))) refitScale();   // แกนราคา: กลับไปช่วงเดิม · ไม่มี/ใช้ไม่ได้ = ปรับอัตโนมัติ
+  return true;
 }
 let CH_VIEW_PEND = null;   // ตำแหน่งที่รอโหลดแท่งเก่าให้ถึงก่อน
 // หลังเติมแท่งเก่า: ถึงตำแหน่งที่จำไว้แล้ว → ไปที่นั่น · ยังไม่ถึง → อยู่ขอบซ้ายเพื่อโหลดต่อ · โหลดไม่ได้อีก → ไปแท่งเก่าสุด
 function chViewPendStep(){
   const v = CH_VIEW_PEND; if (!v) return;
-  if (v.t >= CH_BARS[0].time){ applyChView(v); refitScale(); return; }
+  if (v.t >= CH_BARS[0].time){ applyChView(v); return; }
   if (OLD.done || CH_BARS.length >= OLD_MAX_BARS){ CH_VIEW_PEND = null; try{ LWC.timeScale().setVisibleLogicalRange({from: 0, to: v.span}); }catch(e){} refitScale(); return; }
   try{ LWC.timeScale().setVisibleLogicalRange({from: 0, to: v.span}); }catch(e){}
 }
@@ -2281,10 +2327,15 @@ function ensureChart(){
     rightPriceScale:{borderColor:'#2a3441'}, timeScale:{borderColor:'#2a3441', timeVisible:true, secondsVisible:false},
     crosshair:{mode:0, horzLine:{visible:true, labelVisible:true, color:'rgba(139,152,168,0.6)', style:LightweightCharts.LineStyle.Dashed, labelBackgroundColor:'#2a3441'}, vertLine:{visible:true, labelVisible:true, color:'rgba(139,152,168,0.6)', style:LightweightCharts.LineStyle.Dashed, labelBackgroundColor:'#2a3441'}},
   });
+  // เก็บรายการ series ไว้ (LWC ไม่มีคำสั่งดึงรายการ series)
+  ['addLineSeries','addHistogramSeries','addCandlestickSeries','addAreaSeries','addBarSeries','addBaselineSeries'].forEach(k=>{ const f = LWC[k]; if (f) LWC[k] = function(...a){ const s = f.apply(this, a); CH_SERIES.add(s); return s; }; });
+  { const rm = LWC.removeSeries; LWC.removeSeries = function(s){ CH_SERIES.delete(s); return rm.call(this, s); }; }
   BAND = {els:[]};
   LWC.timeScale().subscribeVisibleLogicalRangeChange(lr=>{ placeBand(); levelCheck(); if (lr && lr.from < OLD_EDGE) oldCheck(); saveChView(lr); });
   new ResizeObserver(()=>{ placeBand(); placePanels(); fitDrawBar(); }).observe($('chart'));
   ['pointerdown','wheel'].forEach(ev=>$('chart').addEventListener(ev, ()=>{ CH_VIEW_PEND = null; }, {passive:true}));   // ผู้ใช้เลื่อนเอง → ยกเลิกการกลับไปตำแหน่งที่จำไว้
+  // ลาก/ซูมแกนราคาไม่มี event จาก LWC → จำหลังปล่อยเมาส์/นิ้ว
+  ['pointerup','wheel'].forEach(ev=>$('chart').addEventListener(ev, ()=>saveChView(LWC.timeScale().getVisibleLogicalRange()), {passive:true}));
   if (!window.__ovLoop){ window.__ovLoop = true; requestAnimationFrame(overlayLoop); }   // เริ่มครั้งเดียว
   // ปิดเส้น/ป้ายราคาล่าสุดของ series แล้ววาดเองด้วย price line ตัวเดียว → เส้นประกับป้ายราคาอยู่ระดับเดียวกันเสมอ
   setTimeout(initDraw, 0);
@@ -2370,7 +2421,7 @@ async function loadChart(){
     const step = INT_MS[iv]/1000;
     paintMarkers();
     drawLevels(); drawSaved(); renderList(); try{ renderAutoRes(); }catch(e){} renderBreakout();
-    if (!shown){ if (CH_ANCHOR) focusDay(CH_ANCHOR, 1); else if (!applyChView(view)) centerLast(); refitScale(); if (LWC.timeScale().width()) armChView(req); }   // กราฟซ่อนอยู่ → ไปจำตอนเปิดหน้าบันทึกเทรดครั้งแรก   // เริ่มที่ แท่งล่าสุดอยู่ 80% จากซ้าย (ครั้งแรกเท่านั้น ไม่ให้กระโดดตอนเติมแท่งล่าสุด)
+    if (!shown){ if (CH_ANCHOR){ focusDay(CH_ANCHOR, 1); refitScale(); } else if (!applyChView(view)){ centerLast(); refitScale(); } if (LWC.timeScale().width()) armChView(req); }   // กราฟซ่อนอยู่ → ไปจำตอนเปิดหน้าบันทึกเทรดครั้งแรก   // เริ่มที่ แท่งล่าสุดอยู่ 80% จากซ้าย (ครั้งแรกเท่านั้น ไม่ให้กระโดดตอนเติมแท่งล่าสุด)
     if (CH_BARS.length){ $('chPrice').textContent = f2(CH_BARS[CH_BARS.length-1].close,2); updLast(CH_BARS[CH_BARS.length-1]); }
     shown = true;
   };
@@ -2894,7 +2945,7 @@ const OLD = {key:'', busy:false, done:false, last:0, times:[], fail:0, until:0, 
 function oldReset(){ clearTimeout(OLD.timer); Object.assign(OLD, {key:SRC()+':'+CH_IV+':'+CH_REQ, busy:false, done:false, fail:0, until:0}); }
 function oldCheck(){ clearTimeout(OLD.timer); OLD.timer = setTimeout(loadOlder, 250); }   // รอให้หยุดลาก/ซูมก่อน
 async function loadOlder(){
-  if (!LWC || !CS || !CH_BARS.length || OLD.busy || OLD.done) return;
+  if (!LWC || !CS || !CH_BARS.length || OLD.busy || OLD.done || !LWC.timeScale().width()) return;   // กราฟซ่อนอยู่ = ยังไม่โหลดแท่งเก่า
   const lr = LWC.timeScale().getVisibleLogicalRange(); if (!lr || lr.from >= OLD_EDGE) return;
   if (CH_BARS.length >= OLD_MAX_BARS){ OLD.done = true; return; }
   const now = Date.now(); OLD.times = OLD.times.filter(t=>now - t < 6e4);
@@ -3586,7 +3637,6 @@ function closeChartModal(){
   const prev = CM_PREV || {anchor:null}; CM_PREV = null;
   if (CH_ANCHOR !== prev.anchor){ CH_ANCHOR = prev.anchor; setDateVal('chDate', CH_ANCHOR || todayTH()); loadChart(); }
   else if (CH_ANCHOR || !applyChView(loadChView(CH_IV))) resetChart();   // กลับไปตำแหน่งที่เลื่อนไว้ก่อนเปิดดูเทรด
-  else refitScale();
 }
 document.addEventListener('keydown', e=>{ if (e.key==='Escape' && $('chartModal').classList.contains('on')) closeChartModal(); });
 // แท่งล่าสุดอยู่ที่ 80% ของความกว้างกราฟ (เว้นที่ว่างด้านขวาเล็กน้อย)

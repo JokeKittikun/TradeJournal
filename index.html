@@ -63,6 +63,10 @@ header{position:sticky;top:0;z-index:25;background:rgba(13,17,23,.92);backdrop-f
 .spacer{flex:1}
 .btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:6px 12px;border-radius:8px;cursor:pointer;font:inherit;font-weight:500}
 .btn:hover{border-color:#3b4756}
+.gBtn{width:100%;margin-top:14px;padding:10px;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#1f1f1f;border-color:#dadce0;font-weight:600}
+.gBtn:hover{background:#f2f4f7;color:#1f1f1f}
+.orSep{display:flex;align-items:center;gap:10px;margin:14px 0 0;font-size:12px;color:var(--muted)}
+.orSep::before,.orSep::after{content:"";flex:1;height:1px;background:var(--line)}
 .authLinks{display:flex;justify-content:space-between;gap:10px;margin-top:12px;font-size:12.5px}
 .authLinks a{color:var(--accent);cursor:pointer}
 a.btn{text-decoration:none;display:inline-block}
@@ -679,11 +683,16 @@ body.chFs #confirmBox{z-index:55}
     <div><div style="font-weight:600;font-size:16px">Trade <span style="color:var(--accent)">Journal</span></div><div class="hint" style="margin:0" id="g_sub">เข้าสู่ระบบเพื่อจัดการพอร์ตของคุณ</div></div>
   </div>
   <div id="g_login">
+    <div id="g_oauth" hidden>
+      <button class="btn gBtn" id="g_google" type="button" onclick="authGoogle()"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg><span id="g_googleTxt">เข้าสู่ระบบด้วย Google</span></button>
+      <div class="orSep">หรือใช้อีเมล</div>
+    </div>
     <div class="field" style="margin-top:14px"><label>อีเมล</label><input id="g_email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com"></div>
     <div class="field" id="g_pwWrap"><label>รหัสผ่าน</label><input id="g_pw" type="password" autocomplete="current-password" placeholder="อย่างน้อย 6 ตัวอักษร"></div>
     <div class="hint" id="g_msg" style="min-height:18px"></div>
     <button class="btn primary" id="g_btn" style="width:100%;margin-top:8px;padding:10px" onclick="authSubmit()">เข้าสู่ระบบ</button>
     <div class="authLinks"><a id="g_toggle" onclick="authMode(AUTH_MODE==='signup'?'login':'signup')">ยังไม่มีบัญชี? สมัครสมาชิก</a><a id="g_forgot" onclick="authMode(AUTH_MODE==='forgot'?'login':'forgot')">ลืมรหัสผ่าน</a></div>
+    <div class="hint" style="text-align:center;margin:14px 0 0;font-size:11.5px">การเข้าสู่ระบบถือว่ายอมรับ <a href="privacy.html" target="_blank" style="color:var(--muted);text-decoration:underline">นโยบายความเป็นส่วนตัว</a></div>
   </div>
   <div id="g_pending" hidden>
     <div class="pendBox" id="g_pmsg"></div>
@@ -3603,6 +3612,7 @@ function setLoading(on, txt){
 }
 /* ================= ต้องเข้าสู่ระบบก่อนใช้งาน ================= */
 function showGate(msg){
+  msg = msg || oauthReturnError();
   if (AUTH_MODE==='pending') AUTH_MODE = 'login';
   authMode(AUTH_MODE==='reset' ? 'reset' : 'login');
   if (msg) $('g_msg').innerHTML = '<span class="neg">'+esc(msg)+'</span>';
@@ -3623,6 +3633,34 @@ function authMode(m){
   $('g_forgot').textContent = m==='forgot' ? 'กลับไปเข้าสู่ระบบ' : 'ลืมรหัสผ่าน';
   $('g_sub').textContent = {pending:'สถานะบัญชี', signup:'สร้างบัญชีใหม่ · พอร์ตของคุณแยกจากผู้ใช้อื่น', forgot:'ใส่อีเมลที่สมัครไว้ เราจะส่งลิงก์ตั้งรหัสผ่านใหม่ให้', reset:'ตั้งรหัสผ่านใหม่สำหรับบัญชีของคุณ'}[m] || 'เข้าสู่ระบบเพื่อจัดการพอร์ตของคุณ';
   $('g_msg').textContent = '';
+  $('g_googleTxt').textContent = m==='signup' ? 'สมัครด้วยบัญชี Google' : 'เข้าสู่ระบบด้วย Google';
+  $('g_oauth').hidden = !OAUTH.google || m==='forgot';
+}
+// ---------- เข้าสู่ระบบด้วย Google ----------
+// ปุ่มแสดงเมื่อเปิด Google ใน Supabase แล้วเท่านั้น (Authentication → Sign In / Providers → Google)
+var OAUTH = {google:false};
+async function loadOAuth(){
+  try{
+    const r = await fetch(SB_URL+'/auth/v1/settings', {headers:{apikey:SB_KEY}});
+    const j = await r.json(); OAUTH.google = !!(j.external && j.external.google);
+  }catch(e){ OAUTH.google = false; }
+  if ($('g_oauth')) $('g_oauth').hidden = !OAUTH.google || AUTH_MODE==='forgot';
+}
+async function authGoogle(){
+  if (!sb) return;
+  const b = $('g_google'); btnBusy(b, true, 'กำลังไปที่ Google…'); $('g_msg').textContent = '';
+  try{
+    const {error} = await sb.auth.signInWithOAuth({provider:'google', options:{redirectTo: APP_URL(), queryParams:{prompt:'select_account'}}});
+    if (error) throw error;   // สำเร็จ = เบราว์เซอร์ไปหน้า Google (ไม่กลับมาที่บรรทัดนี้)
+  }catch(e){ btnBusy(b, false); $('g_msg').innerHTML = '<span class="neg">'+esc(authErr(e))+'</span>'; }
+}
+// กลับมาจาก Google แบบไม่สำเร็จ (เช่น กดยกเลิก) → Supabase ส่ง error มาใน URL
+function oauthReturnError(){
+  const q = new URLSearchParams(location.search), h = new URLSearchParams(location.hash.replace(/^#/,''));
+  const d = q.get('error_description') || h.get('error_description');
+  if (!d) return null;
+  try{ history.replaceState(null, '', location.pathname + (DEMO ? '?demo' : '')); }catch(e){}
+  return /access_denied|cancel/i.test(q.get('error')||h.get('error')||'') ? 'ยกเลิกการเข้าสู่ระบบด้วย Google' : 'เข้าสู่ระบบด้วย Google ไม่สำเร็จ: '+d.replace(/\+/g,' ');
 }
 const authErr = e => {
   const m = (e && e.message) || String(e);
@@ -3869,7 +3907,7 @@ if (sb) sb.auth.onAuthStateChange((ev, session)=>{
 });
 ['g_email','g_pw'].forEach(id=>$(id).addEventListener('keydown',e=>{ if (e.key==='Enter') authSubmit(); }));
 $('g_newpw').addEventListener('keydown',e=>{ if (e.key==='Enter') authSetNewPassword(); });
-load();
+loadOAuth(); load();
 </script>
 </body>
 </html>

@@ -21,6 +21,15 @@ cloudflare/mexc-worker.js        ← ตัวกลางดึงราคา 
 
 > รันไฟล์ SQL ครั้งเดียวพอ · รันซ้ำได้โดยไม่ลบข้อมูล (ใช้เมื่อมีการแก้ไฟล์ SQL)
 
+### อีเมลยืนยัน / ตั้งรหัสผ่านใหม่ (แบบมีโลโก้)
+
+**Authentication → Emails → Templates** → เลือกเทมเพลต → วางโค้ดจากไฟล์ → **Save**
+
+| เทมเพลต | ไฟล์ | Subject ที่แนะนำ |
+|---|---|---|
+| Confirm signup | `supabase/email-templates/confirm-signup.html` | ยืนยันอีเมลของคุณ · Trade Journal |
+| Reset password | `supabase/email-templates/reset-password.html` | ตั้งรหัสผ่านใหม่ · Trade Journal |
+
 ## 2. ขึ้น GitHub Pages
 
 1. อัปโหลดไฟล์ทั้งหมดขึ้น repo

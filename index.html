@@ -164,7 +164,7 @@ body.syncing #syncBtn .ic{animation:spin 1s linear infinite}
 .accB{font:600 10.5px 'IBM Plex Sans Thai',sans-serif;padding:1px 7px;border-radius:99px;background:rgba(58,160,255,.14);color:#3aa0ff}
 .pOwner{font-size:11px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .viewAs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:rgba(58,160,255,.1);border:1px solid rgba(58,160,255,.35);color:#9cc4ff;margin-bottom:10px;font-size:13px}
-body.ro #saveBtn,body.ro #clearBtn,body.ro #drawBar,body.ro #drawDel,body.ro .homeNew{display:none!important}
+body.ro #saveBtn,body.ro #clearBtn,body.ro #drawBar button:not([data-tool=fs]),body.ro #drawBar .dbSep,body.ro #drawDel,body.ro .homeNew{display:none!important}
 .roNote{display:none;padding:10px 14px;border-radius:10px;background:rgba(58,160,255,.1);border:1px solid rgba(58,160,255,.35);color:#9cc4ff;font-size:13px;margin-bottom:12px}
 body.ro .roNote{display:block}
 /* พอร์ต */
@@ -322,7 +322,7 @@ body.is-loading{touch-action:none}
 .btn.busy .spin{width:15px;height:15px}
 .btn.primary.busy .spin{border-color:rgba(17,17,17,.25);border-top-color:#111}
 /* หน้าต่าง "ดูกราฟ" จากประวัติการเทรด: ซ่อนเครื่องมือวาด / เส้นที่วาด / ราคาปัจจุบัน / gap / Live */
-#chartCard.cm #drawBar,#chartCard.cm #drawDel,#chartCard.cm #drawSvg,#chartCard.cm #chPrice,#chartCard.cm #chSpread,#chartCard.cm #chLive{display:none!important}
+#chartCard.cm #drawBar button:not([data-tool=fs]),#chartCard.cm #drawBar .dbSep,#chartCard.cm #drawDel,#chartCard.cm #drawSvg,#chartCard.cm #chPrice,#chartCard.cm #chSpread,#chartCard.cm #chLive{display:none!important}
 .cmLbl{position:absolute;z-index:5;pointer-events:none;font:700 10px/1.2 'JetBrains Mono','IBM Plex Sans Thai',monospace;white-space:nowrap;padding:0 2px;letter-spacing:.2px;text-shadow:0 0 3px #0d1117,0 0 2px #0d1117}
 /* สถานะกำลังโหลดบนกราฟ: กลางกราฟ (ยังไม่มีแท่ง) / มุมบน (กำลังอัปเดต) */
 #chLoad{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:8;display:none;align-items:center;gap:9px;background:rgba(22,27,34,.94);border:1px solid var(--line);padding:9px 16px;border-radius:10px;font-size:12.5px;color:var(--text);pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.4);white-space:nowrap}
@@ -365,6 +365,7 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
 #drawBar button:hover{background:#1c232d;color:var(--text)}
 #drawBar button.on{background:rgba(247,166,0,.16);color:var(--accent)}
 #chart.drawing{cursor:crosshair}
+#drawBar .dbSep{height:1px;background:var(--line);margin:2px 3px}
 #chart.nopan{touch-action:none}
 /* กราฟเต็มจอ */
 #chartCard.fs{position:fixed;inset:0;z-index:50;margin:0!important;border-radius:0;border:0;display:flex;flex-direction:column;overflow:hidden;
@@ -444,7 +445,6 @@ body.chFs #confirmBox{z-index:55}
         <label hidden style="display:none;align-items:center;gap:6px;margin:0;width:auto;font-size:12px;color:var(--muted)">ไปวันที่<input type="text" id="chDate" class="dp" style="width:128px;padding:4px 8px" placeholder="เลือกวันที่"></label>
         <span id="chHist" class="hint" style="display:none;margin:0;padding:4px 8px;border-radius:8px;background:#10243f;color:#9cc4ff"></span>
         <button class="btn sm" id="chReset" onclick="resetView()" title="รีเซ็ตมุมมอง (เหมือนดับเบิลคลิกบนกราฟ)"><i data-ic="rotate-ccw"></i>Reset</button>
-        <button class="btn sm icon" id="chFsBtn" onclick="toggleChartFs()" title="ขยายกราฟเต็มจอ" aria-label="ขยายกราฟเต็มจอ"><i data-ic="maximize"></i></button>
       </div>
       <div id="chart" style="height:360px;border:1px solid var(--line);border-radius:10px;overflow:hidden;position:relative"></div>
       <div class="hint" id="chLegend" style="display:flex;gap:14px;flex-wrap:wrap">
@@ -2281,13 +2281,15 @@ function initDraw(){
   if (!LWC || $('drawBar')) return;
   $('chart').addEventListener('touchmove', e=>{ if (drawNoPan()) e.preventDefault(); }, {passive:false});
   const bar = document.createElement('div'); bar.id='drawBar';
-  bar.innerHTML = DRAW_TOOLS.map(([k,ic,tt])=>`<button type="button" data-tool="${k}" title="${tt}">${ic}</button>`).join('');
+  bar.innerHTML = DRAW_TOOLS.map(([k,ic,tt])=>`<button type="button" data-tool="${k}" title="${tt}">${ic}</button>`).join('')
+    + `<div class="dbSep"></div><button type="button" data-tool="fs" id="chFsBtn" title="ขยายกราฟเต็มจอ" aria-label="ขยายกราฟเต็มจอ">${ic(isChartFs()?'minimize':'maximize',16,1.75)}</button>`;
   $('chart').appendChild(bar);
   // ใช้ pointerup (แตะบน iPad/มือถือตอบสนองแน่นอน แม้กราฟกำลังจับนิ้วอยู่)
   bar.addEventListener('pointerdown', e=>e.stopPropagation());
   bar.addEventListener('pointerup', e=>{
     e.stopPropagation();
     const b=e.target.closest('button'); if(!b) return; const k=b.dataset.tool;
+    if (k==='fs'){ toggleChartFs(); return; }
     if (k==='undo'){ DRAW.items.pop(); DRAW.sel=-1; saveDraw(); drawHLines(); renderDraw(); return; }
     if (k==='clear'){
       if (DRAW.sel>=0){ DRAW.items.splice(DRAW.sel,1); DRAW.sel=-1; }
@@ -2403,7 +2405,7 @@ function moveXh(x, y){
   paintInfo({point:{x, y}, time:bar.time, seriesData:new Map([[CS, bar]])});
 }
 function setTool(k){ if (k!=='cursor' && DRAW.xh) setXh(false); DRAW.tool=k; DRAW.pending=null; if (k!=='measure') DRAW.measure=null; if (k!=='cursor') DRAW.sel=-1; paintDrawBar(); renderDraw(); }
-function paintDrawBar(){ document.querySelectorAll('#drawBar button').forEach(b=>{ b.classList.toggle('on', b.dataset.tool===DRAW.tool); if (b.dataset.tool==='cursor') b.classList.toggle('lock', !!DRAW.xh && DRAW.tool==='cursor'); }); $('chart').classList.toggle('drawing', DRAW.tool!=='cursor'); paintPan(); }
+function paintDrawBar(){ document.querySelectorAll('#drawBar button').forEach(b=>{ if (b.dataset.tool==='fs') return; b.classList.toggle('on', b.dataset.tool===DRAW.tool); if (b.dataset.tool==='cursor') b.classList.toggle('lock', !!DRAW.xh && DRAW.tool==='cursor'); }); $('chart').classList.toggle('drawing', DRAW.tool!=='cursor'); paintPan(); }
 // กันหน้าเว็บเลื่อนตามนิ้ว ขณะ: เลือกเส้นอยู่ / ลากเส้น / ใช้เครื่องมือวาด / โหมดเล็ง
 function drawNoPan(){ return !!DRAW.xh || DRAW.tool!=='cursor' || DRAW.sel>=0 || !!DRAW.drag || !!DRAW.xhDrag || !!DRAW.pending; }
 function paintPan(){ const c = $('chart'); if (c) c.classList.toggle('nopan', drawNoPan()); }
@@ -2696,7 +2698,7 @@ function toggleChartFs(force){
   if (on===isChartFs()) return;
   let range = null; try{ range = LWC && LWC.timeScale().getVisibleLogicalRange(); }catch(e){}   // คงช่วงที่ดูอยู่ (ไม่ให้แท่งไปกองด้านซ้ายเมื่อกราฟกว้างขึ้น)
   card.classList.toggle('fs', on); document.body.classList.toggle('chFs', on);
-  const b = $('chFsBtn'); b.innerHTML = ic(on ? 'minimize' : 'maximize'); b.title = on ? 'ออกจากเต็มจอ (Esc)' : 'ขยายกราฟเต็มจอ';
+  const b = $('chFsBtn'); if (b){ b.innerHTML = ic(on ? 'minimize' : 'maximize', 16, 1.75); b.title = on ? 'ออกจากเต็มจอ (Esc)' : 'ขยายกราฟเต็มจอ'; b.classList.toggle('on', on); }
   try{
     if (on && card.requestFullscreen && !document.fullscreenElement) card.requestFullscreen({navigationUI:'hide'}).catch(()=>{});
     if (!on && document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(()=>{});

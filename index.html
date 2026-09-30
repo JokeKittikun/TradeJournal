@@ -296,6 +296,18 @@ td.qe:hover{background:rgba(247,166,0,.1);color:var(--accent)}
 .bk{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .bkp{display:flex;align-items:center;justify-content:center;height:34px;border-radius:8px;border:1px solid var(--line,#2a3441);color:var(--muted);font-weight:600;font-size:13px;opacity:.45;user-select:none}
 .bkp.on{opacity:1;cursor:pointer}
+/* กล่องรายละเอียด Breakout */
+.bkInfo{margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.bkInfo.long{border-color:rgba(34,197,94,.45);background:rgba(34,197,94,.07)}
+.bkInfo.short{border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.07)}
+.bkInfo .bkH{display:flex;align-items:center;gap:6px;font-weight:600;color:var(--text);margin-bottom:8px}
+.bkInfo .bkH .ic{flex:none}
+.bkInfo.long .bkH{color:#22c55e}.bkInfo.short .bkH{color:#ef4444}
+.bkInfo .bkG{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.bkInfo .bkG .l{font-size:11px;color:var(--muted)}
+.bkInfo .bkG .v{font:600 13px 'JetBrains Mono',monospace;color:var(--text);white-space:nowrap}
+.bkInfo .bkF{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:11.5px}
+.bkInfo.wait{display:flex;align-items:center;gap:6px}
 .bkp.on[data-v=Long]{background:rgba(34,197,94,.16);border-color:#22c55e;color:#22c55e}
 .bkp.on[data-v=Short]{background:rgba(239,68,68,.16);border-color:#ef4444;color:#ef4444}
 .split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
@@ -550,7 +562,7 @@ body.chFs #confirmBox{z-index:55}
         <h3><span class="dot" style="background:#f97316"></span>การเข้าเทรด</h3>
         <div class="field" id="bkBox"><label>Breakout M30 (ราคาปิดแท่ง 30 นาที)</label>
           <div class="bk"><span class="bkp" id="bkS" data-v="Short">▼ Short</span><span class="bkp" id="bkL" data-v="Long">▲ Long</span></div>
-          <div class="hint" id="bkTxt" style="margin-top:4px">–</div>
+          <div id="bkTxt" class="bkInfo">–</div>
         </div>
         <div class="field"><label>เลือกรูปแบบการเข้า</label>
           <div class="seg big" data-f="mode"><button data-v="Auto">Auto (ตามแผน)</button><button data-v="Manual">Manual</button></div>
@@ -777,6 +789,9 @@ const ICONS = {
   'check':'<path d="M20 6 9 17l-5-5"/>',
   'triangle-alert':'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
   'chart-candlestick':'<path d="M9 5v4"/><rect width="4" height="6" x="7" y="9" rx="1"/><path d="M9 15v2"/><path d="M17 3v2"/><rect width="4" height="8" x="15" y="5" rx="1"/><path d="M17 13v3"/><path d="M3 3v16a2 2 0 0 0 2 2h16"/>',
+  'clock':'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  'trending-up':'<path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/>',
+  'trending-down':'<path d="M16 17h6v-6"/><path d="m22 17-8.5-8.5-5 5L2 7"/>',
   'maximize':'<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>',
   'minimize':'<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>',
   'rotate-ccw':'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
@@ -1127,11 +1142,18 @@ function paintSeg(){ document.querySelectorAll('.seg[data-f]').forEach(s=>s.quer
 document.querySelectorAll('#v-form input, #v-form textarea').forEach(i=>i.addEventListener('input', recalc));
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>showView(t.dataset.view)));
 let FORM_SEEN = false;
+// หลังโหลดข้อมูล: กลับไปหน้าที่เปิดอยู่ก่อนรีเฟรช (ถ้ายังมีพอร์ตที่เลือก) · ไม่มีพอร์ต = หน้าพอร์ต
+function restoreView(){
+  let v = null; try{ v = sessionStorage.getItem('tjView'); }catch(e){}
+  if (!curPort() || !v || !$('v-'+v)) v = 'home';
+  showView(v);
+}
 function showView(v){
   if (typeof isChartFs==='function' && isChartFs()) toggleChartFs(false);
   if (v!=='home' && !curPort()){ toast('เลือกพอร์ตก่อน', true); v = 'home'; }
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.view===v));
   document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));
+  try{ sessionStorage.setItem('tjView', v); }catch(e){}   // จำหน้าที่เปิดอยู่ → รีเฟรชแล้วกลับมาหน้าเดิม
   window.scrollTo(0,0);
   if (v==='stats') renderStats();
   if (v==='home') renderHome();
@@ -2134,7 +2156,7 @@ function breakoutM30(date){
   if (!date || !CH_BARS.length) return null;
   let top = num($('f_t30').value), bot = num($('f_b30').value);
   if (top==null || bot==null){ const r = CH_ROWS.find(x=>x.date===date); if (r && r.m30){ top=r.m30.t; bot=r.m30.b; } }
-  if (top==null || bot==null) return {wait:''};
+  if (top==null || bot==null) return {wait:'รอกรอบ M30 (หลังตลาด US เปิด 30 นาที)'};
   const t0 = sOf(date)/1000 + CH_TZ + 1800, tEnd = sOf(date)/1000 + CH_TZ + 86400, nowT = Date.now()/1000 + CH_TZ;
   let live = null;
   for (const b of bars30().filter(b=>b.time>=t0 && b.time<tEnd)){
@@ -2149,9 +2171,17 @@ function renderBreakout(){
   const r = breakoutM30($('f_date').value);
   ['bkS','bkL'].forEach(id=>$(id).classList.toggle('on', !!(r && r.dir && $(id).dataset.v===r.dir)));
   const hm = t => new Date((t-CH_TZ)*1000+TH).toISOString().slice(11,16);
-  $('bkTxt').innerHTML = !r ? 'รอข้อมูลกราฟ…' : r.dir
-    ? `แท่ง ${hm(r.b.time)}–${hm(r.b.time+1800)} ปิด <b class="${r.dir==='Long'?'pos':'neg'}">${f2(r.b.close,2)}</b> ${r.dir==='Long'?'> กรอบบน '+f2(r.top,2):'< กรอบล่าง '+f2(r.bot,2)} · แตะเพื่อเลือก Position`
-    : r.wait;
+  const el = $('bkTxt');
+  if (!r || !r.dir){ el.className = 'bkInfo wait'; el.innerHTML = ic('clock',14)+' '+(r ? r.wait : 'รอข้อมูลกราฟ…'); return; }
+  const L = r.dir==='Long', edge = L ? r.top : r.bot, d = r.b.close - edge;
+  el.className = 'bkInfo '+(L ? 'long' : 'short');
+  el.innerHTML = `<div class="bkH">${ic(L?'trending-up':'trending-down',15,2.25)} Breakout ${L?'ขึ้น · Long':'ลง · Short'}</div>
+    <div class="bkG">
+      <div><div class="l">แท่ง 30 นาที</div><div class="v">${hm(r.b.time)}–${hm(r.b.time+1800)}</div></div>
+      <div><div class="l">ราคาปิด</div><div class="v ${L?'pos':'neg'}">${f2(r.b.close,2)}</div></div>
+      <div><div class="l">${L?'กรอบบน':'กรอบล่าง'}</div><div class="v">${f2(edge,2)}</div></div>
+    </div>
+    <div class="bkF">ปิด${L?'เหนือ':'ต่ำกว่า'}กรอบ <b class="${L?'pos':'neg'}">${d>0?'+':''}${f2(d,2)}</b> · แตะ <b>${L?'▲ Long':'▼ Short'}</b> ด้านบนเพื่อเลือก Position</div>`;
 }
 document.querySelectorAll('.bkp').forEach(el=>el.addEventListener('click',()=>{
   if (!el.classList.contains('on')) return;
@@ -3544,14 +3574,14 @@ async function load(){
     PORTS = c.ports || [];
     if (PORT!=null && !curPort()) setPort(null);
     DATA = (PORT!=null && c.data && c.data[PORT]) || {trades:[], capital:null};
-    paintPort(); renderAll(); if (EDIT_ROW==null) resetForm(); hideGate(); if (PORT==null) showView('home');
+    paintPort(); renderAll(); if (EDIT_ROW==null) resetForm(); hideGate(); restoreView();
     setSync(true);
-    try{ await bootFetch(false); }
+    try{ await bootFetch(false); if (!curPort()) showView('home'); }   // พอร์ตที่เปิดอยู่ถูกลบ/ยกเลิกแชร์ → กลับหน้าพอร์ต
     catch(e){ toast('อัปเดตข้อมูลไม่ได้: '+(e.message||String(e)), true); }
     setSync(false); return;
   }
   setLoading(true, 'กำลังโหลดข้อมูล…');
-  try{ await bootFetch(true); hideGate(); if (PORT==null) showView('home'); }
+  try{ await bootFetch(true); hideGate(); restoreView(); }
   catch(e){
     if (CFG) showGate('โหลดข้อมูลไม่ได้: '+(e.message||String(e)));
     else toast('โหลดข้อมูลไม่ได้: '+(e.message||e), true);

@@ -322,6 +322,7 @@ td.qe:hover{background:rgba(247,166,0,.1);color:var(--accent)}
 .toast.err{border-color:var(--red);color:#ffb4b4}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:30;padding:16px}
 .overlay.on{display:flex}
+.overlay,.overlay .modal{overscroll-behavior:contain}
 .overlay.gate{background:rgba(13,17,23,.97);z-index:40}
 body.gated header,body.gated main,body.gated .tabs{filter:blur(6px);pointer-events:none;user-select:none}
 .modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;max-width:360px;width:100%}
@@ -3571,6 +3572,19 @@ async function runExport(){
 }
 async function disconnect(){ toggleProfMenu(false); closeExport(); cacheClear(); VIEW_AS = null; if (sb){ try{ await sb.auth.signOut(); }catch(e){} } SB_USER = null; SB_PROFILE = null; AUTH_MODE = 'login'; CFG=null; paintMode(); PORTS=[]; DATA={trades:[],capital:null}; paintPort(); renderAll(); showGate(); }
 
+// ล็อกหน้าเว็บด้านหลังไม่ให้เลื่อน ขณะมีหน้าต่าง (modal) เปิดอยู่ · ปิดแล้วกลับตำแหน่งเดิม (ใช้ position:fixed เพื่อให้ได้ผลบน iPhone ด้วย)
+(function(){
+  let y = 0, locked = false;
+  const sync = () => {
+    const open = !!document.querySelector('.overlay.on');
+    if (open === locked) return; locked = open;
+    const b = document.body;
+    if (open){ y = window.scrollY; Object.assign(b.style, {position:'fixed', top:(-y)+'px', left:'0', right:'0'}); }
+    else { Object.assign(b.style, {position:'', top:'', left:'', right:''}); window.scrollTo(0, y); }
+  };
+  const mo = new MutationObserver(sync);
+  document.querySelectorAll('.overlay').forEach(o=>mo.observe(o, {attributes:true, attributeFilter:['class']}));
+})();
 // ดึงหน้าลงจากบนสุด (มือถือ) → รีเฟรชเหมือนแอป · ไม่ทำงานตอนแตะบนกราฟ / เปิดหน้าต่าง / หน้าเข้าสู่ระบบ / เต็มจอ
 (function(){
   const P = $('ptr'), TH = 70; let y0 = null, d = 0, busy = false;

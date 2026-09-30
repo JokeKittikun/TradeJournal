@@ -88,7 +88,9 @@ drop policy if exists "portfolios read"   on public.portfolios;
 drop policy if exists "portfolios insert" on public.portfolios;
 drop policy if exists "portfolios update" on public.portfolios;
 drop policy if exists "portfolios delete" on public.portfolios;
-create policy "portfolios read"   on public.portfolios for select to authenticated using (public.port_access(id) is not null);
+-- เจ้าของ: เช็กคอลัมน์ user_id ตรง ๆ (ต้องมี เพราะตอน insert … returning ฟังก์ชัน port_access ยังมองไม่เห็นแถวที่เพิ่งเพิ่ม)
+create policy "portfolios read"   on public.portfolios for select to authenticated
+  using ((user_id = auth.uid() and public.is_active()) or public.port_access(id) is not null);
 create policy "portfolios insert" on public.portfolios for insert to authenticated with check (user_id = auth.uid() and public.is_active());
 create policy "portfolios update" on public.portfolios for update to authenticated using (public.port_access(id) = 'owner') with check (user_id = auth.uid());
 create policy "portfolios delete" on public.portfolios for delete to authenticated using (public.port_access(id) = 'owner');

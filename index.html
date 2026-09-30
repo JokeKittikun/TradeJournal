@@ -2328,6 +2328,7 @@ function drT(x){ const l = LWC.timeScale().coordinateToLogical(x); return l==nul
 function drX(t){ return LWC.timeScale().logicalToCoordinate((t - CH_BARS[0].time)/drStep()); }
 function initDraw(){
   if (!LWC || $('drawBar')) return;
+  $('chart').addEventListener('touchmove', e=>{ if (drawNoPan()) e.preventDefault(); }, {passive:false});
   const bar = document.createElement('div'); bar.id='drawBar';
   bar.innerHTML = DRAW_TOOLS.map(([k,ic,tt])=>`<button type="button" data-tool="${k}" title="${tt}">${ic}</button>`).join('');
   $('chart').appendChild(bar);
@@ -2437,7 +2438,7 @@ function paintInfo(p){
 function setXh(on){
   DRAW.xh = !!on; DRAW.xhDrag = false;
   LWC.applyOptions({handleScroll:!on, handleScale:!on});
-  $('chart').classList.toggle('nopan', !!on || DRAW.tool!=='cursor');
+  paintPan();
   paintDrawBar();
   if (on) toast('โหมดเล็ง: ลากบนกราฟเพื่อดูเวลา/ราคา · แตะปุ่มเล็งอีกครั้งเพื่อเลื่อนกราฟตามปกติ');
   else { try{ LWC.clearCrosshairPosition(); }catch(e){} paintInfo(null); }
@@ -2451,7 +2452,10 @@ function moveXh(x, y){
   paintInfo({point:{x, y}, time:bar.time, seriesData:new Map([[CS, bar]])});
 }
 function setTool(k){ if (k!=='cursor' && DRAW.xh) setXh(false); DRAW.tool=k; DRAW.pending=null; if (k!=='measure') DRAW.measure=null; if (k!=='cursor') DRAW.sel=-1; paintDrawBar(); renderDraw(); }
-function paintDrawBar(){ document.querySelectorAll('#drawBar button').forEach(b=>{ b.classList.toggle('on', b.dataset.tool===DRAW.tool); if (b.dataset.tool==='cursor') b.classList.toggle('lock', !!DRAW.xh && DRAW.tool==='cursor'); }); $('chart').classList.toggle('drawing', DRAW.tool!=='cursor'); $('chart').classList.toggle('nopan', !!DRAW.xh || DRAW.tool!=='cursor'); }
+function paintDrawBar(){ document.querySelectorAll('#drawBar button').forEach(b=>{ b.classList.toggle('on', b.dataset.tool===DRAW.tool); if (b.dataset.tool==='cursor') b.classList.toggle('lock', !!DRAW.xh && DRAW.tool==='cursor'); }); $('chart').classList.toggle('drawing', DRAW.tool!=='cursor'); paintPan(); }
+// กันหน้าเว็บเลื่อนตามนิ้ว ขณะ: เลือกเส้นอยู่ / ลากเส้น / ใช้เครื่องมือวาด / โหมดเล็ง
+function drawNoPan(){ return !!DRAW.xh || DRAW.tool!=='cursor' || DRAW.sel>=0 || !!DRAW.drag || !!DRAW.xhDrag || !!DRAW.pending; }
+function paintPan(){ const c = $('chart'); if (c) c.classList.toggle('nopan', drawNoPan()); }
 function drawClick(x,y,touch){
   if (!CH_BARS.length) return;
   const t=drT(x), p=CS.coordinateToPrice(y); if (t==null || p==null) return;
@@ -2490,6 +2494,7 @@ function drawHLines(){
 }
 let DRAW_SVG=null, DRAW_SEL_HL=-2;
 function renderDraw(){
+  paintPan();
   if (!LWC || !CS || !CH_BARS.length) return;
   if (!DRAW_SVG){ DRAW_SVG=document.createElementNS('http://www.w3.org/2000/svg','svg'); DRAW_SVG.id='drawSvg'; DRAW_SVG.style.cssText='position:absolute;left:0;top:0;pointer-events:none;z-index:4;overflow:hidden'; $('chart').appendChild(DRAW_SVG); }
   const h=$('chart').clientHeight - LWC.timeScale().height(), w=$('chart').clientWidth - LWC.priceScale('right').width();

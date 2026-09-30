@@ -359,6 +359,9 @@ table.mkt td:last-child,table.mkt th:last-child{text-align:left;font-family:'IBM
 table.mkt tr.today td{background:rgba(247,166,0,.06)}
 .st{font-size:12px;font-weight:500}
 /* เป้าหมายพอร์ต (ในการ์ดพอร์ต) */
+.pFlow{display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:2px 9px;border-radius:999px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:#7dd3fc;font:500 11.5px 'JetBrains Mono','IBM Plex Sans Thai',monospace}
+.flowV{color:#7dd3fc}
+.hFlow{display:flex;align-items:center;gap:6px;font-size:12px;color:#7dd3fc;padding:8px 10px;border-radius:9px;background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.2)}
 .pGoal{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
 .pgTop{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11.5px;color:var(--muted)}
 .pgTop span{display:inline-flex;align-items:center;gap:5px}
@@ -369,9 +372,6 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
 .pGoal.done .pgTop span,.pGoal.done .pgTop b{color:#22c55e;font-weight:600}
 .pGoal.done .pgBar i{background:linear-gradient(90deg,#16a34a,#4ade80)}
 .pCard:has(.pGoal.done){border-color:rgba(34,197,94,.55)}
-.pfQuick{display:flex;gap:6px;flex-wrap:wrap;margin:-4px 0 8px}
-.pfQuick button{padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font:500 12px 'JetBrains Mono',monospace;cursor:pointer}
-.pfQuick button:hover{border-color:var(--accent);color:var(--accent)}
 /* สถานะฐานข้อมูล (Super Admin) */
 .modal.dbModal{max-width:760px}
 .dbBody{padding:26px 28px 30px}
@@ -785,9 +785,8 @@ body.chFs #confirmBox{z-index:55}
 <div class="overlay" id="portBox"><div class="modal" style="max-width:400px">
   <h3 style="margin:0 0 12px" id="pf_title">เพิ่มพอร์ต</h3>
   <div class="field"><label>ชื่อพอร์ต</label><input type="text" id="pf_name" maxlength="60" placeholder="เช่น BTC หลัก, ทดลองระบบใหม่"></div>
-  <div class="field" id="pf_capWrap"><label>ทุนเริ่มต้น ($)</label><input type="number" step="any" id="pf_cap" placeholder="เช่น 100"></div>
-  <div id="pf_goalWrap"><div class="field"><label>เป้าหมาย Balance ($) <span class="hint" style="margin:0;font-weight:400">ไม่บังคับ · เว้นว่าง = ไม่ตั้ง</span></label><input type="number" step="any" min="0" id="pf_goal" inputmode="decimal" placeholder="เช่น 500"></div>
-  <div class="pfQuick" id="pf_quick"></div></div>
+  <div class="field" id="pf_capWrap"><label>ทุนเริ่มต้น ($) <span class="hint" id="pf_capHint" style="margin:0;font-weight:400"></span></label><input type="number" step="any" id="pf_cap" placeholder="เช่น 100"></div>
+  <div id="pf_goalWrap"><div class="field"><label>เป้าหมาย Balance ($) <span class="hint" style="margin:0;font-weight:400">ไม่บังคับ · เว้นว่าง = ไม่ตั้ง</span></label><input type="number" step="any" min="0" id="pf_goal" inputmode="decimal" placeholder="เช่น 500"></div></div>
   <div class="hint" id="pf_msg" style="margin:4px 0 12px"></div>
   <div class="actions"><button class="btn danger" id="pf_del" hidden onclick="startDeletePort()" style="margin-right:auto"><i data-ic="trash-2"></i>ลบพอร์ต</button><button class="btn" onclick="closePortForm()">ยกเลิก</button><button class="btn primary" id="pf_btn" onclick="submitPortForm()">สร้างพอร์ต</button></div>
 </div></div>
@@ -891,6 +890,7 @@ const ICONS = {
   'database':'<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>',
   'target':'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
   'trophy':'<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
+  'info':'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
   'maximize':'<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>',
   'minimize':'<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>',
   'rotate-ccw':'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
@@ -1034,9 +1034,8 @@ function sbBuild(port, rows){
   return {trades, capital: num(port.start_capital), version: SB_VERSION, port:{id:port.id, name:port.name}};
 }
 function sbSummary(port, rows){
-  const d = sbBuild(port, rows), c = d.trades.filter(t=>num(t.diff)!=null);
-  let bal = num(port.start_capital); d.trades.forEach(t=>{ if (num(t.bal)!=null) bal = +t.bal; });
-  return {id:port.id, name:port.name, capital:num(port.start_capital), goal:num(port.goal), balance:bal, trades:d.trades.length, closed:c.length, wins:c.filter(t=>t.diff>0).length, losses:c.filter(t=>t.diff<0).length};
+  const d = sbBuild(port, rows), s = tradeStats(d.trades, port.start_capital);
+  return {id:port.id, name:port.name, capital:num(port.start_capital), goal:num(port.goal), balance:s.bal, ret:s.twr, pl:s.pl, flow:s.flow, trades:d.trades.length, closed:s.closed, wins:s.wins, losses:s.losses};
 }
 async function sbPorts(){
   const uid = VIEW_AS ? VIEW_AS.id : SB_USER.id;
@@ -1142,9 +1141,8 @@ const demo = {
 };
 const DEMO_PORTS = [{id:'0', name:'พอร์ตตัวอย่าง', store:demo}];
 function demoStore(){ const p = DEMO_PORTS.find(x=>x.id===String(PORT)) || DEMO_PORTS[0]; return p.store; }
-function demoList(){ return {version:7, ports: DEMO_PORTS.map(p=>{ const d = demoTrades(p.store), c = d.trades.filter(t=>num(t.diff)!=null);
-  let bal = p.store.capital; d.trades.forEach(t=>{ if (num(t.bal)!=null) bal=+t.bal; });
-  return {id:p.id, name:p.name, capital:p.store.capital, goal:p.goal||null, balance:bal, trades:d.trades.length, closed:c.length, wins:c.filter(t=>t.diff>0).length, losses:c.filter(t=>t.diff<0).length}; })}; }
+function demoList(){ return {version:7, ports: DEMO_PORTS.map(p=>{ const d = demoTrades(p.store), s = tradeStats(d.trades, p.store.capital);
+  return {id:p.id, name:p.name, capital:p.store.capital, goal:p.goal||null, balance:s.bal, ret:s.twr, pl:s.pl, flow:s.flow, trades:d.trades.length, closed:s.closed, wins:s.wins, losses:s.losses}; })}; }
 function demoTrades(store){
   const demo = store || demoStore();
   let cap = demo.capital; const count = {};
@@ -1180,7 +1178,7 @@ function apiRaw(fn, ...args){
     if (fn==='addTrade') demo.rows.push(args[0]);
     if (fn==='updateTrade') demo.rows[args[0]-4]=args[1];
     if (fn==='deleteTrade') demo.rows.splice(args[0]-4,1);
-    if (fn==='setCapital') demo.capital=+args[0];
+    if (fn==='setCapital'){ const dp = DEMO_PORTS.find(x=>x.id===String(args[1])); (dp ? dp.store : demo).capital = +args[0]; }
     if (args[0] && args[0].capital && fn==='addTrade' && demo.rows.length===1) demo.capital=+args[0].capital;
     res(demoTrades());
   },200));
@@ -1277,6 +1275,26 @@ function showView(v){
   if (v==='form' && !FORM_SEEN){ FORM_SEEN = true; requestAnimationFrame(()=>{ try{ if (typeof resetView==='function') resetView(); }catch(e){} }); }
 }
 // กราฟ Equity (ใช้ทั้งหน้าพอร์ตและหน้าสรุปผล): แกนราคาเป็นจำนวนเต็ม · แกน x เป็นวันที่ · hover/แตะ ดูรายละเอียดแต่ละเทรด
+// ---------- เพิ่ม/ลดทุน แยกจากกำไรการเทรด ----------
+// เพิ่ม/ลดทุน = ทุนที่กรอกเองในเทรด − ทุนอัตโนมัติ (Balance เทรดก่อนหน้า · ถ้ายังไม่ปิด = ทุนเทรดก่อนหน้า)
+function tradeFlows(trades){
+  let prevBal = null, prevCap = null;
+  trades.forEach((t,i)=>{
+    const cap = num(t.cap); let f = 0;
+    if (i>0 && t.capital!=='' && t.capital!=null && cap!=null){ const exp = prevBal!=null ? prevBal : prevCap; if (exp!=null) f = cap - exp; }
+    t.flow = Math.abs(f) < 0.005 ? 0 : f; prevBal = num(t.bal); prevCap = cap;
+  });
+  return trades;
+}
+// สรุปพอร์ต: Balance จริง · กำไรจากการเทรด ($) · ผลตอบแทนแบบทบต้นจาก Diff ของทุกเทรด (ไม่นับเพิ่ม/ลดทุน) · เพิ่ม/ลดทุนสุทธิ
+function tradeStats(trades, startCap){
+  tradeFlows(trades);
+  const c = trades.filter(t=>num(t.diff)!=null);
+  let bal = num(startCap); trades.forEach(t=>{ if (num(t.bal)!=null) bal = +t.bal; });
+  return {bal, pl: c.reduce((a,t)=>a+(t.bal-t.cap),0), twr: c.length ? c.reduce((a,t)=>a*(1+t.diff),1)-1 : null,
+    flow: trades.reduce((a,t)=>a+(t.flow||0),0), closed: c.length, wins: c.filter(t=>t.diff>0).length, losses: c.filter(t=>t.diff<0).length};
+}
+const flowTxt = f => (f>0 ? 'เพิ่มทุน +$' : 'ลดทุน −$') + fN(Math.abs(f));
 function equityChart(canvas, prev, cap, trades, startTitle){
   if (prev) prev.destroy();
   if (!window.Chart || !canvas) return null;
@@ -1284,14 +1302,15 @@ function equityChart(canvas, prev, cap, trades, startTitle){
   trades.forEach(t=>{ if(num(t.bal)!=null){
     const c0 = num(t.cap), sd = side(t);
     lab.push(t.date+' #'+t.n); eq.push(+t.bal);
-    meta.push({title:`${t.date} · เทรด ${t.n}${sd.pos?' · '+sd.pos+' '+(sd.tf||''):''}`, pl: c0!=null ? t.bal-c0 : null, diff: num(t.diff), res: t.result});
+    meta.push({title:`${t.date} · เทรด ${t.n}${sd.pos?' · '+sd.pos+' '+(sd.tf||''):''}`, pl: c0!=null ? t.bal-c0 : null, diff: num(t.diff), res: t.result, flow: t.flow||0});
   } });
   const up = eq.length>1 && eq[eq.length-1] >= (eq[0] ?? eq[1]);
+  const fl = meta.map(m=>!!m.flow);   // จุดที่มีเพิ่ม/ลดทุน → วงกลมสีฟ้า
   const col = up ? '#22c55e' : '#ef4444';
   // เส้นแนวตั้งตามตำแหน่งที่ชี้
   const vline = {id:'vline', afterDraw(ch){ const a = ch.tooltip && ch.tooltip.getActiveElements(); if (!a || !a.length) return;
     const x = a[0].element.x, {top, bottom} = ch.chartArea, g = ch.ctx; g.save(); g.strokeStyle='rgba(139,152,168,.45)'; g.lineWidth=1; g.setLineDash([3,3]); g.beginPath(); g.moveTo(x,top); g.lineTo(x,bottom); g.stroke(); g.restore(); }};
-  return new Chart(canvas, {type:'line', data:{labels:lab, datasets:[{data:eq, borderColor:col, backgroundColor:col+'1f', fill:true, tension:.25, pointRadius:0, pointHoverRadius:4, pointHoverBackgroundColor:col, pointHoverBorderColor:'#0d1117', pointHoverBorderWidth:2, borderWidth:2}]},
+  return new Chart(canvas, {type:'line', data:{labels:lab, datasets:[{data:eq, borderColor:col, backgroundColor:col+'1f', fill:true, tension:.25, pointRadius:c=>fl[c.dataIndex] ? 4 : 0, pointBackgroundColor:c=>fl[c.dataIndex] ? '#38bdf8' : col, pointBorderColor:c=>fl[c.dataIndex] ? '#0d1117' : col, pointHoverRadius:4, pointHoverBackgroundColor:col, pointHoverBorderColor:'#0d1117', pointHoverBorderWidth:2, borderWidth:2}]},
     plugins:[vline],
     options:{responsive:true, maintainAspectRatio:false, animation:false,
       interaction:{mode:'index', intersect:false},   // ไม่ต้องชี้โดนจุดพอดี
@@ -1301,7 +1320,7 @@ function equityChart(canvas, prev, cap, trades, startTitle){
           callbacks:{
             title: x => meta[x[0].dataIndex].title,
             label: x => 'Balance  $'+fN(x.parsed.y),
-            afterLabel: x => { const m = meta[x.dataIndex]; if (m.pl==null) return ''; return 'กำไร/ขาดทุน  '+money(m.pl)+(m.diff!=null?'  ('+pct(m.diff)+')':'')+(m.res?'  '+m.res:''); },
+            afterLabel: x => { const m = meta[x.dataIndex]; const a = []; if (m.flow) a.push(flowTxt(m.flow)+'  (ก่อนเทรดนี้)'); if (m.pl!=null) a.push('กำไร/ขาดทุน  '+money(m.pl)+(m.diff!=null?'  ('+pct(m.diff)+')':'')+(m.res?'  '+m.res:'')); return a; },
           }}},
       scales:{
         // แกน x: วันที่แบบสั้น (วัน/เดือน) · เลือกแสดงเฉพาะบางจุดไม่ให้ทับกัน
@@ -1322,10 +1341,6 @@ function goalHtml(p){
     + `<div class="pgBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${w.toFixed(0)}"><i style="width:${w}%"></i></div>`
     + `<div class="pgSub">${done ? 'เกินเป้า $'+fN(g)+' ไป +$'+fN(bal-g) : 'อีก $'+fN(g-bal)+' ถึงเป้า'}</div></div>`;
 }
-// ปุ่มลัดตั้งเป้าหมาย (คิดจาก Balance ตอนนี้ หรือทุนเริ่มต้นตอนสร้างพอร์ต)
-function paintGoalQuick(base){
-  $('pf_quick').innerHTML = base>0 ? [['+25%',1.25],['+50%',1.5],['x2',2],['x3',3],['x5',5]].map(([l,m])=>`<button type="button" onclick="$('pf_goal').value=${Math.round(base*m*100)/100}">${l} · $${fN(base*m,0)}</button>`).join('') : '';
-}
 
 function renderHome(){
   if (!$('v-home')) return;
@@ -1333,16 +1348,18 @@ function renderHome(){
   const p = curPort(); $('portDash').hidden = !p; if (!p) return;
   $('dashPort').textContent = p.name;
   const ym = thToday().slice(0,7);
+  tradeFlows(DATA.trades);
   const T = DATA.trades.filter(t=>String(t.date).slice(0,7)===ym);
   const c = T.filter(t=>num(t.diff)!=null), w = c.filter(t=>t.diff>0).length, l = c.filter(t=>t.diff<0).length;
   const pl = c.reduce((a,t)=>a+((num(t.bal)!=null&&num(t.cap)!=null)?t.bal-t.cap:0),0);
-  const cap0 = T.length ? num(T[0].cap) : null, ret = (cap0 && c.length) ? pl/cap0 : null;
+  const ret = c.length ? c.reduce((a,t)=>a*(1+t.diff),1)-1 : null, mf = T.reduce((a,t)=>a+(t.flow||0),0);   // ผลตอบแทนทบต้น · เพิ่ม/ลดทุนในเดือน
   $('hMonth').textContent = new Date(ym+'-01T00:00:00').toLocaleDateString('th-TH',{month:'long',year:'numeric'});
   const st = [['เทรด',T.length+(T.length-c.length?` <span class="hint" style="margin:0;font-size:11px">(เปิด ${T.length-c.length})</span>`:'')],
     ['Win rate',(w+l)?fN(w/(w+l)*100,1)+'%':'–'],
     ['กำไร/ขาดทุน',c.length?money(pl):'–',c.length?cls(pl):''],
     ['ผลตอบแทน',pct(ret),cls(ret)]];
-  $('hStats').innerHTML = st.map(x=>`<div class="kpi"><div class="l">${x[0]}</div><div class="v mono ${x[2]||''}">${x[1]}</div></div>`).join('');
+  $('hStats').innerHTML = st.map(x=>`<div class="kpi"><div class="l">${x[0]}</div><div class="v mono ${x[2]||''}">${x[1]}</div></div>`).join('')
+    + (mf ? `<div class="hFlow" style="grid-column:1 / -1">${ic('info',13)} ${flowTxt(mf)} ในเดือนนี้ · ไม่นับเป็นกำไร/ขาดทุน</div>` : '');
   homeChart = equityChart($('hEq'), homeChart, num(DATA.capital), DATA.trades, 'ทุนเริ่มต้น');
 
   // เทรดล่าสุด 5 เทรด
@@ -1733,20 +1750,24 @@ $('stRange').addEventListener('change',e=>{ if ($('stRange')._flatpickr) return;
 function statTrades(){ return DATA.trades.filter(t=>(!ST_FROM || t.date>=ST_FROM) && (!ST_TO || t.date<=ST_TO)); }
 
 function renderStats(){
+  tradeFlows(DATA.trades);
   const T = statTrades();
   const c = T.filter(t=>num(t.diff)!=null), wins = c.filter(t=>t.diff>0), losses = c.filter(t=>t.diff<0);
+  const flow = T.reduce((a,t,i)=>a+((ST_FROM && i===0) ? 0 : (t.flow||0)),0);   // ต้นช่วง: ทุนของเทรดแรกรวมการเพิ่ม/ลดทุนไว้แล้ว
+  const plNet = c.reduce((a,t)=>a+(t.bal-t.cap),0);
   // ทุนเริ่มของช่วง = ทุนของเทรดแรกในช่วง (ถ้าไม่กรอง = ทุนเริ่มต้น)
   const cap = T.length ? (ST_FROM ? num(T[0].cap) : num(DATA.capital)) : (ST_FROM ? null : num(DATA.capital));
   let bal = cap; T.forEach(t=>{ if(num(t.bal)!=null) bal=+t.bal; });
   const sumW = wins.reduce((s,t)=>s+(t.bal-t.cap),0), sumL = losses.reduce((s,t)=>s+(t.bal-t.cap),0);
   const avg = a => a.length ? a.reduce((s,t)=>s+t.diff,0)/a.length : null;
-  let peak = cap, mdd = 0, b = cap, curW=0, curL=0, maxW=0, maxL=0;
-  T.forEach(t=>{ if(num(t.bal)==null) return; b=+t.bal; peak=Math.max(peak,b); mdd=Math.min(mdd,b/peak-1);
+  // Max drawdown จากดัชนีผลตอบแทนทบต้น (ไม่ให้การเพิ่ม/ลดทุนทำให้ดูเหมือนกำไร/ขาดทุน)
+  let peak = 1, mdd = 0, b = 1, curW=0, curL=0, maxW=0, maxL=0;
+  T.forEach(t=>{ if(num(t.diff)==null) return; b*=1+t.diff; peak=Math.max(peak,b); mdd=Math.min(mdd,b/peak-1);
     if(t.diff>0){curW++;curL=0;} else if(t.diff<0){curL++;curW=0;} maxW=Math.max(maxW,curW); maxL=Math.max(maxL,curL); });
-  const ret = cap ? bal/cap-1 : null, wr = (wins.length+losses.length) ? wins.length/(wins.length+losses.length) : null;
+  const ret = c.length ? c.reduce((a,t)=>a*(1+t.diff),1)-1 : null, wr = (wins.length+losses.length) ? wins.length/(wins.length+losses.length) : null;
   $('stInfo').textContent = `${ST_FROM?ST_FROM+' ถึง '+ST_TO:'ทุกช่วงเวลา'} · ${T.length} เทรด (ปิดแล้ว ${c.length})`;
   const st = [
-    [ST_FROM?'ทุนต้นช่วง':'ทุนเริ่มต้น','$'+fN(cap)],['Balance ปลายช่วง','$'+fN(bal)],['กำไร/ขาดทุนสุทธิ',(bal-cap>=0?'+$':'-$')+fN(Math.abs(bal-cap)),cls(bal-cap)],
+    [ST_FROM?'ทุนต้นช่วง':'ทุนเริ่มต้น','$'+fN(cap)],['Balance ปลายช่วง','$'+fN(bal)],['กำไร/ขาดทุนสุทธิ',c.length?money(plNet):'–',c.length?cls(plNet):''],['เพิ่ม/ลดทุน',flow?(flow>0?'+$':'−$')+fN(Math.abs(flow)):'–',flow?'flowV':''],
     ['ผลตอบแทน',pct(ret),cls(ret)],['Win rate', wr==null?'–':fN(wr*100,1)+'%'],
     ['Profit factor', sumL ? (sumW/Math.abs(sumL)).toFixed(2) : (sumW?'∞':'–')],
     ['เฉลี่ยเทรดชนะ',pct(avg(wins)),'pos'],['เฉลี่ยเทรดแพ้',pct(avg(losses)),'neg'],
@@ -3684,8 +3705,8 @@ async function bootFetch(resetAfter){
 // อัปเดตสรุปของพอร์ตที่เลือกจากข้อมูลล่าสุด (หลังบันทึก/แก้/ลบเทรด)
 function syncPortSummary(){
   const p = curPort(); if (!p || !DATA || !DATA.trades) return;
-  const c = closed();
-  Object.assign(p, {capital:DATA.capital, balance:lastBalance(), trades:DATA.trades.length, closed:c.length, wins:c.filter(t=>t.diff>0).length, losses:c.filter(t=>t.diff<0).length});
+  const s = tradeStats(DATA.trades, DATA.capital);
+  Object.assign(p, {capital:DATA.capital, balance:s.bal, ret:s.twr, pl:s.pl, flow:s.flow, trades:DATA.trades.length, closed:s.closed, wins:s.wins, losses:s.losses});
 }
 function renderPorts(){
   if (!$('portList')) return;
@@ -3693,12 +3714,13 @@ function renderPorts(){
   $('portNote').innerHTML = PORT==null && PORTS.length ? 'แตะพอร์ตเพื่อเลือก แล้วเริ่มบันทึกเทรด' : '';
   const card = p=>{
     const on = String(p.id)===PORT, cap = num(p.capital), bal = num(p.balance);
-    const ret = (cap && bal!=null) ? bal/cap-1 : null, wl = (p.wins||0)+(p.losses||0), own = !p.access || p.access==='owner';
+    const ret = p.ret!==undefined ? p.ret : ((cap && bal!=null) ? bal/cap-1 : null), wl = (p.wins||0)+(p.losses||0), own = !p.access || p.access==='owner';
     return `<div class="pCard ${on?'on':''}" onclick="selectPort('${esc(p.id)}')">
       <div class="pTop"><b class="pName">${esc(p.name)}</b>${on?'<span class="badge open">ใช้งานอยู่</span>':''}${!own ? `<span class="accB">${p.access==='edit'?'แก้ไขได้':'ดูอย่างเดียว'}</span>` : ''}<span style="flex:1"></span>${!own||VIEW_AS?'':`<button class="btn sm icon" title="เปลี่ยนชื่อ" onclick="event.stopPropagation();openPortForm('${esc(p.id)}')">${ic('pencil',13)}</button>`}</div>
       ${!own && p.owner && !VIEW_AS ? `<div class="pOwner">ของ ${esc(p.owner)}</div>` : ''}
       <div class="pBal mono">${bal!=null?'$'+fN(bal):'–'}</div>
-      <div class="pMeta">${p.trades!=null?`<span class="${cls(ret)}">${pct(ret)}</span> · ${p.trades} เทรด · Win ${wl?fN(p.wins/wl*100,1)+'%':'–'}`:'แตะเพื่อเปิด'}</div>
+      <div class="pMeta">${p.trades!=null?`<span class="${cls(ret)}">${pct(ret)}</span>${num(p.pl)!=null && p.closed ? ` · กำไร <span class="${cls(p.pl)}">${money(p.pl)}</span>` : ''} · ${p.trades} เทรด · Win ${wl?fN(p.wins/wl*100,1)+'%':'–'}`:'แตะเพื่อเปิด'}</div>
+      ${p.flow ? `<div class="pFlow">${ic(p.flow>0?'plus':'minus',12,2.25)} ${flowTxt(p.flow)}</div>` : ''}
       ${goalHtml(p)}
     </div>`; };
   const mine = PORTS.filter(p=>!p.access || p.access==='owner' || VIEW_AS), shared = VIEW_AS ? [] : PORTS.filter(p=>p.access && p.access!=='owner');
@@ -3717,10 +3739,10 @@ function openPortForm(id){
   const p = PF_EDIT ? PORTS.find(x=>String(x.id)===PF_EDIT) : null;
   $('pf_title').textContent = p ? 'แก้ไขพอร์ต' : 'เพิ่มพอร์ต';
   $('pf_btn').textContent = p ? 'บันทึก' : 'สร้างพอร์ต';
-  $('pf_name').value = p ? p.name : ''; $('pf_cap').value = '';
-  $('pf_capWrap').hidden = !!p; $('pf_goalWrap').hidden = false;
+  $('pf_name').value = p ? p.name : ''; $('pf_cap').value = p && num(p.capital)!=null ? p.capital : '';
+  $('pf_capWrap').hidden = false; $('pf_goalWrap').hidden = false;
+  $('pf_capHint').textContent = p ? 'ใช้เป็นทุนของเทรดแรก · แก้แล้วผลตอบแทนคำนวณใหม่' : '';
   $('pf_goal').value = p && num(p.goal)!=null ? p.goal : '';
-  paintGoalQuick(p ? num(p.balance) : 0);
   $('pf_msg').textContent = '';
   $('portBox').classList.add('on'); setTimeout(()=>$('pf_name').focus(), 50);
 }
@@ -3730,7 +3752,7 @@ function startDeletePort(){
   const p = PORTS.find(x=>String(x.id)===PF_EDIT); if (!p) return;
   PF_DEL = true;
   $('pf_title').textContent = 'ลบพอร์ต';
-  $('pf_del').hidden = true; $('pf_goalWrap').hidden = true;
+  $('pf_del').hidden = true; $('pf_goalWrap').hidden = true; $('pf_capWrap').hidden = true;
   $('pf_name').value = ''; $('pf_name').placeholder = p.name;
   $('pf_msg').innerHTML = `<span class="neg">${ic('triangle-alert',12)} ลบพอร์ต "<b>${esc(p.name)}</b>" พร้อมเทรดทั้งหมด${p.trades?` (${p.trades} เทรด)`:''} · กู้คืนไม่ได้</span><br>พิมพ์ชื่อพอร์ตด้านบนเพื่อยืนยัน (แนะนำให้ดาวน์โหลดข้อมูลเก็บไว้ก่อน)`;
   $('pf_btn').textContent = 'ลบถาวร';
@@ -3763,7 +3785,7 @@ async function submitPortForm(){
   if (PF_DEL) return deletePortNow();
   const name = $('pf_name').value.trim(), cap = num($('pf_cap').value);
   if (!name) return $('pf_msg').innerHTML = '<span class="neg">ใส่ชื่อพอร์ต</span>';
-  if (!PF_EDIT && (cap==null || cap<=0)) return $('pf_msg').innerHTML = '<span class="neg">ใส่ทุนเริ่มต้นมากกว่า 0</span>';
+  if (cap==null || cap<=0) return $('pf_msg').innerHTML = '<span class="neg">ใส่ทุนเริ่มต้นมากกว่า 0</span>';
   const goalTxt = $('pf_goal').value.trim(), goal = goalTxt==='' ? null : num(goalTxt);
   if (goalTxt!=='' && !(goal>0)) return $('pf_msg').innerHTML = '<span class="neg">เป้าหมายต้องมากกว่า 0 (หรือเว้นว่าง)</span>';
   const old = PF_EDIT ? PORTS.find(x=>String(x.id)===PF_EDIT) : null;
@@ -3774,6 +3796,14 @@ async function submitPortForm(){
       ? await safeWrite('renamePort', [pid, name], async()=>{ const x = await apiRaw('listPorts'); const q = x.ports.find(q=>String(q.id)===pid); return (q && q.name===name) ? x : null; })
       : await safeWrite('addPort', [name, cap], async()=>{ const x = await apiRaw('listPorts'); const q = x.ports.find(q=>q.name===name); if (!q) return null; x.added = q.id; return x; });
     PORTS = r.ports || PORTS;
+    // ทุนเริ่มต้น: แก้เมื่อเปลี่ยน (พอร์ตเดิมเท่านั้น)
+    if (old && Math.abs(cap - (num(old.capital)||0)) > 1e-9){
+      try{
+        const d = await apiFor(pid, 'setCapital', cap);
+        const q = PORTS.find(x=>String(x.id)===pid); if (q){ q.capital = cap; if (!q.trades) q.balance = cap; }
+        if (pid===PORT && d && d.trades){ DATA = d; renderAll(); if (EDIT_ROW==null) recalc(); }
+      }catch(e){ toast('บันทึกทุนเริ่มต้นไม่ได้: '+(e.message||e), true); }
+    }
     // เป้าหมาย: บันทึกเมื่อเปลี่ยน (พอร์ตใหม่ = หลังสร้างเสร็จ)
     const gid = pid || r.added, gOld = old ? num(old.goal) : null;
     if (gid!=null && goal!==gOld){
@@ -3790,7 +3820,6 @@ async function submitPortForm(){
   }catch(e){ $('pf_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
   b.classList.remove('loading');
 }
-$('pf_cap').addEventListener('input', ()=>{ if (!PF_EDIT) paintGoalQuick(num($('pf_cap').value)); });   // พอร์ตใหม่: ปุ่มลัดคิดจากทุนเริ่มต้นที่พิมพ์
 ['pf_name','pf_cap','pf_goal'].forEach(id=>$(id).addEventListener('keydown',e=>{ if (e.key==='Enter') submitPortForm(); }));
 
 async function load(){

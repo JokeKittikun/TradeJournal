@@ -133,21 +133,7 @@ begin
   return p;
 end $$;
 
--- รายชื่อผู้ใช้ทั้งหมด (Admin ขึ้นไป) · จำนวนพอร์ต/ไม้ ไม่รวมรายละเอียดการเทรด
-create or replace function public.admin_list_users()
-returns table (id uuid, email text, display_name text, role text, status text, created_at timestamptz,
-               last_seen_at timestamptz, approved_at timestamptz, ports bigint, trades bigint, last_trade date)
-language plpgsql stable security definer set search_path = public as $$
-begin
-  if not public.is_admin() then raise exception 'ไม่มีสิทธิ์จัดการผู้ใช้'; end if;
-  return query
-    select p.id, p.email, p.display_name, p.role, p.status, p.created_at, p.last_seen_at, p.approved_at,
-           (select count(*) from public.portfolios f where f.user_id = p.id),
-           (select count(*) from public.trades t join public.portfolios f on f.id = t.portfolio_id where f.user_id = p.id),
-           (select max(t.date) from public.trades t join public.portfolios f on f.id = t.portfolio_id where f.user_id = p.id)
-      from public.profiles p
-     order by (p.status = 'pending') desc, p.created_at desc;
-end $$;
+-- รายชื่อผู้ใช้ทั้งหมด (Admin ขึ้นไป) → ดูฟังก์ชัน admin_list_users ด้านล่าง (รวมสิทธิ์ส่งออเดอร์)
 
 -- อนุมัติ / ระงับ / เปิดใช้งาน (Admin ขึ้นไป · Admin จัดการได้เฉพาะผู้ใช้ทั่วไป · แตะ Super Admin ไม่ได้)
 create or replace function public.admin_set_status(target uuid, new_status text) returns void
@@ -268,6 +254,35 @@ begin
 end $$;
 revoke execute on function public.admin_db_usage() from anon, public;
 grant execute on function public.admin_db_usage() to authenticated;
+
+-- ---------- สิทธิ์ส่งออเดอร์ไปตลาด (Super Admin เป็นผู้กำหนด) ----------
+alter table public.profiles add column if not exists can_trade boolean not null default false;
+-- รายชื่อผู้ใช้ + สิทธิ์ส่งออเดอร์ (เปลี่ยนคอลัมน์ที่คืนค่า → ต้องลบฟังก์ชันเดิมก่อน)
+drop function if exists public.admin_list_users();
+create function public.admin_list_users()
+returns table (id uuid, email text, display_name text, role text, status text, created_at timestamptz,
+               last_seen_at timestamptz, approved_at timestamptz, ports bigint, trades bigint, last_trade date, can_trade boolean)
+language plpgsql stable security definer set search_path = public as $$
+begin
+  if not public.is_admin() then raise exception 'ไม่มีสิทธิ์จัดการผู้ใช้'; end if;
+  return query
+    select p.id, p.email, p.display_name, p.role, p.status, p.created_at, p.last_seen_at, p.approved_at,
+           (select count(*) from public.portfolios f where f.user_id = p.id),
+           (select count(*) from public.trades t join public.portfolios f on f.id = t.portfolio_id where f.user_id = p.id),
+           (select max(t.date) from public.trades t join public.portfolios f on f.id = t.portfolio_id where f.user_id = p.id),
+           p.can_trade
+      from public.profiles p
+     order by (p.status = 'pending') desc, p.created_at desc;
+end $$;
+create or replace function public.admin_set_trade(target uuid, allow boolean) returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  if not public.is_super() then raise exception 'เฉพาะ Super Admin กำหนดสิทธิ์ส่งออเดอร์ได้'; end if;
+  update public.profiles set can_trade = allow where id = target;
+  if not found then raise exception 'ไม่พบผู้ใช้'; end if;
+end $$;
+revoke execute on function public.admin_list_users(), public.admin_set_trade(uuid, boolean) from anon, public;
+grant execute on function public.admin_list_users(), public.admin_set_trade(uuid, boolean) to authenticated;
 
 revoke execute on function public.touch_me(), public.admin_list_users(), public.admin_set_status(uuid,text),
   public.admin_set_role(uuid,text), public.share_portfolio(uuid,text,text), public.unshare_portfolio(uuid,uuid),

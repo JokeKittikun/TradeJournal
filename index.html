@@ -358,6 +358,51 @@ table.mkt td:nth-child(2){text-align:right}   /* คอลัมน์ M30 ก�
 table.mkt td:last-child,table.mkt th:last-child{text-align:left;font-family:'IBM Plex Sans Thai',sans-serif}
 table.mkt tr.today td{background:rgba(247,166,0,.06)}
 .st{font-size:12px;font-weight:500}
+/* ส่งออเดอร์ / บัญชีเทรด */
+.orderBtn{border-color:rgba(56,189,248,.45);color:#7dd3fc}
+.listTabs{margin-bottom:12px;max-width:420px}
+.listTabs button.on{background:rgba(247,166,0,.16);color:var(--accent)}
+.listTabs[hidden],#ordersPane[hidden]{display:none!important}
+.oTbl td{vertical-align:middle}
+.oTbl tr.oFail td{background:rgba(239,68,68,.05)}
+.oNote{font-size:12px;color:var(--muted);max-width:280px;white-space:normal;word-break:break-word}
+tr.oFail .oNote{color:#fca5a5}
+.tradeTg{border-color:var(--line)}
+.tradeTg.on{border-color:rgba(56,189,248,.5);color:#7dd3fc;background:rgba(56,189,248,.1)}
+.uTrade{display:inline-flex;align-items:center;gap:3px;margin-left:6px;padding:1px 6px;border-radius:999px;font-size:10.5px;background:rgba(56,189,248,.12);color:#7dd3fc;border:1px solid rgba(56,189,248,.3);vertical-align:middle}
+#ot_side button.on[data-v=BUY]{background:rgba(34,197,94,.15);color:var(--green)}
+#ot_side button.on[data-v=SELL]{background:rgba(239,68,68,.15);color:var(--red)}
+#ot_type button.on,#ex_exSeg button.on,#ex_modeSeg button.on{background:rgba(247,166,0,.16);color:var(--accent)}
+#ot_type button:disabled,#ex_exSeg button:disabled{opacity:.35;cursor:not-allowed}
+#ex_exSeg small{font-size:10px}
+#ot_btn:disabled,#ex_btn:disabled{opacity:.45;cursor:not-allowed}
+.otConfirm[hidden],#ex_modeSeg[hidden]{display:none!important}
+.orderBtn:hover{background:rgba(56,189,248,.1)}
+body.ro .orderBtn{display:none!important}
+.modal.exModal{max-width:640px}
+.exBody{padding:22px 24px 26px}
+.exRow{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);margin-bottom:8px}
+.exRow .n{font-weight:600}.exRow .k{font:500 12px 'JetBrains Mono',monospace;color:var(--muted)}
+.exRow .b{font:500 12px 'JetBrains Mono',monospace;color:var(--muted);margin-left:auto;text-align:right}
+.envB{padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600}
+.envB.demo{background:rgba(56,189,248,.12);color:#7dd3fc;border:1px solid rgba(56,189,248,.35)}
+.envB.live{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.4)}
+.exForm .seg{margin-bottom:10px}
+.exSeg button{flex:1}
+.exHelp{font-size:12px;color:var(--muted);line-height:1.7;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:4px 0 8px}
+.exHelp b{color:var(--text)}
+.modal.otModal{max-width:460px}
+.otHead{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.otHead b{display:flex;align-items:center;gap:6px;font-size:15px}
+.otEnv{border-radius:10px;padding:8px 12px;font-size:12.5px;margin-bottom:10px}
+.otEnv.demo{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.3);color:#7dd3fc}
+.otEnv.live{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.4);color:#fca5a5}
+.otRow{display:flex;gap:8px;margin-bottom:10px}.otRow .seg{flex:1}
+.otGrid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+.otSum{font:500 12px 'JetBrains Mono','IBM Plex Sans Thai',monospace;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;line-height:1.8;margin:2px 0 10px}
+.otSum b{color:var(--text)}
+.otConfirm{display:flex;align-items:center;gap:8px;font-size:13px;margin:6px 0;width:auto;color:var(--text)}
+.otConfirm input{width:auto;margin:0}
 /* เป้าหมายพอร์ต (ในการ์ดพอร์ต) */
 .pFlow{display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:2px 9px;border-radius:999px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:#7dd3fc;font:500 11.5px 'JetBrains Mono','IBM Plex Sans Thai',monospace}
 .flowV{color:#7dd3fc}
@@ -692,6 +737,7 @@ body.chFs #confirmBox{z-index:55}
     </div>
     <div class="actions">
       <button class="btn" id="clearBtn" onclick="resetForm()">ล้างฟอร์ม</button><button class="btn" id="cancelEditBtn" onclick="closeEdit()" hidden>ยกเลิก</button>
+      <button class="btn orderBtn" id="orderBtn" onclick="openOrder()"><i data-ic="send" data-sz="15"></i>ส่งออเดอร์</button>
       <button class="btn primary" id="saveBtn" onclick="save()">บันทึกเทรด</button>
     </div>
     </div>
@@ -699,6 +745,14 @@ body.chFs #confirmBox{z-index:55}
 
   <!-- ============ LIST ============ -->
   <section class="view" id="v-list">
+    <div class="seg listTabs" id="listTabs" hidden><button data-v="journal">บันทึกเทรด</button><button data-v="orders">คำสั่งที่ส่งจริง</button></div>
+    <div id="ordersPane" hidden>
+      <div class="tbl-wrap"><table class="oTbl">
+        <thead><tr><th>วันเวลา</th><th>พอร์ต</th><th>ตลาด</th><th>Position</th><th>ประเภท</th><th>ราคา</th><th>จำนวน (BTC)</th><th>Leverage</th><th>TP</th><th>SL</th><th>สถานะ</th><th>Order / หมายเหตุ</th></tr></thead>
+        <tbody id="ordersList"></tbody>
+      </table></div>
+    </div>
+    <div id="journalPane">
     <div class="filters">
       <select id="flRes" onchange="renderList()"><option value="">ผลลัพธ์ทั้งหมด</option><option>Win</option><option>Loss</option><option value="open">ยังไม่ปิด</option></select>
       <select id="flTf" onchange="renderList()"><option value="">ทุก TF</option><option>M30</option><option>H1</option></select>
@@ -709,6 +763,7 @@ body.chFs #confirmBox{z-index:55}
         <thead><tr><th>วันที่</th><th>เทรด</th><th>ทุน</th><th>การเข้า</th><th>ราคาเข้า</th><th>TP</th><th>SL</th><th>Balance</th><th>Diff</th><th>Result</th><th></th></tr></thead>
         <tbody id="tbody"></tbody>
       </table>
+    </div>
     </div>
   </section>
 
@@ -800,6 +855,50 @@ body.chFs #confirmBox{z-index:55}
   <div class="actions"><button class="btn" id="qe_full" style="margin-right:auto">แก้ไขทั้งหมด</button><button class="btn" onclick="closeQuickEdit()">ยกเลิก</button><button class="btn primary" id="qe_btn" onclick="saveQuickEdit()">บันทึก</button></div>
 </div></div>
 
+<!-- บัญชีตลาด (เชื่อม API ของผู้ใช้เอง) -->
+<div class="overlay" id="exBox"><div class="modal admModal exModal">
+  <div class="admHead">
+    <div class="admIc"><i data-ic="wallet" data-sz="18"></i></div>
+    <div style="min-width:0"><div class="admTitle">บัญชีเทรด</div><div class="admSub">เชื่อมบัญชีตลาดของคุณเพื่อส่งออเดอร์จากหน้าบันทึกเทรด</div></div>
+    <div class="spacer"></div>
+    <button class="btn sm icon" onclick="closeEx()" title="ปิด"><i data-ic="x" data-sz="16"></i></button>
+  </div>
+  <div class="exBody">
+    <div id="ex_list"></div>
+    <div class="dbSec">เชื่อมบัญชีใหม่</div>
+    <div class="exForm">
+      <div class="seg exSeg" id="ex_exSeg"><button data-v="binance">Binance Futures</button><button data-v="mexc">MEXC Futures</button><button data-v="deriv" disabled title="รอ Deriv เปิด API สำหรับ Crypto Exchange Futures">Deriv <small>(เร็ว ๆ นี้)</small></button></div>
+      <div class="seg exSeg" id="ex_modeSeg"><button data-v="1">ทดลอง (Testnet)</button><button data-v="0">บัญชีจริง</button></div>
+      <div id="ex_fields"></div>
+      <div class="exHelp" id="ex_help"></div>
+      <div class="hint" id="ex_msg" style="min-height:18px"></div>
+      <div class="actions"><button class="btn primary" id="ex_btn" onclick="saveExKey()">ตรวจสอบและเชื่อมบัญชี</button></div>
+    </div>
+  </div>
+</div></div>
+<!-- ส่งออเดอร์ -->
+<div class="overlay" id="otBox"><div class="modal otModal">
+  <div class="otHead"><b><i data-ic="send" data-sz="16"></i> ส่งออเดอร์ BTC</b><span class="spacer" style="flex:1"></span><button class="btn sm icon" onclick="closeOrder()" title="ปิด"><i data-ic="x" data-sz="16"></i></button></div>
+  <div id="ot_env" class="otEnv"></div>
+  <div class="field"><label>บัญชี</label><select id="ot_acc" onchange="otPaint()"></select></div>
+  <div class="otRow">
+    <div class="seg" id="ot_side"><button data-v="BUY">▲ Long</button><button data-v="SELL">▼ Short</button></div>
+    <div class="seg" id="ot_type"><button data-v="MARKET">Market</button><button data-v="LIMIT">Limit</button></div>
+  </div>
+  <div class="otGrid">
+    <div class="field" id="ot_priceWrap"><label>ราคา Limit</label><input id="ot_price" type="number" step="any" inputmode="decimal"></div>
+    <div class="field"><label id="ot_marginL">มาร์จิ้น (USDT)</label><input id="ot_margin" type="number" step="any" inputmode="decimal"></div>
+    <div class="field"><label>Leverage (x)</label><input id="ot_lev" type="number" step="any" inputmode="decimal"></div>
+    <div class="field" id="ot_qtyWrap"><label>จำนวน (BTC)</label><input id="ot_qty" type="number" step="any" inputmode="decimal"></div>
+    <div class="field"><label>TP</label><input id="ot_tp" type="number" step="any" inputmode="decimal"></div>
+    <div class="field"><label>SL</label><input id="ot_sl" type="number" step="any" inputmode="decimal"></div>
+  </div>
+  <div class="otSum" id="ot_sum"></div>
+  <label class="otConfirm" id="ot_liveWrap"><input type="checkbox" id="ot_live" onchange="otPaint()"> ยืนยันส่งคำสั่งด้วย <b>เงินจริง</b></label>
+  <label class="otConfirm"><input type="checkbox" id="ot_journal" checked> บันทึกเทรดนี้ลงเจอร์นัลหลังส่งสำเร็จ</label>
+  <div class="hint" id="ot_msg" style="min-height:18px"></div>
+  <div class="actions"><button class="btn" onclick="closeOrder()">ยกเลิก</button><button class="btn primary" id="ot_btn" onclick="sendOrder()">ส่งคำสั่ง</button></div>
+</div></div>
 <div class="overlay" id="dbBox"><div class="modal admModal dbModal">
   <div class="admHead">
     <div class="admIc"><i data-ic="database" data-sz="18"></i></div>
@@ -891,6 +990,9 @@ const ICONS = {
   'target':'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
   'trophy':'<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
   'info':'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+  'send':'<path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/>',
+  'wallet':'<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
+  'shield':'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
   'maximize':'<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>',
   'minimize':'<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>',
   'rotate-ccw':'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
@@ -1125,6 +1227,7 @@ async function sbCall(fn, a){
     case 'setRole':    await SBDB.rpc('admin_set_role', {target:a[0], new_role:a[1]}); return SBDB.rpc('admin_list_users');
     case 'deleteUser': await SBDB.rpc('admin_delete_user', {target:a[0]}); return SBDB.rpc('admin_list_users');
     case 'dbUsage':    return SBDB.rpc('admin_db_usage');
+    case 'setTrade':   await SBDB.rpc('admin_set_trade', {target:a[0], allow:!!a[1]}); return SBDB.rpc('admin_list_users');
     case 'saveDrawings': await SBDB.saveDraw(a[1] || PORT, Array.isArray(a[0]) ? a[0] : []); return {ok:true};
   }
   throw new Error('ไม่รู้จักคำสั่ง '+fn);
@@ -1270,6 +1373,8 @@ function showView(v){
   try{ sessionStorage.setItem('tjView', v); }catch(e){}   // จำหน้าที่เปิดอยู่ → รีเฟรชแล้วกลับมาหน้าเดิม
   window.scrollTo(0,0);
   if (v==='stats') renderStats();
+  paintTradeUi();
+  if (v==='list') setListTab(canTrade() ? LIST_TAB : 'journal');
   if (v==='home') renderHome();
   // กราฟโหลดตอนซ่อนอยู่ (กว้าง 0) → เปิดหน้าบันทึกเทรดครั้งแรกให้จัดมุมมองใหม่
   if (v==='form' && !FORM_SEEN){ FORM_SEEN = true; requestAnimationFrame(()=>{ try{ if (typeof resetView==='function') resetView(); }catch(e){} }); }
@@ -1483,7 +1588,7 @@ function editTrade(row){
   // ย้ายฟอร์มเข้าไปในหน้าต่างแก้ไข (แยกจากการบันทึกเทรดใหม่)
   $('emBody').appendChild($('formWrap'));
   $('emTxt').textContent = `${t.date} · เทรดที่ ${t.n}`;
-  $('saveBtn').textContent='บันทึกการแก้ไข'; $('clearBtn').hidden = true; $('cancelEditBtn').hidden = false;
+  $('saveBtn').textContent='บันทึกการแก้ไข'; $('clearBtn').hidden = true; $('cancelEditBtn').hidden = false; $('orderBtn').hidden = true;
   $('editModal').classList.add('on'); document.body.style.overflow='hidden';
   recalc(); $('editModal').querySelector('.modal').scrollTop = 0;
 }
@@ -1492,7 +1597,7 @@ function closeEdit(){
   EDIT_ROW = null;
   $('editModal').classList.remove('on'); document.body.style.overflow='';
   $('formHome').after($('formWrap'));
-  $('saveBtn').textContent='บันทึกเทรด'; $('clearBtn').hidden = false; $('cancelEditBtn').hidden = true;
+  $('saveBtn').textContent='บันทึกเทรด'; $('clearBtn').hidden = false; $('cancelEditBtn').hidden = true; $('orderBtn').hidden = !canTrade();
   if (DRAFT){ restoreForm(DRAFT); DRAFT = null; } else resetForm();
 }
 document.addEventListener('keydown', e=>{ if (e.key==='Escape' && $('editModal').classList.contains('on')) closeEdit(); });
@@ -3992,6 +4097,7 @@ function paintProfile(){
   const em = (SB_USER && SB_USER.email) || '';
   $('profAvatar').textContent = em ? em[0] : '?';
   $('profDot').hidden = !(isAdminRole() && ADMIN_PENDING>0); $('profDot').textContent = ADMIN_PENDING;
+  paintTradeUi();
 }
 async function refreshPendingCount(){
   try{ const us = await SBDB.rpc('admin_list_users'); ADMIN_PENDING = us.filter(u=>u.status==='pending').length; ADMIN_USERS = us; paintProfile(); }catch(e){}
@@ -4012,6 +4118,7 @@ function toggleProfMenu(force){
       + (isSuper() ? item('database','สถานะฐานข้อมูล','openDbUsage()') : '')
       + (VIEW_AS ? item('arrow-left','กลับไปพอร์ตของฉัน','exitViewAs()') : '')
       + (p && p.access==='owner' && !VIEW_AS ? item('share-2','แชร์พอร์ต "'+esc(p.name)+'"',`openShare()`) : '')
+      + (canTrade() ? item('wallet','บัญชีเทรด','openEx()') : '')
       + item('download','ดาวน์โหลดข้อมูล','openExport()')
       + item('circle-help','คู่มือการใช้งาน',"location.href='guide.html'")
       + '<div class="pmSep"></div>' + item('log-out','ออกจากระบบ','disconnect()');
@@ -4087,13 +4194,14 @@ function renderAdmin(){
       else if (u.status==='active') acts.push(`<button class="btn sm ghostDanger" onclick="setUserStatus('${u.id}','disabled')">ระงับ</button>`);
       else acts.push(`<button class="btn sm" onclick="setUserStatus('${u.id}','active')">เปิดใช้งาน</button>`);
     }
+    if (isSuper() && u.status==='active') acts.unshift(`<button class="btn sm tradeTg ${u.can_trade?'on':''}" title="สิทธิ์ส่งออเดอร์ไปตลาด (กดเพื่อ${u.can_trade?'ปิด':'เปิด'})" onclick="setUserTrade('${u.id}', ${!u.can_trade})">${ic('send',12)} ${u.can_trade?'ส่งออเดอร์: เปิด':'ส่งออเดอร์: ปิด'}</button>`);
     if (isSuper() && !self && !sup) acts.push(`<button class="btn sm icon ghostDanger" title="ลบบัญชีถาวร" aria-label="ลบบัญชีถาวร" onclick="openDelUser('${u.id}')">${ic('trash-2',14)}</button>`);
     if (isSuper() && !self && +u.ports>0) acts.unshift(`<button class="btn sm icon" title="ดูพอร์ต (อ่านอย่างเดียว)" onclick="viewUser('${u.id}','${esc(u.email)}')">${ic('eye',15)}</button>`);
     const role = (isSuper() && !self && !sup)
       ? `<select class="roleSel" onchange="setUserRole('${u.id}', this.value)" aria-label="บทบาท"><option value="user" ${u.role==='user'?'selected':''}>ผู้ใช้</option><option value="admin" ${u.role==='admin'?'selected':''}>Admin</option></select>`
       : `<span class="rolePill ${u.role}">${ROLE_TH[u.role]||u.role}</span>`;
     return `<div class="uRow ${u.status}">
-      <div class="uWho"><div class="uAv ${u.role}">${esc((u.email||'?')[0])}</div><div style="min-width:0"><div class="uEm" title="${esc(u.email)}">${esc(u.email)}${self?' <span class="me">(คุณ)</span>':''}</div><div class="uSub">สมัคร ${fmtDate(u.created_at)}${u.approved_at && u.status==='active' ? ' · อนุมัติ '+fmtDate(u.approved_at) : ''}</div></div></div>
+      <div class="uWho"><div class="uAv ${u.role}">${esc((u.email||'?')[0])}</div><div style="min-width:0"><div class="uEm" title="${esc(u.email)}">${esc(u.email)}${self?' <span class="me">(คุณ)</span>':''}${u.can_trade?`<span class="uTrade" title="ส่งออเดอร์ได้">${ic('send',9)} เทรดจริง</span>`:''}</div><div class="uSub">สมัคร ${fmtDate(u.created_at)}${u.approved_at && u.status==='active' ? ' · อนุมัติ '+fmtDate(u.approved_at) : ''}</div></div></div>
       <div class="uTags"><div class="uRole">${role}</div><div class="uStat"><span class="pill ${u.status}">${STATUS_TH[u.status]||u.status}</span></div></div>
       <div class="uData"><span class="mono">${u.ports}</span> พอร์ต · <span class="mono">${u.trades}</span> เทรด${u.last_trade ? `<div class="s">เทรดล่าสุด ${fmtDate(u.last_trade)}</div>` : ''}</div>
       <div class="uSeen" title="${u.last_seen_at ? new Date(u.last_seen_at).toLocaleString('th-TH') : ''}">${ago(u.last_seen_at)}</div>
@@ -4114,6 +4222,19 @@ async function setUserRole(id, role){
   catch(e){ $('adm_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; renderAdmin(); }
 }
 
+async function setUserTrade(id, allow){
+  const u = ADMIN_USERS.find(x=>x.id===id);
+  if (allow && !await askConfirm(`เปิดสิทธิ์ส่งออเดอร์ไปตลาดให้ ${u ? u.email : ''}? (ผู้ใช้จะเชื่อม API ของตัวเองและส่งคำสั่งด้วยบัญชีตัวเองได้)`)) return;
+  $('adm_msg').textContent = '';
+  try{
+    ADMIN_USERS = await apiRaw('setTrade', id, allow); renderAdmin();
+    if (SB_USER && id===SB_USER.id && SB_PROFILE){ SB_PROFILE.can_trade = allow; paintProfile(); }
+    toast((u ? u.email+' · ' : '')+(allow ? 'เปิดสิทธิ์ส่งออเดอร์แล้ว' : 'ปิดสิทธิ์ส่งออเดอร์แล้ว'));
+  }catch(e){
+    const m = e.message||String(e);
+    $('adm_msg').innerHTML = '<span class="neg">'+esc(/admin_set_trade|Could not find the function|schema cache/i.test(m) ? 'ยังไม่ได้อัปเดตฐานข้อมูล — รัน SQL ส่วน "สิทธิ์ส่งออเดอร์" ใน supabase/admin.sql' : m)+'</span>';
+  }
+}
 // ---------- สถานะฐานข้อมูล (Super Admin) ----------
 // โควตาแพ็กเกจฟรีของ Supabase (ต่อโปรเจกต์) · ปริมาณรับส่งข้อมูล (Egress) ต้องดูในหน้า Usage ของ Supabase
 const SB_FREE = {db: 500*1024*1024, storage: 1024*1024*1024, mau: 50000};
@@ -4153,6 +4274,213 @@ function renderDbUsage(u){
     + `<div class="dbNote">ขนาดฐานข้อมูลรวมข้อมูลระบบของ Supabase ด้วย (ประมาณ 10–20 MB แม้ยังไม่มีข้อมูล) · ปริมาณรับส่งข้อมูล (Egress 5 GB/เดือน) และผู้ใช้รายเดือนที่แม่นยำ ดูได้ที่ <a href="${SB_USAGE_URL}" target="_blank" rel="noopener">Supabase → Usage</a></div>`;
 }
 document.addEventListener('keydown', e=>{ if (e.key==='Escape' && $('dbBox').classList.contains('on')) closeDbUsage(); });
+
+// ============================================================
+// ส่งออเดอร์ไปตลาดด้วยบัญชีของผู้ใช้เอง (ผ่าน Edge Function "trade" · เก็บ Key แบบเข้ารหัส)
+// ============================================================
+const EX_NAME = {binance:'Binance Futures', mexc:'MEXC Futures', deriv:'Deriv'};
+// สิทธิ์ส่งออเดอร์: Super Admin เปิดให้รายบัญชี (profiles.can_trade) · ระบบหลังบ้านตรวจซ้ำอีกชั้น
+function canTrade(){ return !VIEW_AS && (DEMO || !!(SB_PROFILE && SB_PROFILE.status==='active' && SB_PROFILE.can_trade)); }
+function paintTradeUi(){
+  const on = canTrade();
+  if ($('orderBtn')) $('orderBtn').hidden = !on || EDIT_ROW!=null;
+  if ($('listTabs')){ $('listTabs').hidden = !on; if (!on && LIST_TAB==='orders') setListTab('journal'); }
+}
+// ---------- ประวัติ: บันทึกเทรด (เจอร์นัล) / คำสั่งที่ส่งไปตลาดจริง ----------
+let LIST_TAB = 'journal';
+function setListTab(t){
+  LIST_TAB = t;
+  document.querySelectorAll('#listTabs button').forEach(b=>b.classList.toggle('on', b.dataset.v===t));
+  $('journalPane').hidden = t!=='journal'; $('ordersPane').hidden = t!=='orders';
+  if (t==='orders') loadOrders();
+}
+document.querySelectorAll('#listTabs button').forEach(b=>b.addEventListener('click',()=>setListTab(b.dataset.v)));
+let DEMO_ORDERS = [];
+// ทุกคำสั่งที่ส่งจริงของบัญชีนี้ (ทุกพอร์ต · ดึงทีละ 1,000 จนครบ)
+async function loadOrders(){
+  const box = $('ordersList');
+  box.innerHTML = '<tr><td colspan="12" class="empty"><span class="spin sm"></span> กำลังโหลด…</td></tr>';
+  try{
+    let rows = [];
+    if (DEMO) rows = DEMO_ORDERS.slice();
+    else for (let a=0;;a+=1000){ const part = await sbq(sb.from('order_log').select('*').order('created_at', {ascending:false}).range(a, a+999)); rows = rows.concat(part); if (part.length < 1000) break; }
+    box.innerHTML = rows.length ? rows.map(orderRow).join('') : '<tr><td colspan="12" class="empty">ยังไม่มีคำสั่งที่ส่งไปตลาด</td></tr>';
+  }catch(e){ const m = e.message||String(e); box.innerHTML = '<tr><td colspan="12" class="empty neg">'+esc(/order_log|does not exist|schema cache/i.test(m) ? 'ยังไม่ได้ติดตั้งตารางประวัติคำสั่ง — รัน supabase/trading.sql' : m)+'</td></tr>'; }
+}
+function orderRow(o){
+  const r = o.response || {}, L = o.side==='BUY', px = v => num(v)!=null ? fN(v,2) : '–', leg = x => x==null ? '' : (x.ok ? ' <span class="pos">✓</span>' : ' <span class="neg">✗</span>');
+  const port = (PORTS.find(p=>String(p.id)===String(o.portfolio_id)) || {}).name || '–';
+  const t = new Date(o.created_at).toLocaleString('th-TH', {day:'numeric', month:'short', year:'2-digit', hour:'2-digit', minute:'2-digit'});
+  return `<tr class="${o.ok?'':'oFail'}"><td style="white-space:nowrap">${t}</td><td>${esc(port)}</td>`
+    + `<td style="white-space:nowrap">${EX_NAME[o.exchange]||esc(o.exchange)} <span class="envB ${o.testnet?'demo':'live'}">${o.testnet?'ทดลอง':'จริง'}</span></td>`
+    + `<td><span class="badge ${L?'Long':'Short'}">${L?'Long':'Short'}</span></td><td>${esc(o.order_type||'–')}</td>`
+    + `<td class="mono">${px(o.price ?? r.price)}</td><td class="mono">${o.qty!=null ? fN(o.qty,4) : '–'}</td><td class="mono">${o.leverage!=null ? fN(o.leverage,2)+'x' : '–'}</td>`
+    + `<td class="mono">${px(o.tp)}${o.ok?leg(r.tp):''}</td><td class="mono">${px(o.sl)}${o.ok?leg(r.sl):''}</td>`
+    + `<td>${o.ok ? '<span class="badge Win">ส่งแล้ว</span>' : '<span class="badge Loss">ไม่สำเร็จ</span>'}</td>`
+    + `<td class="oNote">${o.ok ? '#'+esc(r.orderId||'–')+(r.status?' · '+esc(r.status):'') : esc(o.message||'')}</td></tr>`;
+}
+const EX_REGION = 'ap-southeast-1';   // เรียก Edge Function จากสิงคโปร์ (Binance บล็อก IP สหรัฐฯ)
+let EX_KEYS = [], EX_SEL = {ex:'binance', demo:true};
+async function tradeFn(body){
+  if (DEMO) return demoTradeFn(body);
+  if (!sb) throw new Error('ยังไม่ได้เข้าสู่ระบบ');
+  const {data, error} = await sb.functions.invoke('trade', {body, region: EX_REGION});
+  if (error){
+    let m = error.message || String(error);
+    try{ const j = await error.context.json(); if (j && j.error) m = j.error; }catch(e){}
+    if (/Failed to send|not found|404/i.test(m)) m = 'ยังไม่ได้ติดตั้งระบบส่งออเดอร์ (Edge Function "trade") — ดูวิธีใน supabase/functions/trade/index.ts';
+    throw new Error(m);
+  }
+  if (!data || data.ok===false) throw new Error((data && data.error) || 'ไม่สำเร็จ');
+  return data;
+}
+// โหมดตัวอย่าง: จำลองการตอบกลับ
+let DEMO_KEYS = [];
+async function demoTradeFn(b){
+  await new Promise(r=>setTimeout(r,400));
+  if (b.action==='saveKey'){ const k = {id:'k'+Date.now(), exchange:b.exchange, testnet:b.exchange==='mexc'?false:!!b.testnet, key_hint:String(b.apiKey||b.token||'').slice(-4), created_at:new Date().toISOString()}; DEMO_KEYS = DEMO_KEYS.filter(x=>!(x.exchange===k.exchange && x.testnet===k.testnet)).concat(k); return {ok:true, testnet:k.testnet}; }
+  if (b.action==='balance') return {ok:true, info:{currency:'USDT', available:1000, balance:1000}};
+  if (b.action==='placeOrder'){ const result = {orderId:'DEMO-'+Date.now(), status:'NEW', qty:b.qty, price:b.price, tp:b.tp?{ok:true}:null, sl:b.sl?{ok:true}:null}; DEMO_ORDERS.unshift({created_at:new Date().toISOString(), portfolio_id:b.portfolioId, exchange:b.exchange, testnet:b.testnet, side:b.side, order_type:b.type, qty:b.qty, price:b.price, leverage:b.leverage, tp:b.tp, sl:b.sl, ok:true, response:result}); return {ok:true, result}; }
+  throw new Error('ไม่รู้จักคำสั่ง');
+}
+async function loadExKeys(){
+  if (DEMO){ EX_KEYS = DEMO_KEYS.slice(); return EX_KEYS; }
+  EX_KEYS = await sbq(sb.from('exchange_keys').select('id,exchange,testnet,key_hint,created_at').order('created_at'));
+  return EX_KEYS;
+}
+// ---------- หน้าบัญชีเทรด ----------
+async function openEx(){
+  if (!canTrade()) return toast('บัญชีนี้ยังไม่ได้รับสิทธิ์ส่งออเดอร์ — ติดต่อ Super Admin', true);
+  $('exBox').classList.add('on'); $('ex_msg').textContent = '';
+  $('ex_list').innerHTML = '<div class="admEmpty"><span class="spin sm"></span>กำลังโหลด…</div>';
+  exPaintForm();
+  try{ await loadExKeys(); exPaintList(); }
+  catch(e){ const m = e.message||String(e); $('ex_list').innerHTML = '<div class="admEmpty neg">'+esc(/exchange_keys|does not exist|schema cache/i.test(m) ? 'ยังไม่ได้ติดตั้งตารางบัญชีเทรด — รัน supabase/trading.sql ก่อน' : m)+'</div>'; }
+}
+function closeEx(){ $('exBox').classList.remove('on'); }
+function exPaintList(){
+  $('ex_list').innerHTML = EX_KEYS.length ? EX_KEYS.map(k=>`<div class="exRow"><div><div class="n">${EX_NAME[k.exchange]||k.exchange} <span class="envB ${k.testnet?'demo':'live'}">${k.testnet?'ทดลอง':'จริง'}</span></div><div class="k">Key ••••${esc(k.key_hint||'')}</div></div>
+      <div class="b" id="exb_${k.id}"><button class="btn sm" onclick="exBalance('${k.id}')">ดูยอดเงิน</button></div>
+      <button class="btn sm icon ghostDanger" title="ยกเลิกการเชื่อม" onclick="delExKey('${k.id}')">${ic('trash-2',14)}</button></div>`).join('')
+    : '<div class="glEmpty" style="padding:4px 2px 2px">ยังไม่ได้เชื่อมบัญชีตลาด</div>';
+}
+function exPaintForm(){
+  const ex = EX_SEL.ex;
+  document.querySelectorAll('#ex_exSeg button').forEach(b=>b.classList.toggle('on', b.dataset.v===ex));
+  $('ex_modeSeg').hidden = ex!=='binance';   // MEXC = จริงเท่านั้น · Deriv = ตามประเภทบัญชีของ Token
+  document.querySelectorAll('#ex_modeSeg button').forEach(b=>b.classList.toggle('on', (b.dataset.v==='1')===EX_SEL.demo));
+  const f = (id, l, ph) => `<div class="field"><label>${l}</label><input id="${id}" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${ph}"></div>`;
+  $('ex_fields').innerHTML = ex==='deriv' ? f('ex_token','API Token','วาง Token ของ Deriv') : f('ex_key','API Key','วาง API Key') + f('ex_secret','API Secret','วาง API Secret');
+  $('ex_help').innerHTML = {
+    binance: EX_SEL.demo
+      ? '<b>ทดลอง (เงินปลอม):</b> สมัครที่ <a href="https://testnet.binancefuture.com" target="_blank" rel="noopener">testnet.binancefuture.com</a> → เมนู API Key → สร้าง Key แล้ววางด้านบน'
+      : '<b>บัญชีจริง:</b> Binance → จัดการ API → สร้าง Key → เปิด <b>Enable Futures</b> เท่านั้น · <b>ห้ามเปิดสิทธิ์ถอนเงิน</b>',
+    mexc: '<b>MEXC (เงินจริงเท่านั้น):</b> MEXC → API Management → สร้าง Key ที่เปิดสิทธิ์ <b>Futures Trade</b> · ห้ามเปิดสิทธิ์ถอนเงิน · <span class="neg">MEXC จำกัดการเปิดออเดอร์ Futures ผ่าน API สำหรับบัญชีทั่วไป อาจส่งคำสั่งไม่ได้</span>',
+    deriv: '<b>Deriv:</b> app.deriv.com → Settings → API token → สร้าง Token ที่เลือก <b>Read</b> + <b>Trade</b> เท่านั้น · ใช้ Token ของบัญชี <b>Demo</b> เพื่อทดลอง (ระบบรู้จากบัญชีเอง) · เทรด BTC แบบ Multiplier (Market เท่านั้น)',
+  }[ex] + '<br>' + ic('shield',12) + ' Key ถูกเข้ารหัสที่เซิร์ฟเวอร์ · หน้าเว็บจะไม่แสดง Secret อีก';
+}
+document.querySelectorAll('#ex_exSeg button').forEach(b=>b.addEventListener('click',()=>{ if (b.disabled) return; EX_SEL.ex = b.dataset.v; exPaintForm(); }));
+document.querySelectorAll('#ex_modeSeg button').forEach(b=>b.addEventListener('click',()=>{ EX_SEL.demo = b.dataset.v==='1'; exPaintForm(); }));
+async function saveExKey(){
+  const ex = EX_SEL.ex, body = {action:'saveKey', exchange:ex, testnet:EX_SEL.demo};
+  if (ex==='deriv') body.token = ($('ex_token').value||'').trim(); else { body.apiKey = ($('ex_key').value||'').trim(); body.apiSecret = ($('ex_secret').value||'').trim(); }
+  if (ex==='deriv' ? !body.token : (!body.apiKey || !body.apiSecret)) return $('ex_msg').innerHTML = '<span class="neg">กรอกข้อมูลให้ครบ</span>';
+  const b = $('ex_btn'); btnBusy(b, true, 'กำลังตรวจสอบกับตลาด…'); $('ex_msg').textContent = '';
+  try{
+    const r = await tradeFn(body);
+    btnBusy(b, false); exPaintForm(); await loadExKeys(); exPaintList();
+    $('ex_msg').innerHTML = '<span class="pos">เชื่อม '+EX_NAME[ex]+' ('+(r.testnet?'ทดลอง':'จริง')+') แล้ว</span>';
+  }catch(e){ btnBusy(b, false); $('ex_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
+}
+async function exBalance(id){
+  const k = EX_KEYS.find(x=>x.id===id), el = $('exb_'+id); if (!k || !el) return;
+  el.innerHTML = '<span class="spin sm"></span>';
+  try{ const r = await tradeFn({action:'balance', exchange:k.exchange, testnet:k.testnet}); el.textContent = 'ใช้ได้ '+fN(r.info.available)+' '+(r.info.currency||''); }
+  catch(e){ el.innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
+}
+async function delExKey(id){
+  const k = EX_KEYS.find(x=>x.id===id); if (!k) return;
+  if (!await askConfirm(`ยกเลิกการเชื่อม ${EX_NAME[k.exchange]} (${k.testnet?'ทดลอง':'จริง'})? · Key จะถูกลบจากระบบ`)) return;
+  try{ if (DEMO) DEMO_KEYS = DEMO_KEYS.filter(x=>x.id!==id); else await sbq(sb.from('exchange_keys').delete().eq('id', id)); await loadExKeys(); exPaintList(); toast('ยกเลิกการเชื่อมแล้ว'); }
+  catch(e){ toast('ลบไม่ได้: '+(e.message||e), true); }
+}
+// ---------- หน้าต่างส่งออเดอร์ (ค่าเริ่มต้นจากฟอร์มบันทึกเทรด) ----------
+const OT = {side:'BUY', type:'MARKET'};
+function otRefPrice(){ return CH_BARS.length ? CH_BARS[CH_BARS.length-1].close : null; }
+async function openOrder(){
+  if (roBlock()) return;
+  if (!canTrade()) return toast('บัญชีนี้ยังไม่ได้รับสิทธิ์ส่งออเดอร์ — ติดต่อ Super Admin', true);
+  if (!seg.pos) return toast('เลือก Position (Long / Short) ในฟอร์มก่อน', true);
+  const d = readForm(), c = compute(Object.assign({}, d)), man = seg.mode==='Manual';
+  const entry = man ? num(d.open) : (num(c.retest)!=null ? c.retest : num(c.avg));
+  OT.side = seg.pos==='Long' ? 'BUY' : 'SELL'; OT.type = entry!=null ? 'LIMIT' : 'MARKET';
+  $('ot_price').value = entry!=null ? +(+entry).toFixed(2) : '';
+  $('ot_margin').value = num($('f_capital').value) ?? '';
+  const lv = man ? c.mLev : c.aLev; $('ot_lev').value = lv ? +(+lv).toFixed(2) : '';
+  const tp = man ? c.mTp : c.tp, sl = man ? c.mSl : c.sl;
+  $('ot_tp').value = tp!=null ? +(+tp).toFixed(2) : ''; $('ot_sl').value = sl!=null ? +(+sl).toFixed(2) : '';
+  $('ot_qty').value = ''; $('ot_live').checked = false; $('ot_msg').textContent = ''; $('ot_btn').disabled = false;
+  $('ot_acc').innerHTML = '<option>กำลังโหลด…</option>';
+  $('otBox').classList.add('on'); otPaint();
+  try{
+    await loadExKeys();
+    $('ot_acc').innerHTML = EX_KEYS.length ? EX_KEYS.map(k=>`<option value="${k.id}">${EX_NAME[k.exchange]} · ${k.testnet?'ทดลอง':'จริง'} · ••••${esc(k.key_hint||'')}</option>`).join('') : '<option value="">ยังไม่ได้เชื่อมบัญชี</option>';
+    const demoFirst = EX_KEYS.find(k=>k.testnet); if (demoFirst) $('ot_acc').value = demoFirst.id;   // เริ่มที่บัญชีทดลองก่อนเสมอ
+  }catch(e){ $('ot_acc').innerHTML = '<option value="">โหลดบัญชีไม่ได้</option>'; $('ot_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
+  otCalcQty(); otPaint();
+}
+function closeOrder(){ $('otBox').classList.remove('on'); }
+function otAcc(){ return EX_KEYS.find(k=>k.id===$('ot_acc').value) || null; }
+function otPx(){ return OT.type==='LIMIT' ? num($('ot_price').value) : otRefPrice(); }
+function otCalcQty(){ const m = num($('ot_margin').value), l = num($('ot_lev').value), px = otPx(); $('ot_qty').value = (m>0 && l>0 && px>0) ? +(m*l/px).toFixed(4) : ''; }
+function otPaint(){
+  const k = otAcc(), deriv = k && k.exchange==='deriv';
+  if (deriv) OT.type = 'MARKET';
+  document.querySelectorAll('#ot_side button').forEach(b=>b.classList.toggle('on', b.dataset.v===OT.side));
+  document.querySelectorAll('#ot_type button').forEach(b=>{ b.classList.toggle('on', b.dataset.v===OT.type); b.disabled = deriv && b.dataset.v==='LIMIT'; });
+  $('ot_priceWrap').style.visibility = OT.type==='LIMIT' ? '' : 'hidden';
+  $('ot_qtyWrap').style.visibility = deriv ? 'hidden' : '';
+  $('ot_marginL').textContent = deriv ? 'Stake (เงินเดิมพัน)' : 'มาร์จิ้น (USDT)';
+  const env = $('ot_env');
+  if (!k){ env.className = 'otEnv demo'; env.innerHTML = 'ยังไม่ได้เชื่อมบัญชีตลาด · <a onclick="closeOrder();openEx()" style="cursor:pointer;color:var(--accent)">เชื่อมบัญชี</a>'; }
+  else if (k.testnet){ env.className = 'otEnv demo'; env.innerHTML = ic('shield',13)+' บัญชี<b>ทดลอง</b> — เงินปลอม ไม่มีผลกับเงินจริง'; }
+  else { env.className = 'otEnv live'; env.innerHTML = ic('triangle-alert',13)+' บัญชี<b>จริง</b> — คำสั่งนี้ใช้เงินจริงของคุณ'; }
+  $('ot_liveWrap').hidden = !k || k.testnet;
+  const px = otPx(), m = num($('ot_margin').value), l = num($('ot_lev').value), q = deriv ? (m>0&&l>0&&px ? m*l/px : null) : num($('ot_qty').value);
+  const tp = num($('ot_tp').value), sl = num($('ot_sl').value), dir = OT.side==='BUY' ? 1 : -1;
+  const pnl = t => (q && px && t!=null) ? dir*(t-px)*q : null;
+  $('ot_sum').innerHTML = `ราคาอ้างอิง <b>${px?fN(px,2):'–'}</b>${OT.type==='MARKET'?' (ราคาล่าสุดบนกราฟ)':''}<br>`
+    + `มูลค่าสัญญา <b>${q&&px?'$'+fN(q*px,2):'–'}</b>${q&&!deriv?` · ${fN(q,4)} BTC`:''}<br>`
+    + `ถ้าชน TP ≈ <b class="pos">${pnl(tp)!=null?money(pnl(tp)):'–'}</b> · ถ้าชน SL ≈ <b class="neg">${pnl(sl)!=null?money(pnl(sl)):'–'}</b>`
+    + (deriv ? '<br><span style="color:var(--muted)">Deriv: TP/SL ส่งเป็นจำนวนเงินตามค่าข้างบน · Leverage ปัดเป็น Multiplier ที่ตลาดรองรับ</span>' : '');
+  $('ot_btn').disabled = !k || (!k.testnet && !$('ot_live').checked);
+  $('ot_btn').textContent = k && !k.testnet ? 'ส่งคำสั่ง (เงินจริง)' : 'ส่งคำสั่ง';
+}
+document.querySelectorAll('#ot_side button').forEach(b=>b.addEventListener('click',()=>{ OT.side = b.dataset.v; otPaint(); }));
+document.querySelectorAll('#ot_type button').forEach(b=>b.addEventListener('click',()=>{ if (b.disabled) return; OT.type = b.dataset.v; otCalcQty(); otPaint(); }));
+['ot_price','ot_margin','ot_lev'].forEach(id=>$(id).addEventListener('input', ()=>{ otCalcQty(); otPaint(); }));
+['ot_qty','ot_tp','ot_sl'].forEach(id=>$(id).addEventListener('input', otPaint));
+async function sendOrder(){
+  const k = otAcc(); if (!k) return;
+  if (!k.testnet && !$('ot_live').checked) return;
+  const body = {action:'placeOrder', exchange:k.exchange, testnet:k.testnet, side:OT.side, type:OT.type,
+    price: OT.type==='LIMIT' ? num($('ot_price').value) : null, qty: num($('ot_qty').value), margin: num($('ot_margin').value),
+    leverage: num($('ot_lev').value), tp: num($('ot_tp').value), sl: num($('ot_sl').value), refPrice: otPx(), portfolioId: PORT};
+  if (!(body.leverage>=1)) return $('ot_msg').innerHTML = '<span class="neg">ใส่ Leverage อย่างน้อย 1</span>';
+  if (k.exchange!=='deriv' && !(body.qty>0)) return $('ot_msg').innerHTML = '<span class="neg">ใส่จำนวน BTC</span>';
+  const b = $('ot_btn'); btnBusy(b, true, 'กำลังส่งคำสั่ง…'); $('ot_msg').textContent = '';
+  try{
+    const r = (await tradeFn(body)).result || {};
+    btnBusy(b, false);
+    const part = x => x==null ? '' : (x.ok ? '✓' : '✗ '+(x.error||''));
+    const warn = (r.tp && !r.tp.ok) || (r.sl && !r.sl.ok);
+    $('ot_msg').innerHTML = `<span class="${warn?'neg':'pos'}">ส่งคำสั่งแล้ว · #${esc(r.orderId)}${r.status?' · '+esc(r.status):''}${r.tp?' · TP '+esc(part(r.tp)):''}${r.sl?' · SL '+esc(part(r.sl)):''}${r.multiplier?' · Multiplier x'+r.multiplier:''}</span>`
+      + (warn ? '<br><span class="neg">ตั้ง TP/SL บางรายการไม่สำเร็จ — ตรวจสอบและตั้งเองในแอปตลาด</span>' : '');
+    toast('ส่งคำสั่งไป '+EX_NAME[k.exchange]+(k.testnet?' (ทดลอง)':'')+' แล้ว');
+    b.disabled = true;   // กันกดซ้ำ
+    if ($('ot_journal').checked){ setTimeout(()=>{ closeOrder(); save(); }, 900); }
+  }catch(e){ btnBusy(b, false); $('ot_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
+}
 
 // ---------- ลบบัญชีถาวร (Super Admin) ----------
 let DEL_USER = null;

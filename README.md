@@ -43,6 +43,23 @@ cloudflare/mexc-worker.js        ← ตัวกลางดึงราคา 
 3. กด **Edit code** → ลบโค้ดเดิม → วางโค้ดจาก `cloudflare/mexc-worker.js` → **Deploy**
 4. คัดลอก URL ของ Worker (เช่น `https://mexc-proxy.xxxx.workers.dev`) ใส่ใน `index.html` ที่ `const MEXC_WORKER`
 
+## 4. ส่งออเดอร์จากหน้าบันทึกเทรด (ไม่บังคับ)
+
+ผู้ใช้เชื่อมบัญชีตลาดของตัวเองที่เมนูโปรไฟล์ → **บัญชีเทรด** แล้วกด **ส่งออเดอร์** ในหน้าบันทึกเทรด
+
+| ตลาด | สถานะ |
+|---|---|
+| Binance USDⓈ-M Futures | รองรับ (มี Testnet เงินปลอม) |
+| MEXC Futures | รองรับ — แต่ MEXC จำกัด API เปิดออเดอร์ Futures สำหรับบัญชีทั่วไป |
+| Deriv | ยังไม่เปิด — รอ API ของ Deriv Crypto Exchange Futures |
+
+ติดตั้ง:
+1. รัน `supabase/trading.sql` ใน SQL Editor
+2. **Edge Functions → Secrets** → เพิ่ม `TJ_ENC_KEY` = ค่าสุ่ม 32 ไบต์แบบ base64 (สร้างเองด้วย `openssl rand -base64 32` · ห้ามเปลี่ยนภายหลัง ไม่งั้น Key ที่บันทึกไว้จะถอดรหัสไม่ได้)
+3. **Edge Functions → Deploy a new function** → ชื่อ `trade` → วางโค้ดจาก `supabase/functions/trade/index.ts` → ปิด **Verify JWT** (ฟังก์ชันตรวจผู้ใช้เอง)
+
+API Key ของผู้ใช้ถูกเข้ารหัสที่เซิร์ฟเวอร์ · หน้าเว็บอ่าน Secret ไม่ได้ · ให้ผู้ใช้สร้าง Key แบบ **เทรดได้อย่างเดียว ห้ามเปิดสิทธิ์ถอนเงิน**
+
 ## หมายเหตุ
 
 - **ห้ามใส่ service_role key ในหน้าเว็บหรือ repo** · ใช้ได้เฉพาะ publishable key (ข้อมูลป้องกันด้วย Row Level Security)

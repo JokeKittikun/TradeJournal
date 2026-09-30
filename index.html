@@ -143,6 +143,7 @@ body.syncing #syncBtn .ic{animation:spin 1s linear infinite}
 .uSeen{font-size:12px;color:var(--muted);white-space:nowrap}
 .uActs{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 .uActs .btn{white-space:nowrap}
+#du_btn:disabled{opacity:.4;cursor:not-allowed}
 .btn.ghostDanger{background:none;color:var(--red);border-color:rgba(239,68,68,.35)}
 .btn.ghostDanger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
 .admEmpty{padding:36px 20px;text-align:center;color:var(--muted);font-size:13px}
@@ -773,6 +774,14 @@ body.chFs #confirmBox{z-index:55}
   <div id="confirmTxt" style="margin-bottom:16px"></div>
   <div class="actions"><button class="btn" onclick="closeConfirm(false)">ยกเลิก</button><button class="btn primary" style="background:var(--red);border-color:var(--red);color:#fff" onclick="closeConfirm(true)">ลบ</button></div>
 </div></div>
+<!-- ลบบัญชีถาวร (Super Admin) : ต้องพิมพ์อีเมลให้ตรงก่อน -->
+<div class="overlay" id="delUserBox"><div class="modal" style="max-width:420px">
+  <h3 style="margin:0 0 10px;display:flex;align-items:center;gap:8px;color:var(--red)"><i data-ic="trash-2" data-sz="18"></i> ลบบัญชีถาวร</h3>
+  <div id="du_txt" style="font-size:13.5px;line-height:1.7"></div>
+  <div class="field" style="margin-top:12px"><label>พิมพ์อีเมลของบัญชีนี้เพื่อยืนยัน</label><input id="du_email" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+  <div class="hint" id="du_msg" style="min-height:18px"></div>
+  <div class="actions"><button class="btn" onclick="closeDelUser()">ยกเลิก</button><button class="btn primary" id="du_btn" disabled style="background:var(--red);border-color:var(--red);color:#fff" onclick="deleteUserNow()">ลบถาวร</button></div>
+</div></div>
 
 <script>
 /* ================= ไอคอน Lucide (lucide.dev · ISC) ฝังในไฟล์ ไม่ต้องโหลดไลบรารี ================= */
@@ -830,7 +839,7 @@ let PORTS = [];         // [{id,name,capital,balance,trades,closed,wins,losses}]
 const PORT_FNS = ['getTrades','addTrade','updateTrade','deleteTrade','setCapital','saveDrawings'];
 const PORT_POS = {getTrades:0, addTrade:1, updateTrade:2, deleteTrade:1, setCapital:1, saveDrawings:1};   // ตำแหน่ง argument ของพอร์ตในแต่ละคำสั่ง
 const esc = v => String(v==null?'':v).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function setPort(id){ PORT = id==null ? null : String(id); try{ PORT==null ? localStorage.removeItem('tjPort') : localStorage.setItem('tjPort', PORT); }catch(e){} paintPort(); }
+function setPort(id){ PORT = id==null ? null : String(id); if (!VIEW_AS) try{ PORT==null ? localStorage.removeItem('tjPort') : localStorage.setItem('tjPort', PORT); }catch(e){} paintPort(); }   // ดูพอร์ตคนอื่น (Super Admin) ไม่ทับพอร์ตที่เลือกไว้ของตัวเอง
 function curPort(){ return PORTS.find(p=>String(p.id)===PORT) || null; }
 // เมนูสลับพอร์ตแบบเร็วที่หัวเว็บ (อยู่หน้าเดิม แค่เปลี่ยนพอร์ต)
 function togglePortMenu(force){
@@ -1020,6 +1029,7 @@ async function sbCall(fn, a){
     case 'adminUsers': return SBDB.rpc('admin_list_users');
     case 'setStatus':  await SBDB.rpc('admin_set_status', {target:a[0], new_status:a[1]}); return SBDB.rpc('admin_list_users');
     case 'setRole':    await SBDB.rpc('admin_set_role', {target:a[0], new_role:a[1]}); return SBDB.rpc('admin_list_users');
+    case 'deleteUser': await SBDB.rpc('admin_delete_user', {target:a[0]}); return SBDB.rpc('admin_list_users');
     case 'saveDrawings': await SBDB.saveDraw(a[1] || PORT, Array.isArray(a[0]) ? a[0] : []); return {ok:true};
   }
   throw new Error('ไม่รู้จักคำสั่ง '+fn);
@@ -1788,6 +1798,12 @@ async function mexcKlines(iv, from, to){
   }
   return cache.filter(k=>k[0]>=from && k[0]<=to);
 }
+// ปิด WebSocket อย่างนุ่มนวล: ถ้ายังเชื่อมต่อไม่เสร็จ รอให้ต่อติดก่อนแล้วค่อยปิด (กัน error "closed before the connection is established" ตอนสลับ TF เร็ว ๆ)
+function wsClose(ws){
+  if (!ws) return;
+  clearInterval(ws._ping); ws.onmessage = null; ws.onerror = null;
+  try{ if (ws.readyState===0) ws.onopen = ()=>{ try{ ws.close(); }catch(e){} }; else if (ws.readyState===1) ws.close(); }catch(e){}
+}
 // WebSocket แท่งเทียนแบบ realtime (Binance หรือ MEXC) → onBar({t(ms),o,h,l,c,i})
 function openKlineWS(src, iv, onBar){
   let ws;
@@ -1843,7 +1859,7 @@ function rangeLiveStart(){
   if (!rlTick) rlTick = setInterval(()=>{ paintToday(); rangeLiveCheck(); }, 1000);
 }
 function rangeLiveStop(keepTick){
-  RWS_KEY=''; if (RWS){ RWS.onclose=null; clearInterval(RWS._ping); try{ RWS.close(); }catch(e){} RWS=null; }
+  RWS_KEY=''; if (RWS){ RWS.onclose=null; wsClose(RWS); RWS=null; }
   if (!keepTick){ clearInterval(rlTick); rlTick=null; }
 }
 function paintToday(){
@@ -2601,7 +2617,7 @@ function liveConnect(iv){
   WS.onerror = ()=>{ try{ WS.close(); }catch(e){} };
   WS.onclose = ()=>{ setLive(false); if (WS_KEY){ clearTimeout(wsRetry); wsRetry=setTimeout(()=>{ WS=null; const k=WS_KEY; WS_KEY=''; liveConnect(k.split(':')[1]); }, 3000); } };
 }
-function liveClose(){ WS_KEY=''; clearTimeout(wsRetry); if (WS){ WS.onclose=null; clearInterval(WS._ping); try{ WS.close(); }catch(e){} WS=null; } setLive(false); }
+function liveClose(){ WS_KEY=''; clearTimeout(wsRetry); if (WS){ WS.onclose=null; wsClose(WS); WS=null; } setLive(false); }
 function onLiveBar(b){
   if (!CS || !chIsLive()) return;   // กำลังดูย้อนหลัง → ไม่เอาแท่งสดมาต่อ
   const last = CH_BARS[CH_BARS.length-1];
@@ -3288,7 +3304,7 @@ function clearOverlay(){
   if (OV.series && LWC){ try{ LWC.removeSeries(OV.series); }catch(e){} }
   const old = OV.ws;
   OV = {series:null, ws:null, bars:[], src:'', key:'', req:OV.req+1};   // key ว่าง = ยกเลิกการต่อใหม่อัตโนมัติของชุดเดิม
-  if (old){ try{ old.close(); }catch(e){} }
+  if (old) wsClose(old);
   $('chSpread').textContent=''; $('lgCmp').style.display='none';
 }
 async function loadOverlay(){
@@ -3298,7 +3314,7 @@ async function loadOverlay(){
   if (!LWC || !CH_BARS.length){ clearOverlay(); return; }
   const src = otherSrc(), iv = CH_IV, step = INT_MS[iv], key = src+':'+iv, req = ++OV.req;
   if (!(OV.ws && OV.key===key && OV.ws.readyState<=1)){
-    if (OV.ws){ try{ OV.ws.close(); }catch(e){} }
+    if (OV.ws) wsClose(OV.ws);
     OV.ws = null; OV.bars = []; OV.src = ''; OV.key = key;
     const onBar = b=>{
       if (OV.key!==key || b.i!==iv) return;
@@ -3792,7 +3808,7 @@ async function viewUser(id, email){
   setLoading(false); paintRO();
 }
 async function exitViewAs(){
-  VIEW_AS = null; PORT = VIEW_PREV; VIEW_PREV = null; PORTS = []; DATA = {trades:[], capital:null};
+  VIEW_AS = null; setPort(VIEW_PREV); VIEW_PREV = null; PORTS = []; DATA = {trades:[], capital:null};
   setLoading(true, 'กำลังโหลดพอร์ตของคุณ…');
   try{ await bootFetch(true); showView('home'); }catch(e){ toast('โหลดไม่ได้: '+(e.message||e), true); }
   setLoading(false); paintRO();
@@ -3833,6 +3849,7 @@ function renderAdmin(){
       else if (u.status==='active') acts.push(`<button class="btn sm ghostDanger" onclick="setUserStatus('${u.id}','disabled')">ระงับ</button>`);
       else acts.push(`<button class="btn sm" onclick="setUserStatus('${u.id}','active')">เปิดใช้งาน</button>`);
     }
+    if (isSuper() && !self && !sup) acts.push(`<button class="btn sm icon ghostDanger" title="ลบบัญชีถาวร" aria-label="ลบบัญชีถาวร" onclick="openDelUser('${u.id}')">${ic('trash-2',14)}</button>`);
     if (isSuper() && !self && +u.ports>0) acts.unshift(`<button class="btn sm icon" title="ดูพอร์ต (อ่านอย่างเดียว)" onclick="viewUser('${u.id}','${esc(u.email)}')">${ic('eye',15)}</button>`);
     const role = (isSuper() && !self && !sup)
       ? `<select class="roleSel" onchange="setUserRole('${u.id}', this.value)" aria-label="บทบาท"><option value="user" ${u.role==='user'?'selected':''}>ผู้ใช้</option><option value="admin" ${u.role==='admin'?'selected':''}>Admin</option></select>`
@@ -3857,6 +3874,33 @@ async function setUserRole(id, role){
   $('adm_msg').textContent = '';
   try{ ADMIN_USERS = await apiRaw('setRole', id, role); renderAdmin(); toast('เปลี่ยนบทบาทเป็น '+(ROLE_TH[role]||role)+' แล้ว'); }
   catch(e){ $('adm_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; renderAdmin(); }
+}
+
+// ---------- ลบบัญชีถาวร (Super Admin) ----------
+let DEL_USER = null;
+function openDelUser(id){
+  const u = ADMIN_USERS.find(x=>x.id===id); if (!u || !isSuper()) return;
+  DEL_USER = u;
+  $('du_txt').innerHTML = `ลบบัญชี <b>${esc(u.email)}</b> ออกจากระบบถาวร พร้อมข้อมูลทั้งหมดของบัญชีนี้:<br>`
+    + `<span class="neg">• ${+u.ports||0} พอร์ต · ${+u.trades||0} เทรด · เส้นที่วาด · การแชร์พอร์ต</span><br>`
+    + `<span style="color:var(--muted)">กู้คืนไม่ได้ · เจ้าของบัญชีต้องสมัครใหม่ถ้าจะใช้งานอีก (ถ้าแค่ไม่ให้เข้าใช้ ให้กด “ระงับ” แทน)</span>`;
+  $('du_email').value = ''; $('du_email').placeholder = u.email; $('du_msg').textContent = ''; $('du_btn').disabled = true;
+  $('delUserBox').classList.add('on'); setTimeout(()=>$('du_email').focus(), 50);
+}
+function closeDelUser(){ $('delUserBox').classList.remove('on'); DEL_USER = null; }
+$('du_email').addEventListener('input', ()=>{ $('du_btn').disabled = !DEL_USER || $('du_email').value.trim().toLowerCase() !== String(DEL_USER.email||'').toLowerCase(); });
+$('du_email').addEventListener('keydown', e=>{ if (e.key==='Enter' && !$('du_btn').disabled) deleteUserNow(); if (e.key==='Escape') closeDelUser(); });
+async function deleteUserNow(){
+  const u = DEL_USER; if (!u) return;
+  const b = $('du_btn'); btnBusy(b, true, 'กำลังลบ…'); $('du_msg').textContent = '';
+  try{
+    ADMIN_USERS = await apiRaw('deleteUser', u.id);
+    btnBusy(b, false); closeDelUser(); renderAdmin(); toast('ลบบัญชี '+u.email+' แล้ว');
+  }catch(e){
+    btnBusy(b, false);
+    const m = e.message||String(e);
+    $('du_msg').innerHTML = '<span class="neg">'+esc(/admin_delete_user|Could not find the function|schema cache/i.test(m) ? 'ยังไม่ได้เพิ่มฟังก์ชันลบบัญชีในฐานข้อมูล — รัน SQL ในไฟล์ supabase/admin.sql ก่อน' : m)+'</span>';
+  }
 }
 
 // ---------- แชร์พอร์ต (เจ้าของพอร์ต) ----------

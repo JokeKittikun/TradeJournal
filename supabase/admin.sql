@@ -224,6 +224,21 @@ language sql stable security definer set search_path = public as $$
    where s.user_id = auth.uid() and public.is_active()
 $$;
 
+-- ลบบัญชีถาวร (Super Admin เท่านั้น) · ลบผู้ใช้จากระบบล็อกอิน → พอร์ต / เทรด / เส้นที่วาด / การแชร์ ถูกลบตามอัตโนมัติ (on delete cascade)
+create or replace function public.admin_delete_user(target uuid) returns void
+language plpgsql security definer set search_path = public, auth as $$
+declare t public.profiles;
+begin
+  if not public.is_super() then raise exception 'เฉพาะ Super Admin ลบบัญชีได้'; end if;
+  if target = auth.uid() then raise exception 'ลบบัญชีของตัวเองไม่ได้'; end if;
+  select * into t from public.profiles where id = target;
+  if found and t.role = 'super_admin' then raise exception 'ลบบัญชี Super Admin ไม่ได้'; end if;
+  delete from auth.users where id = target;
+  if not found then raise exception 'ไม่พบผู้ใช้ (อาจถูกลบไปแล้ว)'; end if;
+end $$;
+revoke execute on function public.admin_delete_user(uuid) from anon, public;
+grant execute on function public.admin_delete_user(uuid) to authenticated;
+
 revoke execute on function public.touch_me(), public.admin_list_users(), public.admin_set_status(uuid,text),
   public.admin_set_role(uuid,text), public.share_portfolio(uuid,text,text), public.unshare_portfolio(uuid,uuid),
   public.portfolio_share_list(uuid), public.my_shared_ports() from anon, public;

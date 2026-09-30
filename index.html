@@ -76,7 +76,7 @@ a.btn{text-decoration:none;display:inline-block}
 .kpi{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:8px 11px}
 .kpi .l{color:var(--muted);font-size:11px}
 .kpi .v{font-size:17px;font-weight:600;margin-top:1px}
-/* เมนูด้านล่าง (หน้าแรก / บันทึกไม้ / ประวัติการเทรด / สรุปผล) */
+/* เมนูด้านล่าง (หน้าแรก / บันทึกเทรด / ประวัติการเทรด / สรุปผล) */
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:25;display:flex;justify-content:center;background:rgba(13,17,23,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:0 8px env(safe-area-inset-bottom)}
 .tab{flex:1;max-width:220px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 6px 4px;border:0;background:none;color:var(--muted);font:inherit;font-size:10.5px;font-weight:500;cursor:pointer;position:relative;white-space:nowrap;min-width:0}
 .tab .ic{width:17px;height:17px}
@@ -423,7 +423,7 @@ body.chFs #confirmBox{z-index:55}
       <div class="kpi"><div class="l">Balance</div><div class="v mono" id="kBal">–</div></div>
       <div class="kpi"><div class="l">ผลตอบแทนรวม</div><div class="v mono" id="kRet">–</div></div>
       <div class="kpi"><div class="l">Win rate</div><div class="v mono" id="kWin">–</div></div>
-      <div class="kpi"><div class="l">ไม้ที่ปิดแล้ว</div><div class="v mono" id="kCnt">–</div></div>
+      <div class="kpi"><div class="l">เทรดที่ปิดแล้ว</div><div class="v mono" id="kCnt">–</div></div>
     </div>
   </div>
 </header>
@@ -439,7 +439,7 @@ body.chFs #confirmBox{z-index:55}
       <div class="hint" id="portNote" style="margin:8px 0 0"></div>
     </div>
     <div id="portDash" hidden>
-    <button class="btn primary homeNew" onclick="showView('form')"><i data-ic="circle-plus" data-sz="16"></i>บันทึกไม้ใหม่&nbsp;·&nbsp;<span id="dashPort"></span></button>
+    <button class="btn primary homeNew" onclick="showView('form')"><i data-ic="circle-plus" data-sz="16"></i>บันทึกเทรดใหม่&nbsp;·&nbsp;<span id="dashPort"></span></button>
     <div class="card homeCard">
       <h3>เดือนนี้ <span class="hint" id="hMonth" style="margin:0;font-weight:400"></span></h3>
       <div class="hStats" id="hStats"></div>
@@ -449,7 +449,7 @@ body.chFs #confirmBox{z-index:55}
       <div style="height:170px"><canvas id="hEq"></canvas></div>
     </div>
     <div class="card homeCard">
-      <h3 style="display:flex;align-items:center">ไม้ล่าสุด<span class="spacer" style="flex:1"></span><a class="hMore" onclick="showView('list')">ดูทั้งหมด</a></h3>
+      <h3 style="display:flex;align-items:center">เทรดล่าสุด<span class="spacer" style="flex:1"></span><a class="hMore" onclick="showView('list')">ดูทั้งหมด</a></h3>
       <div id="hRecent"></div>
     </div>
     </div>
@@ -465,7 +465,7 @@ body.chFs #confirmBox{z-index:55}
         <input type="hidden" id="chInt" value="15m">
 
         <label hidden style="display:none"><input type="checkbox" id="chCmp" onchange="loadOverlay()" style="width:auto">เทียบอีก Broker</label>
-        <label hidden style="display:none;align-items:center;gap:6px;margin:0;font-size:12px;color:var(--text);width:auto"><input type="checkbox" id="chSaved" onchange="drawSaved()" style="width:auto">ไม้ที่บันทึกแล้ว</label>
+        <label hidden style="display:none;align-items:center;gap:6px;margin:0;font-size:12px;color:var(--text);width:auto"><input type="checkbox" id="chSaved" onchange="drawSaved()" style="width:auto">เทรดที่บันทึกแล้ว</label>
         <label hidden style="display:none;align-items:center;gap:6px;margin:0;width:auto;font-size:12px;color:var(--muted)">ไปวันที่<input type="text" id="chDate" class="dp" style="width:128px;padding:4px 8px" placeholder="เลือกวันที่"></label>
         <span id="chHist" class="hint" style="display:none;margin:0;padding:4px 8px;border-radius:8px;background:#10243f;color:#9cc4ff"></span>
         <button class="btn sm" id="chReset" onclick="resetView()" title="รีเซ็ตมุมมอง (เหมือนดับเบิลคลิกบนกราฟ)"><i data-ic="rotate-ccw"></i>Reset</button>
@@ -504,7 +504,7 @@ body.chFs #confirmBox{z-index:55}
     <div class="editing" id="editBar"><i data-ic="pencil"></i> <span id="editTxt"></span><div class="spacer"></div><button class="btn sm" onclick="resetForm()">ยกเลิกแก้ไข</button></div>
     <div class="grid">
       <div class="card">
-        <h3><span class="dot" style="background:#8b98a8"></span>ข้อมูลไม้</h3>
+        <h3><span class="dot" style="background:#8b98a8"></span>ข้อมูลเทรด</h3>
         <div class="field"><label>วันที่</label><input type="text" id="f_date" class="dp" placeholder="เลือกวันที่"></div>
         <div class="row">
           <div class="field"><label>ทุน ($)</label><input type="number" step="any" id="f_capital" placeholder="อัตโนมัติ"></div>
@@ -547,7 +547,7 @@ body.chFs #confirmBox{z-index:55}
       </div>
 
       <div class="card">
-        <h3><span class="dot" style="background:#f97316"></span>การเข้าไม้</h3>
+        <h3><span class="dot" style="background:#f97316"></span>การเข้าเทรด</h3>
         <div class="field" id="bkBox"><label>Breakout M30 (ราคาปิดแท่ง 30 นาที)</label>
           <div class="bk"><span class="bkp" id="bkS" data-v="Short">▼ Short</span><span class="bkp" id="bkL" data-v="Long">▲ Long</span></div>
           <div class="hint" id="bkTxt" style="margin-top:4px">–</div>
@@ -563,11 +563,11 @@ body.chFs #confirmBox{z-index:55}
           <div class="field"><label>Leverage ที่ใช้จริง (x)</label><input type="number" step="any" min="1" id="f_lev" placeholder="อัตโนมัติ"><div class="hint" id="levHint" style="margin:3px 0 0"></div></div>
 
           <div id="autoBox" hidden>
-            <div class="field"><label>วิธีเข้า (แบ่ง 2 ไม้)</label>
+            <div class="field"><label>วิธีเข้า (แบ่ง 2 เทรด)</label>
               <div class="seg" data-f="style"><button data-v="brk">เบรก + รีเทส</button><button data-v="ret">รีเทส 100%</button></div>
             </div>
             <div class="row">
-              <div class="field" id="brkField" hidden><label>เบรก · ไม้ 1 (50%)</label><input type="number" step="any" id="f_brk"></div>
+              <div class="field" id="brkField" hidden><label>เบรก · เทรด 1 (50%)</label><input type="number" step="any" id="f_brk"></div>
               <div class="field"><label id="retLbl">รีเทส (100%)</label><input type="number" step="any" id="f_ret"></div>
             </div>
             <div class="calc">
@@ -595,7 +595,7 @@ body.chFs #confirmBox{z-index:55}
       <div class="card">
         <h3><span class="dot" style="background:#22c55e"></span>ผลลัพธ์</h3>
         <div class="field"><label>ราคาเฉลี่ยจริง</label><input type="number" step="any" id="f_avgReal" placeholder="กรอกจาก Exchange"></div>
-        <div class="field"><label>Balance หลังปิดไม้</label><input type="number" step="any" id="f_bal" placeholder="เว้นว่างถ้ายังไม่ปิด"></div>
+        <div class="field"><label>Balance หลังปิดเทรด</label><input type="number" step="any" id="f_bal" placeholder="เว้นว่างถ้ายังไม่ปิด"></div>
         <div class="field"><label>การชำระบัญชี</label><input type="number" step="any" id="f_liq"></div>
         <div class="hint" id="liqCalc" style="display:none;margin-top:6px;padding:8px 10px;border-radius:8px;background:var(--panel2)"></div>
         <div class="hint" id="liqHint"></div>
@@ -610,7 +610,7 @@ body.chFs #confirmBox{z-index:55}
     </div>
     <div class="actions">
       <button class="btn" id="clearBtn" onclick="resetForm()">ล้างฟอร์ม</button><button class="btn" id="cancelEditBtn" onclick="closeEdit()" hidden>ยกเลิก</button>
-      <button class="btn primary" id="saveBtn" onclick="save()">บันทึกไม้</button>
+      <button class="btn primary" id="saveBtn" onclick="save()">บันทึกเทรด</button>
     </div>
     </div>
   </section>
@@ -624,7 +624,7 @@ body.chFs #confirmBox{z-index:55}
     </div>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>วันที่</th><th>ไม้</th><th>ทุน</th><th>การเข้า</th><th>ราคาเข้า</th><th>TP</th><th>SL</th><th>Balance</th><th>Diff</th><th>Result</th><th></th></tr></thead>
+        <thead><tr><th>วันที่</th><th>เทรด</th><th>ทุน</th><th>การเข้า</th><th>ราคาเข้า</th><th>TP</th><th>SL</th><th>Balance</th><th>Diff</th><th>Result</th><th></th></tr></thead>
         <tbody id="tbody"></tbody>
       </table>
     </div>
@@ -656,7 +656,7 @@ body.chFs #confirmBox{z-index:55}
 </main>
 <nav class="tabs">
   <button class="tab on" data-view="home"><i data-ic="chart-pie"></i>พอร์ต</button>
-  <button class="tab" data-view="form"><i data-ic="circle-plus"></i>บันทึกไม้</button>
+  <button class="tab" data-view="form"><i data-ic="circle-plus"></i>บันทึกเทรด</button>
   <button class="tab" data-view="list"><i data-ic="rotate-ccw-clock"></i>ประวัติการเทรด</button>
   <button class="tab" data-view="stats"><i data-ic="chart-column"></i>สรุปผล</button>
 </nav>
@@ -687,11 +687,11 @@ body.chFs #confirmBox{z-index:55}
 <div id="loadMsg" role="status" aria-live="polite"><span class="spin"></span><span id="loadTxt">กำลังโหลด…</span></div>
 <div class="toast" id="toast"></div>
 <div class="overlay" id="editModal"><div class="modal editModal">
-  <div class="emHead"><b><i data-ic="pencil" data-sz="16"></i> แก้ไขไม้</b> <span class="hint" id="emTxt" style="margin:0"></span><div class="spacer"></div><button class="btn sm icon" onclick="closeEdit()" title="ปิด"><i data-ic="x" data-sz="16"></i></button></div>
+  <div class="emHead"><b><i data-ic="pencil" data-sz="16"></i> แก้ไขเทรด</b> <span class="hint" id="emTxt" style="margin:0"></span><div class="spacer"></div><button class="btn sm icon" onclick="closeEdit()" title="ปิด"><i data-ic="x" data-sz="16"></i></button></div>
   <div id="emBody"></div>
 </div></div>
 <div class="overlay" id="chartModal"><div class="modal editModal">
-  <div class="emHead"><b><i data-ic="chart-candlestick" data-sz="16"></i> กราฟไม้</b> <span class="hint" id="cmTxt" style="margin:0"></span><div class="spacer"></div><button class="btn sm icon" onclick="closeChartModal()" title="ปิด"><i data-ic="x" data-sz="16"></i></button></div>
+  <div class="emHead"><b><i data-ic="chart-candlestick" data-sz="16"></i> กราฟเทรด</b> <span class="hint" id="cmTxt" style="margin:0"></span><div class="spacer"></div><button class="btn sm icon" onclick="closeChartModal()" title="ปิด"><i data-ic="x" data-sz="16"></i></button></div>
   <div id="cmBody"></div>
 </div></div>
 <div class="overlay" id="portBox"><div class="modal" style="max-width:400px">
@@ -891,13 +891,13 @@ const SBDB = {
   getDraw: async pid => { const r = await sbq(sb.from('drawings').select('items').eq('portfolio_id', pid).maybeSingle()); return r && Array.isArray(r.items) ? r.items : []; },
   saveDraw: (pid, items) => sbq(sb.from('drawings').upsert({portfolio_id:pid, items}, {onConflict:'portfolio_id'})),
 };
-// แถวในฐานข้อมูล → ไม้ที่หน้าเว็บใช้ (row = ลำดับ 4,5,… · ทุนต่อเนื่อง · ช่องคำนวณ)
+// แถวในฐานข้อมูล → เทรดที่หน้าเว็บใช้ (row = ลำดับ 4,5,… · ทุนต่อเนื่อง · ช่องคำนวณ)
 function sbBuild(port, rows){
   const trades = [], cnt = {}; let prevBal = null, prevCap = null;
   rows.forEach((r,i)=>{
     const d = sbFromRow(r);
     cnt[d.date] = (cnt[d.date]||0) + 1;
-    // ทุน: ไม้แรก = ทุนเริ่มต้นของพอร์ต · ไม้ถัดไป = กำหนดเอง > Balance ไม้ก่อนหน้า > ทุนไม้ก่อนหน้า 
+    // ทุน: เทรดแรก = ทุนเริ่มต้นของพอร์ต · เทรดถัดไป = กำหนดเอง > Balance เทรดก่อนหน้า > ทุนเทรดก่อนหน้า 
     const cap = i===0 ? num(port.start_capital) : (num(d.capital)!=null ? +d.capital : (prevBal!=null ? prevBal : prevCap));
     const c = compute(Object.assign({}, d));
     const t = Object.assign({row:4+i, n:cnt[d.date], cap, _id:r.id}, d, c);
@@ -934,11 +934,11 @@ async function sbTrades(pid, skipDraw){
   const [p, rows, draw] = await Promise.all([sbPort(pid), SBDB.rows(pid), skipDraw ? null : SBDB.getDraw(pid)]);
   const out = sbBuild(p, rows); if (!skipDraw) out.draw = draw; out._rows = rows; return out;
 }
-// หาไม้จากลำดับ (row) + เช็กว่ายังเป็นไม้เดิม (กันแก้/ลบผิดไม้)
+// หาเทรดจากลำดับ (row) + เช็กว่ายังเป็นเทรดเดิม (กันแก้/ลบผิดเทรด)
 function sbPick(data, row, expectDate){
   const t = data.trades[row-4];
-  if (!t) throw new Error('ไม่พบไม้ที่ต้องการ (อาจถูกลบไปแล้ว)');
-  if (expectDate && String(t.date)!==String(expectDate)) throw new Error('ไม้นี้ถูกแก้จากที่อื่นไปแล้ว — กดรีเฟรชแล้วลองใหม่');
+  if (!t) throw new Error('ไม่พบเทรดที่ต้องการ (อาจถูกลบไปแล้ว)');
+  if (expectDate && String(t.date)!==String(expectDate)) throw new Error('เทรดนี้ถูกแก้จากที่อื่นไปแล้ว — กดรีเฟรชแล้วลองใหม่');
   return t;
 }
 async function sbCall(fn, a){
@@ -1005,7 +1005,7 @@ async function sbCall(fn, a){
 const demo = {
   capital: 127.45,
   rows: [
-    {date:'2026-09-26',t30:84299,b30:83719.6,t1:84901.6,b1:83719.6,risk:5,aPos:'Long',aTf:'M30',brk:'',mPos:'Long',mTf:'M30',open:86597.97,liq:'',bal:133.54,note:'ไม้ตัวอย่าง'},
+    {date:'2026-09-26',t30:84299,b30:83719.6,t1:84901.6,b1:83719.6,risk:5,aPos:'Long',aTf:'M30',brk:'',mPos:'Long',mTf:'M30',open:86597.97,liq:'',bal:133.54,note:'เทรดตัวอย่าง'},
     {date:'2026-09-26',risk:5,bal:145,note:''},
     {date:'2026-09-27',risk:5,note:''},
   ],
@@ -1078,10 +1078,10 @@ function compute(d){
     const L = d.aPos==='Long', m = d.aTf==='M30', rng = m?o.r30:o.r1;
     o.edge = L ? (m?d.t30:d.t1) : (m?d.b30:d.b1);          // กรอบบน (Long) / กรอบล่าง (Short) ของ TF นั้น
     o.retest = num(d.ret)!=null ? +d.ret : null;            // ราคาเข้ารีเทส กรอกเอง
-    // ราคาเฉลี่ย: กรอกเอง > ค่าเฉลี่ยของไม้ที่กรอก (เบรก 50% + รีเทส 50%) > รีเทส 100%
+    // ราคาเฉลี่ย: กรอกเอง > ค่าเฉลี่ยของเทรดที่กรอก (เบรก 50% + รีเทส 50%) > รีเทส 100%
     const legs = [num(d.brk), o.retest].filter(v=>v!=null);
     o.avgCalc = legs.length ? legs.reduce((a,b)=>a+b,0)/legs.length : null;
-    o.avg = o.avgCalc;   // ราคาเฉลี่ยของการเข้าไม้ = คำนวณจากไม้จริงเสมอ (ไม่เกี่ยวกับราคาเฉลี่ยจริงในผลลัพธ์)
+    o.avg = o.avgCalc;   // ราคาเฉลี่ยของการเข้าเทรด = คำนวณจากเทรดจริงเสมอ (ไม่เกี่ยวกับราคาเฉลี่ยจริงในผลลัพธ์)
     if (num(o.edge)!=null){
       // TP / SL วัดจากกรอบบน/ล่างของ TF นั้น ไม่ใช้ราคาเฉลี่ย
       if (rng!=null){ o.tp = L? +o.edge+rng : o.edge-rng; o.sl = L? o.edge-rng : +o.edge+rng; }
@@ -1101,7 +1101,7 @@ function compute(d){
 }
 
 /* ================= State ================= */
-let DATA = {trades:[], capital:null}, EDIT_ROW = null, EDIT_ORIG = null;   // EDIT_ORIG = วันที่เดิมของไม้ที่แก้ (เช็กว่าแก้ถูกไม้)
+let DATA = {trades:[], capital:null}, EDIT_ROW = null, EDIT_ORIG = null;   // EDIT_ORIG = วันที่เดิมของเทรดที่แก้ (เช็กว่าแก้ถูกเทรด)
 const seg = {mode:'Auto',pos:'',tf:'',style:'ret',bias:''};
 let KEEP = {};
 let CAP_MANUAL = false;   // ผู้ใช้แก้ช่องทุนเอง → ไม่เติมค่าอัตโนมัติทับ
@@ -1114,7 +1114,7 @@ document.addEventListener('input', e=>{ if (e.target && e.target.id==='f_lev') L
 document.addEventListener('blur', e=>{ if (e.target && e.target.id==='f_lev' && $('f_lev').value==='') levAuto(); }, true);
 // จับก่อน listener อื่น (capture) เพื่อไม่ให้ recalc เติมค่าทับตอนกำลังพิมพ์
 document.addEventListener('input', e=>{ if (e.target && e.target.id==='f_capital') CAP_MANUAL = true; }, true);
-document.addEventListener('blur', e=>{ if (e.target && e.target.id==='f_capital' && $('f_capital').value==='') capAuto(); }, true);   // ค่าแผนเดิมของไม้ Manual ที่กำลังแก้ไข (กันข้อมูลหาย)
+document.addEventListener('blur', e=>{ if (e.target && e.target.id==='f_capital' && $('f_capital').value==='') capAuto(); }, true);   // ค่าแผนเดิมของเทรด Manual ที่กำลังแก้ไข (กันข้อมูลหาย)
 const FIELDS = ['date','capital','risk','t30','b30','t1','b1','brk','ret','avgReal','lev','open','liq','bal','note'];
 
 document.querySelectorAll('.seg[data-f]').forEach(s=>{
@@ -1135,10 +1135,10 @@ function showView(v){
   window.scrollTo(0,0);
   if (v==='stats') renderStats();
   if (v==='home') renderHome();
-  // กราฟโหลดตอนซ่อนอยู่ (กว้าง 0) → เปิดหน้าบันทึกไม้ครั้งแรกให้จัดมุมมองใหม่
+  // กราฟโหลดตอนซ่อนอยู่ (กว้าง 0) → เปิดหน้าบันทึกเทรดครั้งแรกให้จัดมุมมองใหม่
   if (v==='form' && !FORM_SEEN){ FORM_SEEN = true; requestAnimationFrame(()=>{ try{ if (typeof resetView==='function') resetView(); }catch(e){} }); }
 }
-// กราฟ Equity (ใช้ทั้งหน้าพอร์ตและหน้าสรุปผล): แกนราคาเป็นจำนวนเต็ม · แกน x เป็นวันที่ · hover/แตะ ดูรายละเอียดแต่ละไม้
+// กราฟ Equity (ใช้ทั้งหน้าพอร์ตและหน้าสรุปผล): แกนราคาเป็นจำนวนเต็ม · แกน x เป็นวันที่ · hover/แตะ ดูรายละเอียดแต่ละเทรด
 function equityChart(canvas, prev, cap, trades, startTitle){
   if (prev) prev.destroy();
   if (!window.Chart || !canvas) return null;
@@ -1146,7 +1146,7 @@ function equityChart(canvas, prev, cap, trades, startTitle){
   trades.forEach(t=>{ if(num(t.bal)!=null){
     const c0 = num(t.cap), sd = side(t);
     lab.push(t.date+' #'+t.n); eq.push(+t.bal);
-    meta.push({title:`${t.date} · ไม้ ${t.n}${sd.pos?' · '+sd.pos+' '+(sd.tf||''):''}`, pl: c0!=null ? t.bal-c0 : null, diff: num(t.diff), res: t.result});
+    meta.push({title:`${t.date} · เทรด ${t.n}${sd.pos?' · '+sd.pos+' '+(sd.tf||''):''}`, pl: c0!=null ? t.bal-c0 : null, diff: num(t.diff), res: t.result});
   } });
   const up = eq.length>1 && eq[eq.length-1] >= (eq[0] ?? eq[1]);
   const col = up ? '#22c55e' : '#ef4444';
@@ -1169,7 +1169,7 @@ function equityChart(canvas, prev, cap, trades, startTitle){
         // แกน x: วันที่แบบสั้น (วัน/เดือน) · เลือกแสดงเฉพาะบางจุดไม่ให้ทับกัน
         x:{grid:{display:false}, border:{color:'rgba(139,152,168,.25)'}, ticks:{color:'#8b98a8', font:{size:10}, maxRotation:0, autoSkip:true, autoSkipPadding:12, maxTicksLimit:7,
           callback:(v,i)=>{ const l = lab[i]; if (!l || l==='เริ่ม') return 'เริ่ม'; const m = l.match(/^(\d{4}-(\d{2})-(\d{2}))/); if (!m) return l;
-            return (lab[i-1]||'').startsWith(m[1]) ? '' : (+m[3])+'/'+(+m[2]); }}},   // วันเดียวกันหลายไม้ → แสดงวันที่ครั้งเดียว
+            return (lab[i-1]||'').startsWith(m[1]) ? '' : (+m[3])+'/'+(+m[2]); }}},   // วันเดียวกันหลายเทรด → แสดงวันที่ครั้งเดียว
         y:{grid:{color:'rgba(139,152,168,.12)'}, ticks:{color:'#8b98a8', font:{size:10}, precision:0, callback:v=>Number.isInteger(+v) ? '$'+Number(v).toLocaleString('en-US') : null}}}}});
 }
 // ---------- หน้าแรก ----------
@@ -1185,20 +1185,20 @@ function renderHome(){
   const pl = c.reduce((a,t)=>a+((num(t.bal)!=null&&num(t.cap)!=null)?t.bal-t.cap:0),0);
   const cap0 = T.length ? num(T[0].cap) : null, ret = (cap0 && c.length) ? pl/cap0 : null;
   $('hMonth').textContent = new Date(ym+'-01T00:00:00').toLocaleDateString('th-TH',{month:'long',year:'numeric'});
-  const st = [['ไม้',T.length+(T.length-c.length?` <span class="hint" style="margin:0;font-size:11px">(เปิด ${T.length-c.length})</span>`:'')],
+  const st = [['เทรด',T.length+(T.length-c.length?` <span class="hint" style="margin:0;font-size:11px">(เปิด ${T.length-c.length})</span>`:'')],
     ['Win rate',(w+l)?fN(w/(w+l)*100,1)+'%':'–'],
     ['กำไร/ขาดทุน',c.length?money(pl):'–',c.length?cls(pl):''],
     ['ผลตอบแทน',pct(ret),cls(ret)]];
   $('hStats').innerHTML = st.map(x=>`<div class="kpi"><div class="l">${x[0]}</div><div class="v mono ${x[2]||''}">${x[1]}</div></div>`).join('');
   homeChart = equityChart($('hEq'), homeChart, num(DATA.capital), DATA.trades, 'ทุนเริ่มต้น');
 
-  // ไม้ล่าสุด 5 ไม้
+  // เทรดล่าสุด 5 เทรด
   const rec = DATA.trades.slice(-5).reverse();
   $('hRecent').innerHTML = rec.length ? rec.map(t=>{ const sd=side(t);
     return `<div class="hRow" onclick="viewTradeChart(${t.row})">
-      <div class="d"><div class="l1"><b>${t.date}</b> · ไม้ ${t.n}</div><div class="l2">${sd.pos?`<span class="badge ${sd.pos}">${sd.pos} ${sd.tf||''}</span><span class="badge mode">${sd.mode}</span>`:'<span class="hint" style="margin:0">ยังไม่ระบุ</span>'}</div></div>
+      <div class="d"><div class="l1"><b>${t.date}</b> · เทรด ${t.n}</div><div class="l2">${sd.pos?`<span class="badge ${sd.pos}">${sd.pos} ${sd.tf||''}</span><span class="badge mode">${sd.mode}</span>`:'<span class="hint" style="margin:0">ยังไม่ระบุ</span>'}</div></div>
       <div class="r"><span class="mono ${cls(t.diff)}">${num(t.diff)!=null?pct(t.diff):''}</span>${t.result?`<span class="badge ${t.result}">${t.result}</span>`:autoBadge(t).replace(/ <span class="hint"[^>]*>อัตโนมัติ<\/span>/,'')}${ic('chevron-right',15)}</div>
-    </div>`; }).join('') : '<div class="empty" style="padding:24px">ยังไม่มีไม้ · กด "บันทึกไม้ใหม่" เพื่อเริ่ม</div>';
+    </div>`; }).join('') : '<div class="empty" style="padding:24px">ยังไม่มีเทรด · กด "บันทึกเทรดใหม่" เพื่อเริ่ม</div>';
 }
 
 function readForm(){
@@ -1234,14 +1234,14 @@ function recalc(){
   $('autoBox').hidden = seg.mode!=='Auto'; $('manualBox').hidden = seg.mode!=='Manual';
   const isBrk = seg.style==='brk';
   $('brkField').hidden = !isBrk;
-  $('retLbl').textContent = isBrk ? 'รีเทส · ไม้ 2 (50%)' : 'รีเทส (100%)';
+  $('retLbl').textContent = isBrk ? 'รีเทส · เทรด 2 (50%)' : 'รีเทส (100%)';
   $('edgeLbl').textContent = seg.pos==='Short' ? 'กรอบล่าง (ใช้คิด TP/SL)' : seg.pos==='Long' ? 'กรอบบน (ใช้คิด TP/SL)' : 'กรอบ (ใช้คิด TP/SL)';
   set('c_edge',c.edge,v=>f2(v,2));
   // ราคาเฉลี่ยจริง (อยู่ในโซนผลลัพธ์)
   // การชำระบัญชี → ห่างจากราคาเฉลี่ยเท่าไร (+/-)
   // ใช้ราคาเฉลี่ยจริง (กรอกเอง) ถ้ามี ไม่งั้นใช้ราคาเข้าของแผน
   const real = num(d.avgReal), ent = real!=null ? real : seg.mode==='Auto' ? c.avg : seg.mode==='Manual' ? c.mEntry : null, lq = num(d.liq);
-  const entLbl = real!=null ? 'ราคาเฉลี่ยจริง' : seg.mode==='Auto' ? 'ราคาเฉลี่ยจากไม้ที่เข้า' : 'ราคาเปิด';
+  const entLbl = real!=null ? 'ราคาเฉลี่ยจริง' : seg.mode==='Auto' ? 'ราคาเฉลี่ยจากเทรดที่เข้า' : 'ราคาเปิด';
   if (lq!=null && ent!=null){
     const dd = lq-ent, pc = dd/ent*100, cls = dd>0?'pos':dd<0?'neg':'';
     $('liqCalc').innerHTML = `การชำระบัญชี − ${entLbl} (${f2(ent,2)}) = <b class="${cls}">${dd>=0?'+':''}${f2(dd,2)}</b> <span class="${cls}">(${pc>=0?'+':''}${pc.toFixed(2)}%)</span>`;
@@ -1257,7 +1257,7 @@ function recalc(){
   $('liqHint').innerHTML = (liq && num(d.liq)==null) ? `Liq. ประมาณ ${f2(liq)} (isolated, ${LX(lv)}) — <a onclick="$('f_liq').value=${liq.toFixed(2)};recalc()">ใช้ค่านี้</a>` : '';
 
   const isFirst = EDIT_ROW===FIRST_ROW() || (EDIT_ROW==null && !DATA.trades.length);
-  // ทุน: ไม้แรกต้องกรอก · ไม้ถัดไป ว่าง = ดึงจาก Balance ไม้ก่อนหน้า (ค่าเดิม) หรือกรอกเองเพื่อใช้ทุนเฉพาะไม้นี้
+  // ทุน: เทรดแรกต้องกรอก · เทรดถัดไป ว่าง = ดึงจาก Balance เทรดก่อนหน้า (ค่าเดิม) หรือกรอกเองเพื่อใช้ทุนเฉพาะเทรดนี้
   const autoCap = isFirst ? null : prevCapital();
   if (CAP_MANUAL && $('f_capital').value==='' && document.activeElement!==$('f_capital')) CAP_MANUAL = false;   // ลบจนว่างแล้วออกจากช่อง = กลับไปใช้ค่าอัตโนมัติ
   if (!isFirst && !CAP_MANUAL) $('f_capital').value = autoCap!=null ? autoCap : '';   // เติมค่าอัตโนมัติไว้ให้ (ถ้ายังไม่ได้แก้เอง)
@@ -1266,8 +1266,8 @@ function recalc(){
   const cap = isFirst ? capIn : (capIn!=null ? capIn : autoCap);
   $('f_capital').disabled = false;
   $('f_capital').placeholder = isFirst ? 'ทุนเริ่มต้น' : 'อัตโนมัติ';
-  $('capHint').innerHTML = isFirst ? 'ไม้แรก: กรอกทุนเริ่มต้น'
-    : custom ? `ใช้ทุนที่แก้เองสำหรับไม้นี้ · <a onclick="capAuto()" style="cursor:pointer">กลับไปใช้ค่าอัตโนมัติ${autoCap!=null?' ($'+fN(autoCap)+')':''}</a>`
+  $('capHint').innerHTML = isFirst ? 'เทรดแรก: กรอกทุนเริ่มต้น'
+    : custom ? `ใช้ทุนที่แก้เองสำหรับเทรดนี้ · <a onclick="capAuto()" style="cursor:pointer">กลับไปใช้ค่าอัตโนมัติ${autoCap!=null?' ($'+fN(autoCap)+')':''}</a>`
     : '';
   const bal = num(d.bal);
   if (bal!=null && cap){
@@ -1286,10 +1286,10 @@ function resetForm(){
   $('f_risk').value = num(lastRisk)!=null ? lastRisk : 5;
   if (!DATA.trades.length && num(DATA.capital)!=null) $('f_capital').value = DATA.capital;
   Object.assign(seg,{mode:'Auto',pos:'',tf:'',style:'ret',bias:''}); KEEP={}; paintSeg();
-  $('editBar').classList.remove('on'); $('saveBtn').textContent='บันทึกไม้';
+  $('editBar').classList.remove('on'); $('saveBtn').textContent='บันทึกเทรด';
   recalc();
 }
-let DRAFT = null;   // ฟอร์มบันทึกไม้ที่กรอกค้างไว้ ก่อนเปิดหน้าต่างแก้ไข
+let DRAFT = null;   // ฟอร์มบันทึกเทรดที่กรอกค้างไว้ ก่อนเปิดหน้าต่างแก้ไข
 function snapForm(){ const v={}; FIELDS.forEach(k=>v[k]=$('f_'+k).value); v.date=$('f_date').value; return {v, seg:Object.assign({},seg), KEEP:Object.assign({},KEEP), capManual:CAP_MANUAL, levManual:LEV_MANUAL}; }
 function restoreForm(d){
   FIELDS.forEach(k=>$('f_'+k).value = d.v[k]==null?'':d.v[k]); setDateVal('f_date', d.v.date);
@@ -1301,18 +1301,18 @@ function editTrade(row){
   if (EDIT_ROW==null) DRAFT = snapForm();
   EDIT_ROW = row; EDIT_ORIG = t.date;
   FIELDS.forEach(k=>{ if(k==='capital') return; $('f_'+k).value = (t[k]===undefined||t[k]===null)?'':t[k]; });
-  // ไม้เก่า (ก่อนมีช่องรีเทส): ใช้ราคารีเทสที่คำนวณไว้
+  // เทรดเก่า (ก่อนมีช่องรีเทส): ใช้ราคารีเทสที่คำนวณไว้
   if ($('f_ret').value==='' && t.aPos){ const r = num(t.retest)!=null ? t.retest : compute(t).edge; if (num(r)!=null) $('f_ret').value = r; }
   { const a = prevCapital(); $('f_capital').value = t.cap; CAP_MANUAL = a==null || num(t.cap)==null || Math.abs(t.cap-a) > 1e-9; }
-  LEV_MANUAL = num(t.lev)!=null;   // ไม้ที่เคยกรอก Leverage เอง → คงค่าเดิม
+  LEV_MANUAL = num(t.lev)!=null;   // เทรดที่เคยกรอก Leverage เอง → คงค่าเดิม
   setDateVal('f_date', t.date);
   const sd = side(t);
   Object.assign(seg,{mode:sd.mode||'Auto', pos:sd.pos||'', tf:sd.tf||'', style: num(t.brk)!=null ? 'brk' : 'ret', bias: t.bias||''});
   KEEP = sd.mode==='Manual' ? {aPos:t.aPos||'',aTf:t.aTf||'',brk:t.brk,ret:t.ret} : {};
   paintSeg();
-  // ย้ายฟอร์มเข้าไปในหน้าต่างแก้ไข (แยกจากการบันทึกไม้ใหม่)
+  // ย้ายฟอร์มเข้าไปในหน้าต่างแก้ไข (แยกจากการบันทึกเทรดใหม่)
   $('emBody').appendChild($('formWrap'));
-  $('emTxt').textContent = `${t.date} · ไม้ที่ ${t.n}`;
+  $('emTxt').textContent = `${t.date} · เทรดที่ ${t.n}`;
   $('saveBtn').textContent='บันทึกการแก้ไข'; $('clearBtn').hidden = true; $('cancelEditBtn').hidden = false;
   $('editModal').classList.add('on'); document.body.style.overflow='hidden';
   recalc(); $('editModal').querySelector('.modal').scrollTop = 0;
@@ -1322,7 +1322,7 @@ function closeEdit(){
   EDIT_ROW = null;
   $('editModal').classList.remove('on'); document.body.style.overflow='';
   $('formHome').after($('formWrap'));
-  $('saveBtn').textContent='บันทึกไม้'; $('clearBtn').hidden = false; $('cancelEditBtn').hidden = true;
+  $('saveBtn').textContent='บันทึกเทรด'; $('clearBtn').hidden = false; $('cancelEditBtn').hidden = true;
   if (DRAFT){ restoreForm(DRAFT); DRAFT = null; } else resetForm();
 }
 document.addEventListener('keydown', e=>{ if (e.key==='Escape' && $('editModal').classList.contains('on')) closeEdit(); });
@@ -1333,22 +1333,22 @@ async function save(){
   if (!d.date) return toast('กรุณาเลือกวันที่', true);
   if (!d.mode) return toast('เลือก Auto หรือ Manual ก่อน', true);
   if (!seg.pos || !seg.tf) return toast('เลือก Position และ TF', true);
-  if (d.mode==='Auto' && seg.style==='brk' && num(d.brk)==null) return toast('ใส่ราคาเข้าเบรก (ไม้ 1)', true);
+  if (d.mode==='Auto' && seg.style==='brk' && num(d.brk)==null) return toast('ใส่ราคาเข้าเบรก (เทรด 1)', true);
   if (d.mode==='Auto' && num(d.ret)==null) return toast('ใส่ราคาเข้ารีเทส', true);
   if (d.mode==='Manual' && num(d.open)==null) return toast('ใส่ราคาเปิด', true);
   delete d.mode;
   const isFirst = EDIT_ROW===FIRST_ROW() || (EDIT_ROW==null && !DATA.trades.length);
-  if (isFirst && num(d.capital)==null) return toast('ไม้แรกต้องกรอกทุนเริ่มต้น', true);
-  // ทุน = ค่าอัตโนมัติ → ส่งว่าง (ใช้ Balance ไม้ก่อนหน้า) · ต่างจากนั้น = ทุนกำหนดเอง
+  if (isFirst && num(d.capital)==null) return toast('เทรดแรกต้องกรอกทุนเริ่มต้น', true);
+  // ทุน = ค่าอัตโนมัติ → ส่งว่าง (ใช้ Balance เทรดก่อนหน้า) · ต่างจากนั้น = ทุนกำหนดเอง
   { const a = levCalc(), v = num(d.lev); if (v!=null && a!=null && Math.abs(v-a) <= 1e-9) d.lev=''; }   // Leverage = ค่าที่คำนวณ → ส่งว่างเหมือนเดิม
   if (!isFirst){ const a = prevCapital(), v = num(d.capital); if (v==null || (a!=null && Math.abs(v-a) <= 1e-9)) d.capital=''; }
   if (!isFirst && num(d.capital)==null) d.capital='';
-  // บันทึกแบบทันที: แสดงไม้ในรายการ/ล้างฟอร์มเลย แล้วบันทึกเบื้องหลัง (ถ้าบันทึกไม่ได้ → เอาไม้ออก และคืนข้อมูลกลับเข้าฟอร์ม)
+  // บันทึกแบบทันที: แสดงเทรดในรายการ/ล้างฟอร์มเลย แล้วบันทึกเบื้องหลัง (ถ้าบันทึกไม่ได้ → เอาเทรดออก และคืนข้อมูลกลับเข้าฟอร์ม)
   if (EDIT_ROW) d._orig = EDIT_ORIG;
   return saveOptimistic(d, EDIT_ROW, snapForm());
 }
 
-// ข้อมูลไม้สำหรับส่ง updateTrade โดยไม่ผ่านฟอร์ม (ให้ผลเหมือนเปิดแก้ไขแล้วกดบันทึกโดยไม่เปลี่ยนอะไร)
+// ข้อมูลเทรดสำหรับส่ง updateTrade โดยไม่ผ่านฟอร์ม (ให้ผลเหมือนเปิดแก้ไขแล้วกดบันทึกโดยไม่เปลี่ยนอะไร)
 function tradePayload(t){
   const sd = side(t), d = {};
   FIELDS.forEach(k=>{ d[k] = (t[k]===undefined || t[k]===null) ? '' : t[k]; });
@@ -1356,11 +1356,11 @@ function tradePayload(t){
   // เหมือน readForm(): Auto / Manual / ยังไม่เลือกฝั่ง
   if (sd.mode==='Auto'){
     Object.assign(d, {aPos:t.aPos, aTf:t.aTf, mPos:'', mTf:'', open:''});
-    if (d.ret===''){ const r = num(t.retest)!=null ? t.retest : compute(t).edge; if (num(r)!=null) d.ret = r; }   // ไม้เก่าก่อนมีช่องรีเทส
+    if (d.ret===''){ const r = num(t.retest)!=null ? t.retest : compute(t).edge; if (num(r)!=null) d.ret = r; }   // เทรดเก่าก่อนมีช่องรีเทส
   }
   else if (sd.mode==='Manual') Object.assign(d, {mPos:t.mPos||'', mTf:t.mTf||'', aPos:t.aPos||'', aTf:t.aTf||'', brk:num(t.brk)!=null?t.brk:'', ret:num(t.ret)!=null?t.ret:''});
   else Object.assign(d, {aPos:'', aTf:'', mPos:'', mTf:'', open:'', brk:'', ret:'', lev:''});
-  // ทุน: ไม้แรก = ทุนเริ่มต้น · ไม้อื่นส่งว่าง (สูตรดึงจาก Balance ไม้ก่อนหน้า) เว้นแต่เคยกำหนดเอง
+  // ทุน: เทรดแรก = ทุนเริ่มต้น · เทรดอื่นส่งว่าง (สูตรดึงจาก Balance เทรดก่อนหน้า) เว้นแต่เคยกำหนดเอง
   const isFirst = t.row===FIRST_ROW(), prev = prevCapital(t.row);
   d.capital = isFirst ? t.cap : ((prev!=null && num(t.cap)!=null && Math.abs(t.cap-prev) > 1e-9) ? t.cap : '');
   d._orig = t.date;
@@ -1370,22 +1370,22 @@ function tradePayload(t){
 let QE = null;   // {row, kind}
 function openQuickEdit(row, kind){
   const t = DATA.trades.find(x=>x.row===row); if (!t) return;
-  if (t._pending) return toast('ไม้นี้กำลังบันทึก — รอสักครู่', true);
+  if (t._pending) return toast('เทรดนี้กำลังบันทึก — รอสักครู่', true);
   if (roBlock()) return;
   const sd = side(t);
   if (kind==='entry' && !sd.mode){ editTrade(row); return; }   // ยังไม่ได้เลือกฝั่ง → เปิดฟอร์มเต็ม
   QE = {row, kind};
   const inp = (id, label, v, ph) => `<div class="field"><label>${label}</label><input type="number" step="any" min="0" inputmode="decimal" id="${id}" value="${num(v)!=null?v:''}" placeholder="${ph||''}"></div>`;
-  $('qe_sub').textContent = `${t.date} · ไม้ที่ ${t.n}${sd.pos?' · '+sd.mode+' '+sd.pos+' '+(sd.tf||''):''}`;
+  $('qe_sub').textContent = `${t.date} · เทรดที่ ${t.n}${sd.pos?' · '+sd.mode+' '+sd.pos+' '+(sd.tf||''):''}`;
   if (kind==='entry'){
     $('qe_title').textContent = 'แก้ราคาเข้า';
     $('qe_fields').innerHTML = sd.mode==='Manual'
       ? inp('qe_open','ราคาเปิด',t.open)
-      : (num(t.brk)!=null ? '<div class="row">'+inp('qe_brk','เบรก · ไม้ 1 (50%)',t.brk)+inp('qe_ret','รีเทส · ไม้ 2 (50%)',tradePayload(t).ret)+'</div>' : inp('qe_ret','รีเทส (100%)',tradePayload(t).ret))
-        + inp('qe_avgReal','ราคาเฉลี่ยจริง (ถ้ามี)',t.avgReal,'ว่าง = ใช้ราคาเฉลี่ยจากไม้ที่เข้า');
+      : (num(t.brk)!=null ? '<div class="row">'+inp('qe_brk','เบรก · เทรด 1 (50%)',t.brk)+inp('qe_ret','รีเทส · เทรด 2 (50%)',tradePayload(t).ret)+'</div>' : inp('qe_ret','รีเทส (100%)',tradePayload(t).ret))
+        + inp('qe_avgReal','ราคาเฉลี่ยจริง (ถ้ามี)',t.avgReal,'ว่าง = ใช้ราคาเฉลี่ยจากเทรดที่เข้า');
   } else {
     $('qe_title').textContent = 'แก้ Balance';
-    $('qe_fields').innerHTML = inp('qe_bal','Balance หลังปิดไม้ ($)',t.bal,'ว่าง = ยังไม่ปิดไม้');
+    $('qe_fields').innerHTML = inp('qe_bal','Balance หลังปิดเทรด ($)',t.bal,'ว่าง = ยังไม่ปิดเทรด');
   }
   $('qe_msg').textContent = '';
   $('qe_full').onclick = ()=>{ closeQuickEdit(); editTrade(row); };
@@ -1411,7 +1411,7 @@ function qePreview(){
     else rows.push(['TP / SL', f2(c.mTp)+' / '+f2(c.mSl)]);
   } else {
     const cap = num(t.cap), bal = num(d.bal);
-    rows.push(['ทุนไม้นี้', cap!=null?'$'+fN(cap):'–']);
+    rows.push(['ทุนเทรดนี้', cap!=null?'$'+fN(cap):'–']);
     if (bal!=null && cap){ const df = (bal-cap)/cap, res = df>0?'Win':df<0?'Loss':'BE';
       rows.push(['กำไร/ขาดทุน', `<b class="${cls(df)}">${money(bal-cap)} (${pct(df)})</b>`], ['ผล', `<span class="badge ${res}">${res}</span>`]); }
     else rows.push(['ผล', '<span class="badge open">ยังไม่ปิด</span>']);
@@ -1426,7 +1426,7 @@ async function saveQuickEdit(){
     if (sd.mode==='Auto' && num(t.brk)!=null && !(num(d.brk)>0)) return bad('ใส่ราคาเบรก');
     if (sd.mode==='Auto' && !(num(d.ret)>0)) return bad('ใส่ราคารีเทส');
     if (d.avgReal!=='' && !(num(d.avgReal)>0)) return bad('ราคาเฉลี่ยจริงต้องมากกว่า 0 หรือเว้นว่าง');
-  } else if (d.bal!=='' && !(num(d.bal)>0)) return bad('Balance ต้องมากกว่า 0 หรือเว้นว่าง (ยังไม่ปิดไม้)');
+  } else if (d.bal!=='' && !(num(d.bal)>0)) return bad('Balance ต้องมากกว่า 0 หรือเว้นว่าง (ยังไม่ปิดเทรด)');
   const b = $('qe_btn'); btnBusy(b, true, 'กำลังบันทึก…');
   try{
     const row = QE.row, fp = fpOf(d);
@@ -1440,7 +1440,7 @@ document.addEventListener('keydown', e=>{ if (e.key==='Escape' && $('qeBox').cla
 
 // ---------- เขียนข้อมูลอย่างปลอดภัย ----------
 // บางครั้งฐานข้อมูลทำงานสำเร็จแล้ว แต่คำตอบหายระหว่างทาง (เน็ตหลุด)
-// ห้ามส่งซ้ำทันที (เช่น ลบซ้ำ = ลบไม้ถัดไป) → อ่านสถานะล่าสุดมาเช็กก่อน: ทำแล้ว = ถือว่าสำเร็จ · ยังไม่ทำ = ส่งอีกครั้ง
+// ห้ามส่งซ้ำทันที (เช่น ลบซ้ำ = ลบเทรดถัดไป) → อ่านสถานะล่าสุดมาเช็กก่อน: ทำแล้ว = ถือว่าสำเร็จ · ยังไม่ทำ = ส่งอีกครั้ง
 const isLostReply = e => e && (e.status===404 || e.status===502 || e.status===503 || /Failed to fetch|NetworkError|Load failed|network/i.test(e.message||''));
 async function safeWrite(fn, args, verify, quiet){   // quiet = ไม่แสดงหน้าต่างกำลังโหลด (ใช้กับบันทึกแบบทันที)
   const msg = quiet ? '' : API_MSG[fn]; if (msg) setLoading(true, msg);
@@ -1455,14 +1455,14 @@ async function safeWrite(fn, args, verify, quiet){   // quiet = ไม่แส�
     }
   } finally { if (msg) setLoading(false); }
 }
-// ลายนิ้วมือของไม้ (ช่องที่กรอก) ใช้เช็กว่าไม้นี้มี/ไม่มีอยู่ในฐานข้อมูล
+// ลายนิ้วมือของเทรด (ช่องที่กรอก) ใช้เช็กว่าเทรดนี้มี/ไม่มีอยู่ในฐานข้อมูล
 const FP_KEYS = ['date','t30','b30','t1','b1','aPos','aTf','brk','ret','mPos','mTf','open','liq','bal','note'];
 const fpOf = t => FP_KEYS.map(k=>{ const v = t[k]; return (v===''||v==null) ? '' : (isNaN(+v) ? String(v) : String(+v)); }).join('|');
 const fpCount = (trades, fp) => trades.filter(x=>!x._pending && fpOf(x)===fp).length;
 
 // ---------- บันทึกแบบทันที (optimistic) ----------
-let PENDING = [];   // [{id, kind:'add'|'edit', row, t, orig}]  ไม้ที่แสดงแล้วแต่ฐานข้อมูลยังไม่ยืนยัน
-// สร้างข้อมูลไม้ฝั่งเครื่อง เพื่อแสดงได้ทันที
+let PENDING = [];   // [{id, kind:'add'|'edit', row, t, orig}]  เทรดที่แสดงแล้วแต่ฐานข้อมูลยังไม่ยืนยัน
+// สร้างข้อมูลเทรดฝั่งเครื่อง เพื่อแสดงได้ทันที
 function localTrade(d, row, n){
   const t = Object.assign({}, d), isFirst = row===FIRST_ROW() || !DATA.trades.length;
   t.row = row; t.n = n;
@@ -1473,7 +1473,7 @@ function localTrade(d, row, n){
   t.retest = d.ret; t._pending = true;
   return t;
 }
-// รวมข้อมูลจากฐานข้อมูลกับไม้ที่ยังรอยืนยันอยู่ (ไม่ให้หายระหว่างรอ)
+// รวมข้อมูลจากฐานข้อมูลกับเทรดที่ยังรอยืนยันอยู่ (ไม่ให้หายระหว่างรอ)
 function mergePending(data){
   PENDING.forEach(p=>{
     if (p.kind==='add'){ p.t.row = (data.trades.length ? data.trades[data.trades.length-1].row : 3) + 1; data.trades.push(p.t); }
@@ -1511,7 +1511,7 @@ async function saveOptimistic(d, editRow, snap){
       if (wasEdit){ const i = DATA.trades.findIndex(x=>x.row===editRow); if (i>=0) DATA.trades[i] = entry.orig; }
       else DATA.trades = DATA.trades.filter(x=>x!==entry.t);
       renderAll();
-      // คืนข้อมูลกลับเข้าฟอร์ม (ไม่ให้ข้อมูลหาย) ถ้าไม่ได้กำลังแก้ไม้อื่นอยู่
+      // คืนข้อมูลกลับเข้าฟอร์ม (ไม่ให้ข้อมูลหาย) ถ้าไม่ได้กำลังแก้เทรดอื่นอยู่
       if (!wasEdit && EDIT_ROW==null){ restoreForm(snap); showView('form'); }
       else if (wasEdit && EDIT_ROW==null) editTrade(editRow);
     }
@@ -1526,7 +1526,7 @@ function closeConfirm(v){ $('confirmBox').classList.remove('on'); _confirmRes&&_
 async function delTrade(row){
   if (roBlock()) return;
   const t = DATA.trades.find(x=>x.row===row);
-  if (!await askConfirm(`ลบไม้ ${t.date} ไม้ที่ ${t.n}?`)) return;
+  if (!await askConfirm(`ลบเทรด ${t.date} เทรดที่ ${t.n}?`)) return;
   const fp = fpOf(t), before = fpCount(DATA.trades, fp);
   try{ DATA = await safeWrite('deleteTrade', [row, t.date], async()=>{ const x = await apiRaw('getTrades'); return fpCount(x.trades, fp) < before ? x : null; }); toast('ลบแล้ว'); if(EDIT_ROW===row) closeEdit(); renderAll(); }
   catch(e){ toast('ผิดพลาด: '+(e.message||e), true); }
@@ -1590,7 +1590,7 @@ function statTrades(){ return DATA.trades.filter(t=>(!ST_FROM || t.date>=ST_FROM
 function renderStats(){
   const T = statTrades();
   const c = T.filter(t=>num(t.diff)!=null), wins = c.filter(t=>t.diff>0), losses = c.filter(t=>t.diff<0);
-  // ทุนเริ่มของช่วง = ทุนของไม้แรกในช่วง (ถ้าไม่กรอง = ทุนเริ่มต้น)
+  // ทุนเริ่มของช่วง = ทุนของเทรดแรกในช่วง (ถ้าไม่กรอง = ทุนเริ่มต้น)
   const cap = T.length ? (ST_FROM ? num(T[0].cap) : num(DATA.capital)) : (ST_FROM ? null : num(DATA.capital));
   let bal = cap; T.forEach(t=>{ if(num(t.bal)!=null) bal=+t.bal; });
   const sumW = wins.reduce((s,t)=>s+(t.bal-t.cap),0), sumL = losses.reduce((s,t)=>s+(t.bal-t.cap),0);
@@ -1599,24 +1599,24 @@ function renderStats(){
   T.forEach(t=>{ if(num(t.bal)==null) return; b=+t.bal; peak=Math.max(peak,b); mdd=Math.min(mdd,b/peak-1);
     if(t.diff>0){curW++;curL=0;} else if(t.diff<0){curL++;curW=0;} maxW=Math.max(maxW,curW); maxL=Math.max(maxL,curL); });
   const ret = cap ? bal/cap-1 : null, wr = (wins.length+losses.length) ? wins.length/(wins.length+losses.length) : null;
-  $('stInfo').textContent = `${ST_FROM?ST_FROM+' ถึง '+ST_TO:'ทุกช่วงเวลา'} · ${T.length} ไม้ (ปิดแล้ว ${c.length})`;
+  $('stInfo').textContent = `${ST_FROM?ST_FROM+' ถึง '+ST_TO:'ทุกช่วงเวลา'} · ${T.length} เทรด (ปิดแล้ว ${c.length})`;
   const st = [
     [ST_FROM?'ทุนต้นช่วง':'ทุนเริ่มต้น','$'+fN(cap)],['Balance ปลายช่วง','$'+fN(bal)],['กำไร/ขาดทุนสุทธิ',(bal-cap>=0?'+$':'-$')+fN(Math.abs(bal-cap)),cls(bal-cap)],
     ['ผลตอบแทน',pct(ret),cls(ret)],['Win rate', wr==null?'–':fN(wr*100,1)+'%'],
     ['Profit factor', sumL ? (sumW/Math.abs(sumL)).toFixed(2) : (sumW?'∞':'–')],
-    ['เฉลี่ยไม้ชนะ',pct(avg(wins)),'pos'],['เฉลี่ยไม้แพ้',pct(avg(losses)),'neg'],
-    ['Max drawdown',pct(mdd),mdd<0?'neg':''],['ชนะติดกันสูงสุด',maxW+' ไม้'],['แพ้ติดกันสูงสุด',maxL+' ไม้'],
+    ['เฉลี่ยเทรดชนะ',pct(avg(wins)),'pos'],['เฉลี่ยเทรดแพ้',pct(avg(losses)),'neg'],
+    ['Max drawdown',pct(mdd),mdd<0?'neg':''],['ชนะติดกันสูงสุด',maxW+' เทรด'],['แพ้ติดกันสูงสุด',maxL+' เทรด'],
   ];
   if (cap==null){ st.forEach(x=>{ x[1]='–'; x[2]=''; }); }
   $('statGrid').innerHTML = st.map(s=>`<div class="kpi"><div class="l">${s[0]}</div><div class="v mono ${s[2]||''}" style="font-size:15px">${s[1]}</div></div>`).join('');
-  const brk = (key, vals) => `<tr><th></th><th>ไม้</th><th>ชนะ</th><th>Win rate</th><th>เฉลี่ย %</th></tr>` + vals.map(v=>{
+  const brk = (key, vals) => `<tr><th></th><th>เทรด</th><th>ชนะ</th><th>Win rate</th><th>เฉลี่ย %</th></tr>` + vals.map(v=>{
     const a = c.filter(t=>side(t)[key]===v), w=a.filter(t=>t.diff>0).length;
     return `<tr><td style="text-align:left">${v}</td><td>${a.length}</td><td>${w}</td><td>${a.length?fN(w/a.length*100,1)+'%':'–'}</td><td class="${cls(avg(a))}">${pct(avg(a))}</td></tr>`; }).join('');
   $('byTf').innerHTML = brk('tf',['M30','H1']); $('byPos').innerHTML = brk('pos',['Long','Short']); $('byMode').innerHTML = brk('mode',['Auto','Manual']);
-  // Bias: แยก Long / Short และดูว่าไม้ที่เข้าตรงหรือสวน Bias ได้ผลอย่างไร
+  // Bias: แยก Long / Short และดูว่าเทรดที่เข้าตรงหรือสวน Bias ได้ผลอย่างไร
   const grp = (label, a) => { const w=a.filter(t=>t.diff>0).length; return `<tr><td style="text-align:left">${label}</td><td>${a.length}</td><td>${w}</td><td>${a.length?fN(w/a.length*100,1)+'%':'–'}</td><td class="${cls(avg(a))}">${pct(avg(a))}</td></tr>`; };
   const hb = c.filter(t=>t.bias && side(t).pos);
-  $('byBias').innerHTML = `<tr><th></th><th>ไม้</th><th>ชนะ</th><th>Win rate</th><th>เฉลี่ย %</th></tr>`
+  $('byBias').innerHTML = `<tr><th></th><th>เทรด</th><th>ชนะ</th><th>Win rate</th><th>เฉลี่ย %</th></tr>`
     + grp('Bias Long', c.filter(t=>t.bias==='Long')) + grp('Bias Short', c.filter(t=>t.bias==='Short'))
     + grp('เข้าตาม Bias', hb.filter(t=>side(t).pos===t.bias)) + grp('เข้าสวน Bias', hb.filter(t=>side(t).pos!==t.bias));
   chart = equityChart($('eq'), chart, cap, T, ST_FROM ? 'ทุนต้นช่วง' : 'ทุนเริ่มต้น');
@@ -1897,7 +1897,7 @@ function renderAutoRes(){
 }
 
 /* ================= Candlestick chart + ranges (Lightweight Charts) ================= */
-var CM_ROW = null;   // ไม้ที่กำลังดูในหน้าต่างกราฟ
+var CM_ROW = null;   // เทรดที่กำลังดูในหน้าต่างกราฟ
 let MKT_ROWS = [], LWC = null, CS = null, BAND = null, LEVEL_SERIES = [], TRADE_LINES = [], SAVED_LINES = [], CH_BARS = [], CH_ROWS = [], CH_IV = '5m', CH_ALL = false;
 const CH_TZ = 7*3600;  // แสดงเวลาไทย
 const CH_DAYS = 4;   // จำนวนวันของกรอบ M30/H1 บน TF 4h / 1d
@@ -2157,7 +2157,7 @@ document.querySelectorAll('.bkp').forEach(el=>el.addEventListener('click',()=>{
   if (!el.classList.contains('on')) return;
   seg.pos = el.dataset.v; if (!seg.tf) seg.tf='M30'; paintSeg(); recalc();
 }));
-function drawTrade(){ /* ปิดการแสดงไม้จากฟอร์มบนกราฟ */ }
+function drawTrade(){ /* ปิดการแสดงเทรดจากฟอร์มบนกราฟ */ }
 const SRC = () => $('mktSrc').value || 'spot';   // ค่าเริ่มต้น = Binance
 const KL_LIMIT = () => SRC()==='futures' ? 1500 : 1000;   // Spot / MEXC ดึงครั้งละ 1000 แท่ง
 async function fetchKlines(iv, from, to){
@@ -2592,11 +2592,11 @@ function updateFormingRange(){
 }
 document.addEventListener('visibilitychange', ()=>{ if (document.visibilityState==='visible' && LWC) refreshRecent(); });
 
-// ไม้ที่บันทึกไว้ ของวันที่เลือกบนกราฟ: เส้นเข้า / TP / SL
+// เทรดที่บันทึกไว้ ของวันที่เลือกบนกราฟ: เส้นเข้า / TP / SL
 function drawSaved(){
   if (!LWC) return;
   SAVED_LINES.forEach(x=>LWC.removeSeries(x)); SAVED_LINES=[]; SAVED_BOXES=[]; SAVED_EXT=[]; SAVED_PATHS=[]; CM_LBLS=[];
-  // หน้าบันทึกไม้: ไม่แสดงไม้ที่บันทึกแล้ว (เว้นแต่ติ๊กเอง) · หน้าต่างดูกราฟ: แสดงเฉพาะไม้ที่เลือก
+  // หน้าบันทึกเทรด: ไม่แสดงเทรดที่บันทึกแล้ว (เว้นแต่ติ๊กเอง) · หน้าต่างดูกราฟ: แสดงเฉพาะเทรดที่เลือก
   if ((CM_ROW==null && !$('chSaved').checked) || !CH_BARS.length) return;
   const LS = LightweightCharts.LineStyle, step=INT_MS[CH_IV]/1000, first=CH_BARS[0].time, last=CH_BARS[CH_BARS.length-1].time;
   DATA.trades.forEach(t=>{
@@ -2612,7 +2612,7 @@ function drawSaved(){
     let bb = open ? last : b;
     if (o && o.time && o.time > a) bb = Math.min(bb, o.time + step);   // กล่องสิ้นสุดที่แท่งที่ชน TP / SL
     if (bb<=a) return;
-    const running = open && !(o && o.time) && bb===last;   // ไม้ยังไม่จบ → เส้น/พื้นที่ต่อไปทางขวา
+    const running = open && !(o && o.time) && bb===last;   // เทรดยังไม่จบ → เส้น/พื้นที่ต่อไปทางขวา
     // เส้นประจากจุดเข้า → จุดออก (แบบ TradingView) · ยังไม่จบ = ลากไปถึงราคาล่าสุด
     if (o && o.entryTime){
       if (o.exit!=null) SAVED_PATHS.push({t1:o.entryTime, p1:+sd.entry, t2:o.time, p2:o.exit, win:o.state==='tp'});
@@ -2623,7 +2623,7 @@ function drawSaved(){
     if (num(sd.sl)!=null) SAVED_BOXES.push({a, b:bb, run:running, p1:+sd.entry, p2:+sd.sl, c: open?'rgba(239,68,68,0.20)':'rgba(239,68,68,0.12)'});
     const alpha = open ? 'ff' : '99';
     const add=(p,color,title,style,w)=>{ if(num(p)==null) return;
-      const cm = CM_ROW!=null;   // หน้าต่างดูกราฟไม้: ไม่มีป้ายบนแกนราคา (TP/SL ไปแสดงที่ต้นเส้นแทน)
+      const cm = CM_ROW!=null;   // หน้าต่างดูกราฟเทรด: ไม่มีป้ายบนแกนราคา (TP/SL ไปแสดงที่ต้นเส้นแทน)
       const x = LWC.addLineSeries({color:color+alpha, lineWidth:w, lineStyle:style, priceLineVisible:false, lastValueVisible:open && !cm, title: open && !cm && window.innerWidth>=600 ? title : '', crosshairMarkerVisible:false, priceFormat:{type:'price',precision:2,minMove:0.01}});
       x.setData([{time:a,value:+p},{time:bb,value:+p}]); SAVED_LINES.push(x);
       if (running) SAVED_EXT.push({p:+p, c:color+alpha, w, st: style===LS.Solid?'solid':'dotted'}); };
@@ -2635,7 +2635,7 @@ function drawSaved(){
   });
   placeBoxes();
 }
-var CM_LBLS = [], CM_LBL_ELS = [];   // ป้าย TP / SL ที่ต้นเส้น (หน้าต่างดูกราฟไม้)
+var CM_LBLS = [], CM_LBL_ELS = [];   // ป้าย TP / SL ที่ต้นเส้น (หน้าต่างดูกราฟเทรด)
 var SAVED_PATHS = [], PATH_SVG = null, SAVED_BOXES = [], BOX_ELS = [], LEVEL_EXT = [], SAVED_EXT = [], EXT_ELS = [];
 // ต่อเส้นจากแท่งล่าสุดไปถึงขอบขวาของกราฟ (พื้นที่ว่างด้านขวาตอนลากกราฟ)
 function placeExt(){
@@ -2670,7 +2670,7 @@ function drawSrcSync(){ if (DRAW_SRC && DRAW_SRC!==drawSrcKey()){ const all = dr
 const drawKey = p => 'chDraw:'+p;
 function drawLocal(p){ try{ const v = JSON.parse(localStorage.getItem(drawKey(p))||'null'); return Array.isArray(v) ? v : null; }catch(e){ return null; } }
 function drawRedraw(){ if (typeof LWC!=='undefined' && LWC){ try{ drawHLines(); renderDraw(); }catch(e){} } }
-// เรียกทุกครั้งที่ข้อมูลพอร์ตเปลี่ยน (โหลด/สลับพอร์ต/บันทึกไม้)
+// เรียกทุกครั้งที่ข้อมูลพอร์ตเปลี่ยน (โหลด/สลับพอร์ต/บันทึกเทรด)
 function syncDrawFromData(){
   if (PORT==null){ if (DRAW_PORT!==null){ DRAW_PORT = null; DRAW.items = []; DRAW_OTHER = []; DRAW.sel = -1; drawRedraw(); } return; }
   const srv = DATA && Array.isArray(DATA.draw) ? DATA.draw : null;
@@ -2866,7 +2866,7 @@ function drawClick(x,y,touch){
   DRAW.items.push({type:tool, t1:a.t, p1:a.p, t2:t, p2:p}); saveDraw(); setTool('cursor');
 }
 function hitDraw(x,y){
-  if (CM_ROW!=null) return -1;   // หน้าต่างดูกราฟไม้: เลือก/ลากเส้นที่วาดไม่ได้
+  if (CM_ROW!=null) return -1;   // หน้าต่างดูกราฟเทรด: เลือก/ลากเส้นที่วาดไม่ได้
   for (let i=DRAW.items.length-1;i>=0;i--){
     const d=DRAW.items[i];
     if (d.type==='hline'){ const yy=CS.priceToCoordinate(d.p); if (yy!=null && Math.abs(yy-y)<6) return i; continue; }
@@ -2882,7 +2882,7 @@ function hitDraw(x,y){
 function drawHLines(){
   if (!CS) return;
   DRAW.hl.forEach(l=>{ try{ CS.removePriceLine(l); }catch(e){} }); DRAW.hl=[];
-  if (CM_ROW!=null) return;   // หน้าต่างดูกราฟไม้: ไม่แสดงเส้นที่วาดเอง
+  if (CM_ROW!=null) return;   // หน้าต่างดูกราฟเทรด: ไม่แสดงเส้นที่วาดเอง
   DRAW.items.forEach((d,i)=>{ if (d.type==='hline') DRAW.hl.push(CS.createPriceLine({price:d.p, color: i===DRAW.sel?'#f7a600':'#c084fc', lineWidth: i===DRAW.sel?2:1, lineStyle:LightweightCharts.LineStyle.Solid, axisLabelVisible:true, title:''})); });
 }
 let DRAW_SVG=null, DRAW_SEL_HL=-2;
@@ -3087,10 +3087,10 @@ function paintHist(){
   if (!CH_ANCHOR){ el.style.display='none'; return; }
   el.style.display=''; el.innerHTML = `ดูย้อนหลัง ${CH_ANCHOR} · <a onclick="resetChart()" style="cursor:pointer">กลับวันนี้</a>`;
 }
-// ปุ่ม ดูกราฟ ในประวัติการเทรด → เปิดกราฟวันของไม้นั้น
-// เปิดกราฟของไม้ในหน้าต่างแยก (ไม่กระทบหน้าบันทึกไม้) — ปิดแล้วกราฟหลักกลับเป็นแบบเดิม
-let CM_PREV = null;   // CM_ROW = ไม้ที่กำลังดูในหน้าต่างกราฟ (แสดงเส้นเฉพาะไม้นี้)
-// หน้าต่างดูกราฟไม้: ซ่อนเครื่องมือวาด เส้นที่วาด ราคาปัจจุบัน gap Live และ last price
+// ปุ่ม ดูกราฟ ในประวัติการเทรด → เปิดกราฟวันของเทรดนั้น
+// เปิดกราฟของเทรดในหน้าต่างแยก (ไม่กระทบหน้าบันทึกเทรด) — ปิดแล้วกราฟหลักกลับเป็นแบบเดิม
+let CM_PREV = null;   // CM_ROW = เทรดที่กำลังดูในหน้าต่างกราฟ (แสดงเส้นเฉพาะเทรดนี้)
+// หน้าต่างดูกราฟเทรด: ซ่อนเครื่องมือวาด เส้นที่วาด ราคาปัจจุบัน gap Live และ last price
 function setCmMode(on){
   $('chartCard').classList.toggle('cm', !!on);
   if (on){ DRAW.sel = -1; DRAW.pending = null; if (DRAW.tool!=='cursor') setTool('cursor'); if (DRAW.xh) setXh(false); }
@@ -3102,13 +3102,13 @@ function viewTradeChart(row){
   if (!$('chartModal').classList.contains('on')) CM_PREV = {anchor: CH_ANCHOR};
   $('cmBody').appendChild($('chartCard'));
   const sd = side(t);
-  $('cmTxt').textContent = `${t.date} · ไม้ที่ ${t.n}${sd.pos?' · '+sd.mode+' '+sd.pos+' '+(sd.tf||''):''}`;
+  $('cmTxt').textContent = `${t.date} · เทรดที่ ${t.n}${sd.pos?' · '+sd.mode+' '+sd.pos+' '+(sd.tf||''):''}`;
   $('chartModal').classList.add('on'); document.body.style.overflow='hidden';
   CM_ROW = row; setCmMode(true); drawSaved();
-  // รอให้กราฟปรับขนาดตามหน้าต่างก่อน แล้วค่อยซูมไปช่วงของไม้
+  // รอให้กราฟปรับขนาดตามหน้าต่างก่อน แล้วค่อยซูมไปช่วงของเทรด
   goDate(t.date).then(()=>setTimeout(()=>{ if (CM_ROW===row){ drawSaved(); focusTrade(t); } }, 150));
 }
-// ซูมกราฟเฉพาะช่วงของไม้: ก่อนตลาดเปิดเล็กน้อย → จนชน TP/SL (หรือแท่งล่าสุดถ้ายังเปิดอยู่)
+// ซูมกราฟเฉพาะช่วงของเทรด: ก่อนตลาดเปิดเล็กน้อย → จนชน TP/SL (หรือแท่งล่าสุดถ้ายังเปิดอยู่)
 function focusTrade(t){
   if (!LWC || !CH_BARS.length) return;
   const step = INT_MS[CH_IV]/1000, first = CH_BARS[0].time, last = CH_BARS[CH_BARS.length-1].time;
@@ -3119,7 +3119,7 @@ function focusTrade(t){
   else if (o && (o.state==='running' || o.state==='noentry')) end = last;
   else end = s0 + 4*3600;
   const from = Math.max(first, s0 - Math.max(1800, 3*step)), to = Math.min(last, Math.max(end, s0 + 2*3600));
-  // แปลงช่วงเวลาเป็นลำดับแท่ง แล้วเว้นที่ว่างทางซ้ายของต้นเส้นไม้ ~100px ให้ป้าย "เข้า" (อยู่ทางซ้ายของต้นเส้น) ไม่ชนขอบ
+  // แปลงช่วงเวลาเป็นลำดับแท่ง แล้วเว้นที่ว่างทางซ้ายของต้นเส้นเทรด ~100px ให้ป้าย "เข้า" (อยู่ทางซ้ายของต้นเส้น) ไม่ชนขอบ
   // (คำนวณครั้งเดียว เพราะกราฟเปลี่ยนช่วงในเฟรมถัดไป วัดซ้ำทันทีไม่ได้)
   try{
     const idx = tm => { let i = CH_BARS.findIndex(b=>b.time>=tm); return i<0 ? CH_BARS.length-1 : i; };
@@ -3147,7 +3147,7 @@ function toggleChartFs(force){
   requestAnimationFrame(fit); setTimeout(fit, 250);   // เต็มจอจริงของเบราว์เซอร์เปลี่ยนขนาดช้ากว่าเล็กน้อย
 }
 document.addEventListener('fullscreenchange', ()=>{ if (!document.fullscreenElement && isChartFs()) toggleChartFs(false); });
-// Esc: ออกจากเต็มจอก่อน (ไม่ปิดหน้าต่างกราฟไม้ทันที)
+// Esc: ออกจากเต็มจอก่อน (ไม่ปิดหน้าต่างกราฟเทรดทันที)
 document.addEventListener('keydown', e=>{ if (e.key==='Escape' && isChartFs() && !$('confirmBox').classList.contains('on')){ e.stopImmediatePropagation(); toggleChartFs(false); } }, true);
 function closeChartModal(){
   if (!$('chartModal').classList.contains('on')) return;
@@ -3168,7 +3168,7 @@ function centerLast(){
   try{ LWC.timeScale().setVisibleLogicalRange({from: L - n*0.8, to: L + n*0.2}); }catch(e){}   // แท่งล่าสุดอยู่ที่ 80% จากซ้าย
 }
 function resetView(){
-  if (CM_ROW!=null){ const t = DATA.trades.find(x=>x.row===CM_ROW); if (t){ focusTrade(t); return; } }   // หน้าต่างดูกราฟ: กลับไปช่วงของไม้
+  if (CM_ROW!=null){ const t = DATA.trades.find(x=>x.row===CM_ROW); if (t){ focusTrade(t); return; } }   // หน้าต่างดูกราฟ: กลับไปช่วงของเทรด
   if (CH_ANCHOR){ focusDay(CH_ANCHOR, 1); refitScale(); return; }
   resetChart();
 }
@@ -3295,7 +3295,7 @@ function paintSpread(){
 let LAST_PL = null;
 function updLast(b){
   if (!CS || !b) return;
-  if (CM_ROW!=null){ if (LAST_PL) LAST_PL.applyOptions({lineVisible:false, axisLabelVisible:false}); return; }   // หน้าต่างดูกราฟไม้: ไม่แสดง last price
+  if (CM_ROW!=null){ if (LAST_PL) LAST_PL.applyOptions({lineVisible:false, axisLabelVisible:false}); return; }   // หน้าต่างดูกราฟเทรด: ไม่แสดง last price
   if (LAST_PL) LAST_PL.applyOptions({lineVisible:true, axisLabelVisible:true});
   const color = '#8b98a8';   // เส้นราคาปัจจุบัน: สีเทา
   if (!LAST_PL) LAST_PL = CS.createPriceLine({price:b.close, color, lineWidth:1, lineStyle:LightweightCharts.LineStyle.Dotted, axisLabelVisible:true, title:''});
@@ -3308,7 +3308,7 @@ loadMktPrefs(); window.__chKey=SRC()+'|'+$('mktStart').value; fillChartDays(); l
 // ---------- ดาวน์โหลดข้อมูล (Excel / CSV) ----------
 // คอลัมน์ทั้งหมด (รวมช่องคำนวณ เช่น TP/SL, Diff, Result)
 const EXPORT_COLS = [
-  ['Date','date'],['ไม้ที่','n'],['ทุน','cap'],['M30 กรอบบน','t30'],['M30 กรอบล่าง','b30'],['ระยะวิ่ง M30','r30'],
+  ['Date','date'],['เทรดที่','n'],['ทุน','cap'],['M30 กรอบบน','t30'],['M30 กรอบล่าง','b30'],['ระยะวิ่ง M30','r30'],
   ['H1 กรอบบน','t1'],['H1 กรอบล่าง','b1'],['ระยะวิ่ง H1','r1'],['Risk %','risk'],
   ['Lev M30 Long','lL30'],['Lev M30 Short','lS30'],['Lev H1 Long','lL1'],['Lev H1 Short','lS1'],
   ['Auto Position','aPos'],['ราคาเบรก','brk'],['Auto TF','aTf'],['ราคารีเทส','ret'],['ราคาเฉลี่ย','avg'],['TP','tp'],['SL','sl'],
@@ -3349,7 +3349,7 @@ async function runExport(){
   if (!ports.length) return $('ex_msg').innerHTML = '<span class="neg">ยังไม่มีพอร์ต</span>';
   const b = $('ex_btn'); btnBusy(b, true, 'กำลังเตรียมไฟล์…'); $('ex_msg').textContent = '';
   try{
-    // ข้อมูลไม้ของแต่ละพอร์ต (พอร์ตปัจจุบันใช้ข้อมูลที่โหลดอยู่แล้ว)
+    // ข้อมูลเทรดของแต่ละพอร์ต (พอร์ตปัจจุบันใช้ข้อมูลที่โหลดอยู่แล้ว)
     const sets = [];
     for (const p of ports){
       $('ex_msg').textContent = 'กำลังอ่าน "'+p.name+'"…';
@@ -3369,7 +3369,7 @@ async function runExport(){
       const wb = XLSX.utils.book_new(), used = new Set();
       const sheetName = n => { let x = String(n).replace(/[\\/:*?\[\]]/g,'-').slice(0,31) || 'Sheet'; let y = x, i = 2; while (used.has(y.toLowerCase())) y = x.slice(0,28)+' ('+(i++)+')'; used.add(y.toLowerCase()); return y; };
       // แท็บสรุป
-      const sum = [['พอร์ต','เจ้าของ','ทุนเริ่มต้น','Balance','ผลตอบแทน %','ไม้ทั้งหมด','ปิดแล้ว','Win','Loss','Win rate %']];
+      const sum = [['พอร์ต','เจ้าของ','ทุนเริ่มต้น','Balance','ผลตอบแทน %','เทรดทั้งหมด','ปิดแล้ว','Win','Loss','Win rate %']];
       sets.forEach(({p, trades, capital})=>{
         const c = trades.filter(t=>num(t.diff)!=null), w = c.filter(t=>t.diff>0).length, l = c.filter(t=>t.diff<0).length;
         let bal = num(capital); trades.forEach(t=>{ if (num(t.bal)!=null) bal = +t.bal; });
@@ -3386,7 +3386,7 @@ async function runExport(){
       XLSX.writeFile(wb, base + '.xlsx');
     }
     const n = sets.reduce((a,x)=>a+x.trades.length, 0);
-    $('ex_msg').innerHTML = '<span class="pos">ดาวน์โหลดแล้ว · '+sets.length+' พอร์ต · '+n+' ไม้</span>';
+    $('ex_msg').innerHTML = '<span class="pos">ดาวน์โหลดแล้ว · '+sets.length+' พอร์ต · '+n+' เทรด</span>';
   }catch(e){ $('ex_msg').innerHTML = '<span class="neg">ดาวน์โหลดไม่ได้: '+esc(e.message||String(e))+'</span>'; }
   btnBusy(b, false);
 }
@@ -3401,13 +3401,13 @@ async function hardReload(){
   location.replace(u.toString());
 }
 
-// ข้อมูลไม้ของพอร์ตที่เลือก
+// ข้อมูลเทรดของพอร์ตที่เลือก
 async function loadPortData(){
   DATA = PORT==null ? {trades:[], capital:null} : await apiRaw('getTrades');
   renderAll(); if (EDIT_ROW==null) resetForm();
 }
 async function selectPort(id){
-  if (String(id)===PORT && DATA.version){ renderHome(); return; }   // เลือกแล้วอยู่หน้าพอร์ตต่อ (กด "บันทึกไม้ใหม่" เพื่อไปบันทึก)
+  if (String(id)===PORT && DATA.version){ renderHome(); return; }   // เลือกแล้วอยู่หน้าพอร์ตต่อ (กด "บันทึกเทรดใหม่" เพื่อไปบันทึก)
   setPort(id);
   const c = cacheGet(), cd = c && c.data && c.data[PORT];
   if (cd){   // มีในเครื่อง → แสดงทันที แล้วอัปเดตเบื้องหลัง
@@ -3422,7 +3422,7 @@ async function selectPort(id){
   catch(e){ toast('โหลดพอร์ตไม่ได้: '+(e.message||e), true); }
   setLoading(false);
 }
-// ดึงรายชื่อพอร์ต + ไม้ของพอร์ตที่เลือก (ครั้งเดียว)
+// ดึงรายชื่อพอร์ต + เทรดของพอร์ตที่เลือก (ครั้งเดียว)
 async function bootFetch(resetAfter){
   const p = PORT;
   const r = await apiRaw('boot', ...(PORT!=null ? [PORT] : []));
@@ -3432,7 +3432,7 @@ async function bootFetch(resetAfter){
   paintPort(); renderAll();
   if (resetAfter && EDIT_ROW==null) resetForm(); else recalc();
 }
-// อัปเดตสรุปของพอร์ตที่เลือกจากข้อมูลล่าสุด (หลังบันทึก/แก้/ลบไม้)
+// อัปเดตสรุปของพอร์ตที่เลือกจากข้อมูลล่าสุด (หลังบันทึก/แก้/ลบเทรด)
 function syncPortSummary(){
   const p = curPort(); if (!p || !DATA || !DATA.trades) return;
   const c = closed();
@@ -3441,7 +3441,7 @@ function syncPortSummary(){
 function renderPorts(){
   if (!$('portList')) return;
   paintPort();
-  $('portNote').innerHTML = PORT==null && PORTS.length ? 'แตะพอร์ตเพื่อเลือก แล้วเริ่มบันทึกไม้' : '';
+  $('portNote').innerHTML = PORT==null && PORTS.length ? 'แตะพอร์ตเพื่อเลือก แล้วเริ่มบันทึกเทรด' : '';
   const card = p=>{
     const on = String(p.id)===PORT, cap = num(p.capital), bal = num(p.balance);
     const ret = (cap && bal!=null) ? bal/cap-1 : null, wl = (p.wins||0)+(p.losses||0), own = !p.access || p.access==='owner';
@@ -3449,7 +3449,7 @@ function renderPorts(){
       <div class="pTop"><b class="pName">${esc(p.name)}</b>${on?'<span class="badge open">ใช้งานอยู่</span>':''}${!own ? `<span class="accB">${p.access==='edit'?'แก้ไขได้':'ดูอย่างเดียว'}</span>` : ''}<span style="flex:1"></span>${!own||VIEW_AS?'':`<button class="btn sm icon" title="เปลี่ยนชื่อ" onclick="event.stopPropagation();openPortForm('${esc(p.id)}')">${ic('pencil',13)}</button>`}</div>
       ${!own && p.owner && !VIEW_AS ? `<div class="pOwner">ของ ${esc(p.owner)}</div>` : ''}
       <div class="pBal mono">${bal!=null?'$'+fN(bal):'–'}</div>
-      <div class="pMeta">${p.trades!=null?`<span class="${cls(ret)}">${pct(ret)}</span> · ${p.trades} ไม้ · Win ${wl?fN(p.wins/wl*100,1)+'%':'–'}`:'แตะเพื่อเปิด'}</div>
+      <div class="pMeta">${p.trades!=null?`<span class="${cls(ret)}">${pct(ret)}</span> · ${p.trades} เทรด · Win ${wl?fN(p.wins/wl*100,1)+'%':'–'}`:'แตะเพื่อเปิด'}</div>
     </div>`; };
   const mine = PORTS.filter(p=>!p.access || p.access==='owner' || VIEW_AS), shared = VIEW_AS ? [] : PORTS.filter(p=>p.access && p.access!=='owner');
   $('addPortBtn').hidden = !!VIEW_AS;
@@ -3473,14 +3473,14 @@ function openPortForm(id){
   $('portBox').classList.add('on'); setTimeout(()=>$('pf_name').focus(), 50);
 }
 function closePortForm(){ $('portBox').classList.remove('on'); }
-// ลบพอร์ต: ต้องพิมพ์ชื่อพอร์ตให้ตรงก่อน (ลบพอร์ตพร้อมไม้และเส้นที่วาดทั้งหมด)
+// ลบพอร์ต: ต้องพิมพ์ชื่อพอร์ตให้ตรงก่อน (ลบพอร์ตพร้อมเทรดและเส้นที่วาดทั้งหมด)
 function startDeletePort(){
   const p = PORTS.find(x=>String(x.id)===PF_EDIT); if (!p) return;
   PF_DEL = true;
   $('pf_title').textContent = 'ลบพอร์ต';
   $('pf_del').hidden = true;
   $('pf_name').value = ''; $('pf_name').placeholder = p.name;
-  $('pf_msg').innerHTML = `<span class="neg">${ic('triangle-alert',12)} ลบพอร์ต "<b>${esc(p.name)}</b>" พร้อมไม้ทั้งหมด${p.trades?` (${p.trades} ไม้)`:''} · กู้คืนไม่ได้</span><br>พิมพ์ชื่อพอร์ตด้านบนเพื่อยืนยัน (แนะนำให้ดาวน์โหลดข้อมูลเก็บไว้ก่อน)`;
+  $('pf_msg').innerHTML = `<span class="neg">${ic('triangle-alert',12)} ลบพอร์ต "<b>${esc(p.name)}</b>" พร้อมเทรดทั้งหมด${p.trades?` (${p.trades} เทรด)`:''} · กู้คืนไม่ได้</span><br>พิมพ์ชื่อพอร์ตด้านบนเพื่อยืนยัน (แนะนำให้ดาวน์โหลดข้อมูลเก็บไว้ก่อน)`;
   $('pf_btn').textContent = 'ลบถาวร';
   $('pf_btn').style.cssText = 'background:var(--red);border-color:var(--red);color:#fff';
   setTimeout(()=>$('pf_name').focus(), 50);
@@ -3772,7 +3772,7 @@ function renderAdmin(){
     return `<div class="uRow ${u.status}">
       <div class="uWho"><div class="uAv ${u.role}">${esc((u.email||'?')[0])}</div><div style="min-width:0"><div class="uEm" title="${esc(u.email)}">${esc(u.email)}${self?' <span class="me">(คุณ)</span>':''}</div><div class="uSub">สมัคร ${fmtDate(u.created_at)}${u.approved_at && u.status==='active' ? ' · อนุมัติ '+fmtDate(u.approved_at) : ''}</div></div></div>
       <div class="uTags"><div class="uRole">${role}</div><div class="uStat"><span class="pill ${u.status}">${STATUS_TH[u.status]||u.status}</span></div></div>
-      <div class="uData"><span class="mono">${u.ports}</span> พอร์ต · <span class="mono">${u.trades}</span> ไม้${u.last_trade ? `<div class="s">เทรดล่าสุด ${fmtDate(u.last_trade)}</div>` : ''}</div>
+      <div class="uData"><span class="mono">${u.ports}</span> พอร์ต · <span class="mono">${u.trades}</span> เทรด${u.last_trade ? `<div class="s">เทรดล่าสุด ${fmtDate(u.last_trade)}</div>` : ''}</div>
       <div class="uSeen" title="${u.last_seen_at ? new Date(u.last_seen_at).toLocaleString('th-TH') : ''}">${ago(u.last_seen_at)}</div>
       <div class="uActs">${acts.join('')}</div>
     </div>`; }).join('')

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>คู่มือ Trade Journal</title>
-<meta name="description" content="วิธีใช้ Trade Journal: พอร์ต กราฟ บันทึกไม้ ประวัติการเทรด และสรุปผล สำหรับการเทรด BTC Futures ตามกรอบ M30 / H1">
+<meta name="description" content="วิธีใช้ Trade Journal: พอร์ต กราฟ บันทึกเทรด ประวัติการเทรด และสรุปผล สำหรับการเทรด BTC Futures ตามกรอบ M30 / H1">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#0d1117">
 <link rel="canonical" href="https://jokekittikun.github.io/TradeJournal/guide.html">
@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Trade Journal">
 <meta property="og:locale" content="th_TH">
 <meta property="og:title" content="คู่มือ Trade Journal">
-<meta property="og:description" content="วิธีใช้ Trade Journal: พอร์ต กราฟ บันทึกไม้ ประวัติการเทรด และสรุปผล สำหรับการเทรด BTC Futures ตามกรอบ M30 / H1">
+<meta property="og:description" content="วิธีใช้ Trade Journal: พอร์ต กราฟ บันทึกเทรด ประวัติการเทรด และสรุปผล สำหรับการเทรด BTC Futures ตามกรอบ M30 / H1">
 <meta property="og:url" content="https://jokekittikun.github.io/TradeJournal/guide.html">
 <meta property="og:image" content="https://jokekittikun.github.io/TradeJournal/og-image.png">
 <meta property="og:image:secure_url" content="https://jokekittikun.github.io/TradeJournal/og-image.png">
@@ -24,7 +24,7 @@
 <!-- X (Twitter) -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="คู่มือ Trade Journal">
-<meta name="twitter:description" content="วิธีใช้ Trade Journal: พอร์ต กราฟ บันทึกไม้ ประวัติการเทรด และสรุปผล สำหรับการเทรด BTC Futures ตามกรอบ M30 / H1">
+<meta name="twitter:description" content="วิธีใช้ Trade Journal: พอร์ต กราฟ บันทึกเทรด ประวัติการเทรด และสรุปผล สำหรับการเทรด BTC Futures ตามกรอบ M30 / H1">
 <meta name="twitter:image" content="https://jokekittikun.github.io/TradeJournal/og-image.png">
 <link rel="icon" href="favicon.ico?v=3" sizes="any">
 <link rel="icon" href="favicon.svg?v=3" type="image/svg+xml">
@@ -133,7 +133,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:v
     <a href="#daily">ใช้งานประจำวัน</a>
     <a href="#ports">พอร์ต</a>
     <a href="#chart">กราฟ</a>
-    <a href="#record">บันทึกไม้</a>
+    <a href="#record">บันทึกเทรด</a>
     <a href="#history">ประวัติการเทรด</a>
     <a href="#stats">สรุปผล</a>
     <a href="#more">อื่น ๆ</a>
@@ -158,8 +158,8 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:v
         <li><div><b>รอกรอบก่อตัว</b> ช่วง <span class="num">20:30–21:30</span> น. ตาราง "กรอบราคาจากตลาด" นับถอยหลังและอัปเดตราคาสด</div></li>
         <li><div><b>แตะแถววันนี้</b> ในตาราง เพื่อเติมกรอบ M30 / H1 ลงฟอร์มอัตโนมัติ ระบบคำนวณระยะวิ่งและ Leverage ให้</div></li>
         <li><div><b>ดูสัญญาณเบรก</b> ระบบบอกว่าแท่ง M30 ปิดนอกกรอบฝั่งไหน แตะ <span class="k long">Long</span> / <span class="k short">Short</span> เพื่อเลือก Position</div></li>
-        <li><div><b>ใส่ราคาเข้า</b> แล้วกดบันทึก ไม้ขึ้นในรายการทันที ระบบบันทึกให้เบื้องหลัง</div></li>
-        <li><div><b>ปิดไม้</b> ใส่ Balance หลังปิด (แตะช่อง Balance ในประวัติการเทรดได้เลย) ระบบคิด % และ Win / Loss ให้</div></li>
+        <li><div><b>ใส่ราคาเข้า</b> แล้วกดบันทึก เทรดขึ้นในรายการทันที ระบบบันทึกให้เบื้องหลัง</div></li>
+        <li><div><b>ปิดเทรด</b> ใส่ Balance หลังปิด (แตะช่อง Balance ในประวัติการเทรดได้เลย) ระบบคิด % และ Win / Loss ให้</div></li>
       </ol>
     </section>
 
@@ -178,7 +178,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:v
         <div class="feat">
           <h3>การ์ดสรุปพอร์ต</h3>
           <ul>
-            <li>Balance, ผลตอบแทน %, จำนวนไม้, Win rate</li>
+            <li>Balance, ผลตอบแทน %, จำนวนเทรด, Win rate</li>
             <li>พอร์ตที่ใช้งานอยู่มีขอบสีส้ม</li>
             <li>สลับพอร์ตเร็วจากปุ่มชื่อพอร์ตที่หัวเว็บ อยู่หน้าเดิมได้เลย</li>
           </ul>
@@ -186,9 +186,9 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:v
         <div class="feat wide">
           <h3>ภาพรวมของพอร์ตที่เลือก</h3>
           <ul>
-            <li><b>เดือนนี้:</b> จำนวนไม้ (และที่ยังเปิดอยู่), Win rate, กำไร / ขาดทุน, ผลตอบแทน</li>
-            <li><b>Equity:</b> กราฟ Balance ทุกไม้ เส้นเขียวเมื่อกำไร แดงเมื่อขาดทุน ชี้หรือแตะเพื่อดูรายละเอียดแต่ละไม้</li>
-            <li><b>ไม้ล่าสุด 5 ไม้:</b> แตะเพื่อเปิดกราฟของไม้นั้น</li>
+            <li><b>เดือนนี้:</b> จำนวนเทรด (และที่ยังเปิดอยู่), Win rate, กำไร / ขาดทุน, ผลตอบแทน</li>
+            <li><b>Equity:</b> กราฟ Balance ทุกเทรด เส้นเขียวเมื่อกำไร แดงเมื่อขาดทุน ชี้หรือแตะเพื่อดูรายละเอียดแต่ละเทรด</li>
+            <li><b>เทรดล่าสุด 5 เทรด:</b> แตะเพื่อเปิดกราฟของเทรดนั้น</li>
           </ul>
         </div>
       </div>
@@ -196,7 +196,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:v
 
     <section id="chart">
       <h2><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5v4"/><rect width="4" height="6" x="7" y="9" rx="1"/><path d="M9 15v2"/><path d="M17 3v2"/><rect width="4" height="8" x="15" y="5" rx="1"/><path d="M17 13v3"/><path d="M3 3v16a2 2 0 0 0 2 2h16"/></svg>กราฟ</h2>
-      <p class="where">ด้านบนของหน้า "บันทึกไม้" · BTC / USDT เวลาไทย</p>
+      <p class="where">ด้านบนของหน้า "บันทึกเทรด" · BTC / USDT เวลาไทย</p>
       <div class="grid">
         <div class="feat">
           <h3>ราคาสด</h3>
@@ -230,8 +230,8 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:v
     </section>
 
     <section id="record">
-      <h2><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>บันทึกไม้</h2>
-      <p class="where">เมนูล่าง "บันทึกไม้"</p>
+      <h2><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>บันทึกเทรด</h2>
+      <p class="where">เมนูล่าง "บันทึกเทรด"</p>
       <div class="grid">
         <div class="feat">
           <h3>กรอบราคาจากตลาด</h3>
@@ -243,10 +243,10 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:v
           </ul>
         </div>
         <div class="feat">
-          <h3>ข้อมูลไม้</h3>
+          <h3>ข้อมูลเทรด</h3>
           <ul>
             <li>วันที่, Risk %, Bias ของวัน (Long / Short)</li>
-            <li><b>ทุน</b> เติมจาก Balance ไม้ก่อนหน้าให้อัตโนมัติ แก้เองได้ถ้าทุนไม้นี้ต่างออกไป</li>
+            <li><b>ทุน</b> เติมจาก Balance เทรดก่อนหน้าให้อัตโนมัติ แก้เองได้ถ้าทุนเทรดนี้ต่างออกไป</li>
           </ul>
         </div>
         <div class="feat">
@@ -258,17 +258,17 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:v
           </ul>
         </div>
         <div class="feat">
-          <h3>การเข้าไม้</h3>
+          <h3>การเข้าเทรด</h3>
           <ul>
             <li>ตรวจแท่ง M30 ที่ปิดนอกกรอบให้อัตโนมัติ (Breakout)</li>
             <li>Auto (ตามแผน) หรือ Manual, เลือก Position และ TF</li>
-            <li>วิธีเข้า: เบรก + รีเทส (แบ่ง 2 ไม้) หรือรีเทส 100%</li>
+            <li>วิธีเข้า: เบรก + รีเทส (แบ่ง 2 เทรด) หรือรีเทส 100%</li>
             <li>คำนวณราคาเฉลี่ย, TP, SL, ราคา Liq. ให้ · Leverage เติมค่าที่คำนวณไว้ แก้เองได้</li>
           </ul>
         </div>
         <div class="feat wide">
           <h3>บันทึกทันที</h3>
-          <p>กดบันทึกแล้วไม้ขึ้นในรายการทันที ฟอร์มว่างพร้อมบันทึกไม้ถัดไป ระบบบันทึกเบื้องหลัง (ระหว่างนั้นแถวจะขึ้น "กำลังบันทึก…") ถ้าส่งไม่สำเร็จ ข้อมูลจะกลับเข้าฟอร์มให้กดบันทึกใหม่ ไม่หาย</p>
+          <p>กดบันทึกแล้วเทรดขึ้นในรายการทันที ฟอร์มว่างพร้อมบันทึกเทรดถัดไป ระบบบันทึกเบื้องหลัง (ระหว่างนั้นแถวจะขึ้น "กำลังบันทึก…") ถ้าส่งไม่สำเร็จ ข้อมูลจะกลับเข้าฟอร์มให้กดบันทึกใหม่ ไม่หาย</p>
         </div>
       </div>
     </section>
@@ -278,10 +278,10 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:v
       <p class="where">เมนูล่าง "ประวัติการเทรด"</p>
       <div class="grid">
         <div class="feat">
-          <h3>รายการไม้ทั้งหมด</h3>
+          <h3>รายการเทรดทั้งหมด</h3>
           <ul>
             <li>กรองตามผล (Win / Loss / ยังไม่ปิด), TF, Position</li>
-            <li>ไม้ที่ยังไม่ปิด ระบบเช็กจากกราฟว่าชน TP หรือ SL แล้วหรือยัง แล้วแสดงผลให้อัตโนมัติ</li>
+            <li>เทรดที่ยังไม่ปิด ระบบเช็กจากกราฟว่าชน TP หรือ SL แล้วหรือยัง แล้วแสดงผลให้อัตโนมัติ</li>
           </ul>
         </div>
         <div class="feat">
@@ -292,10 +292,10 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:v
           </ul>
         </div>
         <div class="feat wide">
-          <h3>ดูกราฟของไม้</h3>
+          <h3>ดูกราฟของเทรด</h3>
           <ul>
-            <li>ซูมไปช่วงของไม้นั้นให้เอง พร้อมพื้นที่ TP (เขียว) / SL (แดง) แบบ TradingView และเส้นประจากจุดเข้าไปจุดออก</li>
-            <li>ป้ายราคา <b>#เลขไม้</b>, TP, SL อยู่ที่ต้นเส้น หน้าต่างนี้ไม่มีเครื่องมือวาดหรือราคาสด ให้ดูไม้ได้ชัด ๆ</li>
+            <li>ซูมไปช่วงของเทรดนั้นให้เอง พร้อมพื้นที่ TP (เขียว) / SL (แดง) แบบ TradingView และเส้นประจากจุดเข้าไปจุดออก</li>
+            <li>ป้ายราคา <b>#เลขเทรด</b>, TP, SL อยู่ที่ต้นเส้น หน้าต่างนี้ไม่มีเครื่องมือวาดหรือราคาสด ให้ดูเทรดได้ชัด ๆ</li>
           </ul>
         </div>
       </div>
@@ -311,14 +311,14 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:v
             <tr><td>ทุน / Balance</td><td>ต้นช่วง และปลายช่วง</td></tr>
             <tr><td>ผลงาน</td><td>กำไร / ขาดทุนสุทธิ, ผลตอบแทน %</td></tr>
             <tr><td>ความแม่น</td><td>Win rate, Profit factor</td></tr>
-            <tr><td>เฉลี่ย</td><td>% เฉลี่ยไม้ชนะ และไม้แพ้</td></tr>
+            <tr><td>เฉลี่ย</td><td>% เฉลี่ยเทรดชนะ และเทรดแพ้</td></tr>
             <tr><td>ความเสี่ยง</td><td>Max drawdown, ชนะ / แพ้ติดกันสูงสุด</td></tr>
           </table></div>
         </div>
         <div class="feat">
           <h3>กราฟและตารางแยกผล</h3>
           <ul>
-            <li>Equity curve ชี้หรือแตะดูแต่ละไม้ได้</li>
+            <li>Equity curve ชี้หรือแตะดูแต่ละเทรดได้</li>
             <li>แยกตาม TF (M30 / H1), Position (Long / Short), Auto / Manual</li>
             <li>แยกตาม Bias: เข้าตาม Bias vs เข้าสวน Bias ได้ผลต่างกันแค่ไหน</li>
           </ul>
@@ -343,7 +343,7 @@ footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:v
           <ul>
             <li>เข้าสู่ระบบด้วยอีเมล + รหัสผ่าน · บัญชีใหม่ต้องรอผู้ดูแลอนุมัติก่อนใช้งาน</li>
             <li>แต่ละบัญชีเห็นเฉพาะพอร์ตของตัวเอง และพอร์ตที่มีคนแชร์ให้</li>
-            <li>กันการแก้หรือลบไม้ผิดไม้ และกันการบันทึกซ้ำเมื่อเน็ตหลุดระหว่างบันทึก</li>
+            <li>กันการแก้หรือลบเทรดผิดเทรด และกันการบันทึกซ้ำเมื่อเน็ตหลุดระหว่างบันทึก</li>
             <li>ดาวน์โหลดข้อมูลทุกพอร์ตเป็น Excel / CSV ได้จากเมนูโปรไฟล์</li>
           </ul>
         </div>

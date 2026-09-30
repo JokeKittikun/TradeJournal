@@ -359,7 +359,8 @@ table.mkt td:last-child,table.mkt th:last-child{text-align:left;font-family:'IBM
 table.mkt tr.today td{background:rgba(247,166,0,.06)}
 .st{font-size:12px;font-weight:500}
 /* สถานะฐานข้อมูล (Super Admin) */
-.dbBody{padding:4px 2px 2px;max-height:70vh;overflow:auto}
+.modal.dbModal{max-width:760px}
+.dbBody{padding:26px 28px 30px}
 .dbGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .dbCard{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .dbCard .l{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
@@ -368,14 +369,22 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
 .dbBar{height:6px;border-radius:99px;background:#0d1117;margin:8px 0 4px;overflow:hidden}
 .dbBar i{display:block;height:100%;border-radius:99px;background:#22c55e}
 .dbBar i.warn{background:#f59e0b}.dbBar i.bad{background:#ef4444}
-.dbSec{font-size:12px;font-weight:600;color:var(--muted);margin:16px 2px 8px}
-.dbT{width:100%;border-collapse:collapse;font-size:12.5px}
-.dbT td{padding:6px 8px;border-bottom:1px solid var(--line)}
-.dbT td:last-child{text-align:right;font-family:'JetBrains Mono',monospace;white-space:nowrap}
-.dbNote{margin-top:14px;font-size:12px;color:var(--muted);line-height:1.7}
+.dbSec{font-size:12px;font-weight:600;color:var(--muted);margin:22px 2px 10px;text-transform:none}
+.dbTbl{background:var(--panel2);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.dbRow{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto;align-items:center;gap:12px;padding:10px 14px;border-top:1px solid var(--line);font-size:12.5px}
+.dbRow:first-child{border-top:0}
+.dbRow.h{font-size:11px;color:var(--muted);padding-top:9px;padding-bottom:9px;background:rgba(0,0,0,.12)}
+.dbRow .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dbRow .n small{color:var(--muted);font-size:11px}
+.dbRow .b{height:5px;border-radius:99px;background:#0d1117;overflow:hidden}
+.dbRow .b i{display:block;height:100%;border-radius:99px;background:rgba(247,166,0,.75)}
+.dbRow .z{text-align:right;font:500 12px 'JetBrains Mono',monospace;white-space:nowrap}
+.dbNote{margin-top:16px;padding:12px 14px;border-radius:10px;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.2);font-size:12px;color:var(--muted);line-height:1.7}
+.dbNote a{color:var(--accent)}
+@media (max-width:560px){ .dbBody{padding:20px 18px 24px} .dbRow{grid-template-columns:minmax(0,1fr) minmax(0,44px) auto;gap:8px;padding:9px 12px} }
 /* ดึงหน้าลงเพื่อรีเฟรช (แบบแอป) */
 html,body{overscroll-behavior-y:contain}
-#ptr{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 8px);z-index:45;width:38px;height:38px;margin-left:-19px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--panel2);border:1px solid var(--line);color:var(--accent);box-shadow:0 6px 18px rgba(0,0,0,.45);transform:translateY(-70px);opacity:0;pointer-events:none}
+#ptr{position:fixed;left:50%;top:env(safe-area-inset-top);z-index:45;width:38px;height:38px;margin-left:-19px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--panel2);border:1px solid var(--line);color:var(--accent);box-shadow:0 6px 18px rgba(0,0,0,.45);transform:translateY(-70px);opacity:0;pointer-events:none}
 #ptr.go .ic{animation:spin .8s linear infinite}
 #ptr.ready{border-color:var(--accent)}
 /* หัวกราฟ: ชื่อ · ราคา · Live / แถวล่าง = ส่วนต่างราคาระหว่าง Broker */
@@ -3567,8 +3576,12 @@ async function disconnect(){ toggleProfMenu(false); closeExport(); cacheClear();
   const P = $('ptr'), TH = 70; let y0 = null, d = 0, busy = false;
   const blocked = t => busy || window.scrollY > 0 || document.body.classList.contains('gated') || document.body.classList.contains('chFs')
     || document.querySelector('.overlay.on') || (t && t.closest && t.closest('#chart,#indMenu,.portMenu,input,textarea,select,.tbl-wrap'));
-  const paint = () => { const k = Math.min(d, TH*1.6); P.style.transition = 'none'; P.style.opacity = Math.min(1, d/TH); P.style.transform = `translateY(${k*0.9 - 20}px) rotate(${d*3}deg)`; P.classList.toggle('ready', d>=TH); };
-  const reset = () => { P.style.transition = 'transform .25s, opacity .25s'; P.style.transform = 'translateY(-70px)'; P.style.opacity = 0; P.classList.remove('ready'); d = 0; y0 = null; };
+  // ทั้งหน้า (หัวเว็บ + เนื้อหา) เลื่อนลงตามนิ้ว · ไอคอนรีเฟรชโผล่ในช่องว่างด้านบน
+  const MOVE = () => [document.querySelector('header'), document.querySelector('main')].filter(Boolean);
+  const shift = (k, anim) => MOVE().forEach(el=>{ el.style.transition = anim ? 'transform .28s ease' : 'none'; el.style.transform = k ? `translateY(${k}px)` : ''; });
+  const spin = (k, anim, rot) => { P.style.transition = anim ? 'transform .28s ease, opacity .28s' : 'none'; P.style.transform = `translateY(${k/2 - 19}px) rotate(${rot||0}deg)`; };
+  const paint = () => { const k = Math.min(d, TH*1.5); shift(k); spin(k, false, d*3); P.style.opacity = Math.min(1, d/(TH*0.6)); P.classList.toggle('ready', d>=TH); };
+  const reset = () => { shift(0, true); spin(-60, true); P.style.opacity = 0; P.classList.remove('ready'); d = 0; y0 = null; };
   addEventListener('touchstart', e=>{ y0 = (e.touches.length===1 && !blocked(e.target)) ? e.touches[0].clientY : null; d = 0; }, {passive:true});
   addEventListener('touchmove', e=>{
     if (y0==null) return;
@@ -3578,7 +3591,7 @@ async function disconnect(){ toggleProfMenu(false); closeExport(); cacheClear();
   }, {passive:false});
   addEventListener('touchend', ()=>{
     if (y0==null) return;
-    if (d >= TH){ busy = true; P.classList.add('go'); P.style.transition = 'transform .2s'; P.style.transform = 'translateY(40px)'; setTimeout(hardReload, 250); }
+    if (d >= TH){ busy = true; P.classList.add('go'); shift(56, true); spin(56, true); setTimeout(hardReload, 300); }   // ค้างไว้พร้อมไอคอนหมุน แล้วรีเฟรช
     else reset();
   }, {passive:true});
   addEventListener('touchcancel', reset, {passive:true});
@@ -4044,8 +4057,11 @@ function renderDbUsage(u){
     + card('chart-pie','พอร์ต', fN(u.portfolios,0), `<div class="s">แชร์ ${fN(u.shares,0)} รายการ · เส้นที่วาด ${fN(u.drawings,0)} พอร์ต</div>`)
     + card('pencil','เทรด', fN(u.trades,0), `<div class="s">เฉลี่ย ${u.portfolios ? fN(u.trades/u.portfolios,1) : 0} เทรด/พอร์ต</div>`)
     + '</div>'
-    + '<div class="dbSec">ตารางที่ใหญ่ที่สุด</div><table class="dbT">'
-    + (u.tables||[]).map(t=>`<tr><td>${esc(t.name)}</td><td>${fmtBytes(t.bytes)}</td></tr>`).join('') + '</table>'
+    + '<div class="dbSec">ตารางที่ใหญ่ที่สุด</div><div class="dbTbl"><div class="dbRow h"><span>ตาราง</span><span>สัดส่วน</span><span class="z">ขนาด</span></div>'
+    + (()=>{ const ts = u.tables||[], mx = Math.max(1, ...ts.map(t=>+t.bytes||0));
+        return ts.map(t=>{ const [sc, ...nm] = String(t.name).split('.');
+          return `<div class="dbRow"><span class="n" title="${esc(t.name)}"><small>${esc(sc)}.</small>${esc(nm.join('.'))}</span><span class="b"><i style="width:${Math.max(3,(+t.bytes||0)/mx*100).toFixed(1)}%"></i></span><span class="z">${fmtBytes(t.bytes)}</span></div>`; }).join(''); })()
+    + '</div>'
     + `<div class="dbNote">ขนาดฐานข้อมูลรวมข้อมูลระบบของ Supabase ด้วย (ประมาณ 10–20 MB แม้ยังไม่มีข้อมูล) · ปริมาณรับส่งข้อมูล (Egress 5 GB/เดือน) และผู้ใช้รายเดือนที่แม่นยำ ดูได้ที่ <a href="${SB_USAGE_URL}" target="_blank" rel="noopener">Supabase → Usage</a></div>`;
 }
 document.addEventListener('keydown', e=>{ if (e.key==='Escape' && $('dbBox').classList.contains('on')) closeDbUsage(); });

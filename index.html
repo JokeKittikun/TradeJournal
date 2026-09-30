@@ -119,7 +119,8 @@ body.syncing #syncBtn .ic{animation:spin 1s linear infinite}
 .admSearch:focus-within{border-color:var(--accent)}
 .admSearch input{border:0;background:none;padding:8px 0;outline:none}
 /* ทุกคอลัมน์กว้างคงที่ (ยกเว้นผู้ใช้) → หัวตารางกับทุกแถวตรงกัน ไม่ขึ้นกับจำนวนปุ่มในแถว */
-.admCols,.uRow{display:grid;grid-template-columns:minmax(0,1fr) 100px 80px 110px 76px 226px;gap:12px;align-items:center}
+/* ปุ่มจัดการอยู่บรรทัดที่สองของแต่ละคน (ชิดขวา) → ชื่อผู้ใช้ได้พื้นที่เต็ม */
+.admCols,.uRow{display:grid;grid-template-columns:minmax(0,1fr) 100px 84px 118px 78px;gap:12px;align-items:center}
 .admCols{padding:6px 20px;font-size:11px;color:var(--muted);text-transform:none;letter-spacing:.2px;border-bottom:1px solid var(--line)}
 .admList{display:flex;flex-direction:column}
 .uRow{padding:12px 20px;border-bottom:1px solid var(--line);position:relative}
@@ -143,11 +144,21 @@ body.syncing #syncBtn .ic{animation:spin 1s linear infinite}
 .uData{font-size:12px;line-height:1.35}.uData .mono{font-weight:600}.uData .s{color:var(--muted);font-size:11px}
 .uSeen{font-size:12px;color:var(--muted);white-space:nowrap}
 /* ปุ่มจัดการ: ช่องตายตัว [ดูพอร์ต][ส่งออเดอร์][สถานะ][ลบ] → ปุ่มชนิดเดียวกันอยู่ตำแหน่งเดียวกันทุกแถว */
-.uActs{display:grid;grid-template-columns:28px 28px minmax(0,1fr) 28px;gap:6px;align-items:center}
+.uActs{display:grid;grid-template-columns:86px 128px 136px 28px;gap:6px;align-items:center;justify-content:end}
 .uActs .slot{display:flex;gap:6px;justify-content:flex-end;min-width:0}
-.uActs .btn{white-space:nowrap;height:28px;display:inline-flex;align-items:center;justify-content:center;gap:4px}
+.uActs .btn{white-space:nowrap;height:28px;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:0 10px}
+.uActs > .btn{width:100%}
 .uActs .btn.icon{width:28px;padding:0}
 .uActs .btn .ic{margin-right:0}
+/* ปุ่มสิทธิ์ส่งออเดอร์: สวิตช์บอกสถานะ เปิด/ปิด */
+.tradeTg .sw{position:relative;width:22px;height:12px;border-radius:99px;background:var(--line);flex:none;transition:background .15s}
+.tradeTg .sw::after{content:"";position:absolute;top:2px;left:2px;width:8px;height:8px;border-radius:50%;background:var(--muted);transition:transform .15s,background .15s}
+.tradeTg.on .sw{background:rgba(56,189,248,.55)}
+.tradeTg.on .sw::after{transform:translateX(10px);background:#e0f2fe}
+@media (min-width:761px){
+  .uRow{grid-template-areas:"who role stat data seen" "acts acts acts acts acts";row-gap:10px}
+  .uWho{grid-area:who}.uRole{grid-area:role}.uStat{grid-area:stat}.uData{grid-area:data}.uSeen{grid-area:seen}.uActs{grid-area:acts}
+}
 #du_btn:disabled{opacity:.4;cursor:not-allowed}
 .btn.ghostDanger{background:none;color:var(--red);border-color:rgba(239,68,68,.35)}
 .btn.ghostDanger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
@@ -155,7 +166,9 @@ body.syncing #syncBtn .ic{animation:spin 1s linear infinite}
 @media (max-width:760px){
   .admCols{display:none}
   .uRow{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"who who" "tags tags" "data seen" "acts acts";gap:8px 10px}
-  .uActs{padding-left:44px;max-width:300px}
+  .uActs{padding-left:44px;display:flex;flex-wrap:wrap;justify-content:flex-start}
+  .uActs > span:empty{display:none}
+  .uActs > .btn{width:auto}
   .uWho{grid-area:who}.uActs{grid-area:acts}
   .uTags{grid-area:tags;display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding-left:44px}
   .uData{grid-area:data;padding-left:44px;color:var(--muted)}
@@ -947,7 +960,7 @@ body.chFs #confirmBox{z-index:55}
     <div class="admTabs" id="adm_f" role="tablist"></div>
     <label class="admSearch"><i data-ic="search" data-sz="14"></i><input type="search" id="adm_q" placeholder="ค้นหาอีเมล" oninput="renderAdmin()" aria-label="ค้นหาอีเมล"></label>
   </div>
-  <div class="admCols" aria-hidden="true"><span>ผู้ใช้</span><span>บทบาท</span><span>สถานะ</span><span>ข้อมูล</span><span>ใช้ล่าสุด</span><span style="text-align:right">จัดการ</span></div>
+  <div class="admCols" aria-hidden="true"><span>ผู้ใช้</span><span>บทบาท</span><span>สถานะ</span><span>ข้อมูล</span><span>ใช้ล่าสุด</span></div>
   <div id="adm_list" class="admList"></div>
   <div class="hint" id="adm_msg" style="margin:10px 0 0;min-height:16px"></div>
 </div></div>
@@ -4350,13 +4363,13 @@ function renderAdmin(){
     let stat = '';
     if (canManage){
       if (u.status==='pending') stat = `<button class="btn sm primary" onclick="setUserStatus('${u.id}','active')">${ic('check',13,2.5)} อนุมัติ</button><button class="btn sm ghostDanger" onclick="setUserStatus('${u.id}','disabled')">ปฏิเสธ</button>`;
-      else if (u.status==='active') stat = `<button class="btn sm ghostDanger" onclick="setUserStatus('${u.id}','disabled')">ระงับ</button>`;
+      else if (u.status==='active') stat = `<button class="btn sm ghostDanger" onclick="setUserStatus('${u.id}','disabled')">ระงับบัญชี</button>`;
       else stat = `<button class="btn sm" onclick="setUserStatus('${u.id}','active')">เปิดใช้งาน</button>`;
     }
     const tradeLbl = `ส่งออเดอร์ไปตลาด: ${u.can_trade?'เปิด':'ปิด'} (กดเพื่อ${u.can_trade?'ปิด':'เปิด'})`;
     const acts = [
-      (isSuper() && !self && +u.ports>0) ? `<button class="btn sm icon" title="ดูพอร์ต (อ่านอย่างเดียว)" aria-label="ดูพอร์ต" onclick="viewUser('${u.id}','${esc(u.email)}')">${ic('eye',15)}</button>` : '',
-      (isSuper() && u.status==='active') ? `<button class="btn sm icon tradeTg ${u.can_trade?'on':''}" title="${tradeLbl}" aria-label="${tradeLbl}" aria-pressed="${!!u.can_trade}" onclick="setUserTrade('${u.id}', ${!u.can_trade})">${ic('send',14)}</button>` : '',
+      (isSuper() && !self && +u.ports>0) ? `<button class="btn sm" title="ดูพอร์ต (อ่านอย่างเดียว)" onclick="viewUser('${u.id}','${esc(u.email)}')">${ic('eye',14)} ดูพอร์ต</button>` : '',
+      (isSuper() && u.status==='active') ? `<button class="btn sm tradeTg ${u.can_trade?'on':''}" role="switch" title="${tradeLbl}" aria-label="${tradeLbl}" aria-checked="${!!u.can_trade}" onclick="setUserTrade('${u.id}', ${!u.can_trade})">${ic('send',13)} ส่งออเดอร์ <span class="sw" aria-hidden="true"></span></button>` : '',
       `<div class="slot">${stat}</div>`,
       (isSuper() && !self && !sup) ? `<button class="btn sm icon ghostDanger" title="ลบบัญชีถาวร" aria-label="ลบบัญชีถาวร" onclick="openDelUser('${u.id}')">${ic('trash-2',14)}</button>` : '',
     ].map(h => h || '<span></span>');

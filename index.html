@@ -358,6 +358,41 @@ table.mkt td:nth-child(2){text-align:right}   /* คอลัมน์ M30 ก�
 table.mkt td:last-child,table.mkt th:last-child{text-align:left;font-family:'IBM Plex Sans Thai',sans-serif}
 table.mkt tr.today td{background:rgba(247,166,0,.06)}
 .st{font-size:12px;font-weight:500}
+/* สถานะฐานข้อมูล (Super Admin) */
+.dbBody{padding:4px 2px 2px;max-height:70vh;overflow:auto}
+.dbGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.dbCard{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.dbCard .l{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.dbCard .v{font:600 20px 'JetBrains Mono',monospace;margin:4px 0 2px}
+.dbCard .s{font-size:11.5px;color:var(--muted)}
+.dbBar{height:6px;border-radius:99px;background:#0d1117;margin:8px 0 4px;overflow:hidden}
+.dbBar i{display:block;height:100%;border-radius:99px;background:#22c55e}
+.dbBar i.warn{background:#f59e0b}.dbBar i.bad{background:#ef4444}
+.dbSec{font-size:12px;font-weight:600;color:var(--muted);margin:16px 2px 8px}
+.dbT{width:100%;border-collapse:collapse;font-size:12.5px}
+.dbT td{padding:6px 8px;border-bottom:1px solid var(--line)}
+.dbT td:last-child{text-align:right;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.dbNote{margin-top:14px;font-size:12px;color:var(--muted);line-height:1.7}
+/* ดึงหน้าลงเพื่อรีเฟรช (แบบแอป) */
+html,body{overscroll-behavior-y:contain}
+#ptr{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 8px);z-index:45;width:38px;height:38px;margin-left:-19px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--panel2);border:1px solid var(--line);color:var(--accent);box-shadow:0 6px 18px rgba(0,0,0,.45);transform:translateY(-70px);opacity:0;pointer-events:none}
+#ptr.go .ic{animation:spin .8s linear infinite}
+#ptr.ready{border-color:var(--accent)}
+/* หัวกราฟ: ชื่อ · ราคา · Live / แถวล่าง = ส่วนต่างราคาระหว่าง Broker */
+.chHead{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 10px;margin:0 0 10px}
+.chHead h3{margin:0}
+.chRight{display:flex;align-items:center;gap:10px}
+#chPrice{font-size:16px;font-weight:600;letter-spacing:.2px}
+.chSub{grid-column:1 / -1;justify-self:end;font:500 11.5px 'JetBrains Mono',monospace;color:var(--muted)}
+.chSub:empty{display:none}
+.chSub .sp{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;background:var(--panel2);border:1px solid var(--line)}
+.liveB{display:inline-flex;align-items:center;gap:6px;padding:3px 9px 3px 8px;border-radius:999px;font:600 11px 'IBM Plex Sans Thai',sans-serif;letter-spacing:.3px;white-space:nowrap}
+.liveB.on{background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.35)}
+.liveB.off{background:var(--panel2);color:var(--muted);border:1px solid var(--line)}
+.liveB i{position:relative;width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.liveB.on i::after{content:"";position:absolute;inset:0;border-radius:50%;background:#22c55e;animation:livePulse 1.6s ease-out infinite}
+@keyframes livePulse{0%{transform:scale(1);opacity:.75}80%,100%{transform:scale(2.8);opacity:0}}
+@media (prefers-reduced-motion:reduce){ .liveB.on i::after{animation:none} }
 .btn.stp.on{background:rgba(247,166,0,.16);border-color:rgba(247,166,0,.5);color:var(--accent)}
 #mktBody tr:hover td{background:rgba(247,166,0,.08)}
 .flash{animation:flash 1.2s ease-out}
@@ -407,6 +442,12 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
 #indMenu .ps select{padding:3px 4px;font-size:12px;width:auto;border-radius:6px;margin:0}
 #indMenu .ps input{padding:3px 4px;font:500 12px 'JetBrains Mono',monospace;text-align:center;border-radius:6px;margin:0}
 #indPanels{position:absolute;inset:0;pointer-events:none;z-index:3}
+#indAxis{position:absolute;top:0;right:0;bottom:0;pointer-events:none;z-index:4}
+#indAxis span{position:absolute;left:6px;transform:translateY(-50%);font:500 10.5px 'JetBrains Mono',monospace;color:#8b98a8;white-space:nowrap}
+#indLegend{position:absolute;top:24px;left:50px;z-index:3;display:flex;gap:10px;pointer-events:none;font:600 10.5px 'JetBrains Mono',monospace}
+#indLegend:empty{display:none}
+#chart.bar2 #indLegend{left:88px}
+@media (pointer:coarse){ #indLegend{left:56px} }
 #indPanels .ipMask{position:absolute;background:#0d1117;border-left:1px solid #2a3441}
 #indPanels .ipSep{position:absolute;left:0;height:0;border-top:1px solid rgba(139,152,168,.22)}
 #indPanels .ipLbl{position:absolute;left:48px;font:500 10.5px 'JetBrains Mono','IBM Plex Sans Thai',monospace;color:#8b98a8;background:rgba(13,17,23,.7);padding:0 4px;border-radius:3px;white-space:nowrap}
@@ -480,7 +521,11 @@ body.chFs #confirmBox{z-index:55}
   <section class="view" id="v-form">
     <div id="chartHome"></div>
     <div class="card" id="chartCard" style="margin-bottom:14px">
-      <h3><span class="dot" style="background:#f7a600"></span>กราฟ <span id="chSym">BTCUSDT</span><span class="spacer"></span><span class="hint mono" id="chSpread" style="margin:0 8px 0 0"></span><b class="mono" id="chPrice" style="font-size:14px"></b><span class="st" id="chLive"></span></h3>
+      <div class="chHead">
+        <h3><span class="dot" style="background:#f7a600"></span>กราฟ <span id="chSym">BTCUSDT</span></h3>
+        <div class="chRight"><b class="mono" id="chPrice"></b><span id="chLive"></span></div>
+        <div class="chSub" id="chSpread"></div>
+      </div>
       <div class="filters" style="align-items:center">
         <div class="seg" id="srcSeg" style="width:auto"><button data-src="spot">Binance</button><button data-src="mexc">MEXC</button></div>
         <div class="seg" id="chIntSeg" style="width:auto"><button data-iv="5m">5m</button><button data-iv="15m">15m</button><button data-iv="30m">30m</button><button data-iv="1h">1h</button><button data-iv="4h">4h</button><button data-iv="1d">1d</button></div>
@@ -713,6 +758,7 @@ body.chFs #confirmBox{z-index:55}
 </div></div>
 <div id="loadMsg" role="status" aria-live="polite"><span class="spin"></span><span id="loadTxt">กำลังโหลด…</span></div>
 <div class="toast" id="toast"></div>
+<div id="ptr" aria-hidden="true"><i data-ic="refresh-cw" data-sz="18"></i></div>
 <div class="overlay" id="editModal"><div class="modal editModal">
   <div class="emHead"><b><i data-ic="pencil" data-sz="16"></i> แก้ไขเทรด</b> <span class="hint" id="emTxt" style="margin:0"></span><div class="spacer"></div><button class="btn sm icon" onclick="closeEdit()" title="ปิด"><i data-ic="x" data-sz="16"></i></button></div>
   <div id="emBody"></div>
@@ -738,6 +784,16 @@ body.chFs #confirmBox{z-index:55}
   <div class="actions"><button class="btn" id="qe_full" style="margin-right:auto">แก้ไขทั้งหมด</button><button class="btn" onclick="closeQuickEdit()">ยกเลิก</button><button class="btn primary" id="qe_btn" onclick="saveQuickEdit()">บันทึก</button></div>
 </div></div>
 
+<div class="overlay" id="dbBox"><div class="modal admModal dbModal">
+  <div class="admHead">
+    <div class="admIc"><i data-ic="database" data-sz="18"></i></div>
+    <div style="min-width:0"><div class="admTitle">สถานะฐานข้อมูล</div><div class="admSub" id="db_sub">การใช้งาน Supabase เทียบกับโควตาแพ็กเกจฟรี</div></div>
+    <div class="spacer"></div>
+    <button class="btn sm icon" onclick="openDbUsage()" title="โหลดใหม่"><i data-ic="refresh-cw" data-sz="15"></i></button>
+    <button class="btn sm icon" onclick="closeDbUsage()" title="ปิด"><i data-ic="x" data-sz="16"></i></button>
+  </div>
+  <div id="db_body" class="dbBody"></div>
+</div></div>
 <div class="overlay" id="admBox"><div class="modal admModal">
   <div class="admHead">
     <div class="admIc"><i data-ic="users" data-sz="18"></i></div>
@@ -815,6 +871,7 @@ const ICONS = {
   'clock':'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
   'trending-up':'<path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/>',
   'trending-down':'<path d="M16 17h6v-6"/><path d="m22 17-8.5-8.5-5 5L2 7"/>',
+  'database':'<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>',
   'maximize':'<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>',
   'minimize':'<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>',
   'rotate-ccw':'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
@@ -1035,6 +1092,7 @@ async function sbCall(fn, a){
     case 'setStatus':  await SBDB.rpc('admin_set_status', {target:a[0], new_status:a[1]}); return SBDB.rpc('admin_list_users');
     case 'setRole':    await SBDB.rpc('admin_set_role', {target:a[0], new_role:a[1]}); return SBDB.rpc('admin_list_users');
     case 'deleteUser': await SBDB.rpc('admin_delete_user', {target:a[0]}); return SBDB.rpc('admin_list_users');
+    case 'dbUsage':    return SBDB.rpc('admin_db_usage');
     case 'saveDrawings': await SBDB.saveDraw(a[1] || PORT, Array.isArray(a[0]) ? a[0] : []); return {ok:true};
   }
   throw new Error('ไม่รู้จักคำสั่ง '+fn);
@@ -1966,7 +2024,7 @@ function ensureChart(){
   LWC = LightweightCharts.createChart($('chart'), {
     autoSize:true,
     layout:{background:{type:'solid',color:'#0d1117'}, textColor:'#8b98a8', fontFamily:"'JetBrains Mono','IBM Plex Sans Thai',monospace", fontSize:11},
-    grid:{vertLines:{color:'#18202a'}, horzLines:{color:'#18202a'}},
+    grid:{vertLines:{visible:false}, horzLines:{visible:false}},
     rightPriceScale:{borderColor:'#2a3441'}, timeScale:{borderColor:'#2a3441', timeVisible:true, secondsVisible:false},
     crosshair:{mode:0, horzLine:{visible:true, labelVisible:true, color:'rgba(139,152,168,0.6)', style:LightweightCharts.LineStyle.Dashed, labelBackgroundColor:'#2a3441'}, vertLine:{visible:true, labelVisible:true, color:'rgba(139,152,168,0.6)', style:LightweightCharts.LineStyle.Dashed, labelBackgroundColor:'#2a3441'}},
   });
@@ -2383,7 +2441,7 @@ const IND_MK = {
   volS: ()=>LWC.addHistogramSeries({priceScaleId:'vol', priceFormat:{type:'volume'}, priceLineVisible:false, lastValueVisible:false}),
   volB: ()=>LWC.addHistogramSeries({priceScaleId:'vol', priceFormat:{type:'volume'}, priceLineVisible:false, lastValueVisible:false}),
   cvd:  ()=>mkLine('cvd', '#38bdf8', 1, {priceFormat:{type:'volume'}}),
-  vwap: ()=>mkLine('right', '#e879f9', 2, {lastValueVisible:true, title:'VWAP', priceFormat:{type:'price',precision:2,minMove:0.01}}),
+  vwap: ()=>mkLine('right', '#e879f9', 2, {priceFormat:{type:'price',precision:2,minMove:0.01}}),
   ema0: ()=>mkLine('right', EMA_COL[0], 1, {priceFormat:{type:'price',precision:2,minMove:0.01}}),
   ema1: ()=>mkLine('right', EMA_COL[1], 1, {priceFormat:{type:'price',precision:2,minMove:0.01}}),
   ema2: ()=>mkLine('right', EMA_COL[2], 1, {priceFormat:{type:'price',precision:2,minMove:0.01}}),
@@ -2407,7 +2465,7 @@ function indApply(noFit, keepMenu){
     if (!need[k] && INDS[k]){ try{ LWC.removeSeries(INDS[k]); }catch(e){} delete INDS[k]; }
   });
   indLayout();
-  indAll(); if (!noFit) refitScale(); drawVP(); if (!keepMenu) paintIndMenu();
+  indAll(); if (!noFit) refitScale(); drawVP(); paintIndLegend(); requestAnimationFrame(panelAxis); if (!keepMenu) paintIndMenu();
 }
 function indLayout(){
   if (!LWC) return;
@@ -2440,6 +2498,36 @@ function placePanels(){
     + (IND_PANELS.length ? (()=>{ const t = Math.round(Math.min(...IND_PANELS.map(p=>p.top))), H = el.clientHeight - LWC.timeScale().height(); return `<div class="ipMask" style="left:${W}px;top:${t}px;height:${Math.max(0,H-t)}px;width:${el.clientWidth-W}px"></div>`; })() : '');
   panelVals(null);
 }
+// แกนตัวเลขด้านขวาของแต่ละช่อง Indicator (เหมือนแกนราคา) เช่น RSI 100 · 70 · 50 · 30 · 0
+const fmtAx = v => { if (Number.isInteger(v)) return String(v); const a = Math.abs(v); return a>=1e6 ? (v/1e6).toFixed(1)+'M' : a>=1e4 ? (v/1e3).toFixed(0)+'K' : a>=1000 ? (v/1e3).toFixed(1)+'K' : a>=100 ? v.toFixed(0) : a>=1 ? v.toFixed(1) : v.toFixed(2); };
+function panelAxis(){
+  const el = $('chart'); if (!el || !LWC) return;
+  let box = $('indAxis'); if (!box){ box = document.createElement('div'); box.id = 'indAxis'; el.appendChild(box); }
+  if (!IND_PANELS.length){ box.innerHTML = ''; return; }
+  const W = el.clientWidth - LWC.priceScale('right').width(), out = [];
+  const SER = {vol:INDS.volS, cvd:INDS.cvd, macd:INDS.macd, rsi:INDS.rsi, stoch:INDS.stK};
+  IND_PANELS.forEach(p=>{
+    const sr = SER[p.k]; if (!sr) return;
+    const top = p.top, bot = p.top + p.h, put = v => { const y = sr.priceToCoordinate(v); if (y!=null && y>=top+5 && y<=bot-5) out.push(`<span style="top:${Math.round(y)}px">${fmtAx(v)}</span>`); };
+    if (p.k==='rsi') [100,70,50,30,0].forEach(put);
+    else if (p.k==='stoch') [100,80,50,20,0].forEach(put);
+    else {
+      const hi = sr.coordinateToPrice(top+8), lo = sr.coordinateToPrice(bot-6); if (hi==null || lo==null) return;
+      if (p.k==='vol'){ put(hi); put((hi+lo)/2); }
+      else { put(hi); if (hi>0 && lo<0) put(0); put(lo); }
+    }
+  });
+  box.style.left = (W+1)+'px'; box.innerHTML = out.join('');
+}
+// ชื่อ Indicator บนกราฟราคา (แทนป้ายที่แกนราคา)
+function paintIndLegend(){
+  const el = $('chart'); if (!el) return;
+  let lg = $('indLegend'); if (!lg){ lg = document.createElement('div'); lg.id = 'indLegend'; el.appendChild(lg); }
+  const it = [];
+  IND.ema.forEach((e,i)=>{ if (e.on) it.push(`<span style="color:${EMA_COL[i]}">EMA ${e.p}</span>`); });
+  if (INDS.vwap) it.push(`<span style="color:#e879f9">VWAP${IND.vwapR==='week'?' W':''}</span>`);
+  lg.innerHTML = it.join('');
+}
 // ตัวเลขล่าสุด (หรือของแท่งที่ชี้อยู่) บนป้ายของแต่ละช่อง
 function panelVals(i){
   const box = $('indPanels'); if (!box || !CH_BARS.length) return;
@@ -2459,14 +2547,13 @@ function indAll(){
   if (!CS || !CH_BARS.length) return;
   indCompute();
   if (INDS.volS){ const s=[], bb=[]; CH_BARS.forEach((b,i)=>{ const [x,y] = volPoint(i); s.push(x); if (y) bb.push(y); }); INDS.volS.setData(s); if (INDS.volB) INDS.volB.setData(bb); }
-  if (INDS.vwap) INDS.vwap.applyOptions({title: IND.vwapR==='week' ? 'VWAP W' : 'VWAP'});
   if (INDS.cvd || INDS.vwap){
     const r = indCalc(0);
     IND_V.cvdArr = r.map(x=>x.cvd);
     if (INDS.cvd) INDS.cvd.setData(r.map(x=>({time:CH_BARS[x.i].time, value:x.cvd})));
     if (INDS.vwap) INDS.vwap.setData(r.map(x=>({time:CH_BARS[x.i].time, value:x.vwap})));
   }
-  [0,1,2].forEach(j=>{ const s = INDS['ema'+j]; if (s){ s.applyOptions({title:'EMA '+IND.ema[j].p}); s.setData(ptsOf(IND_V.ema[j])); } });
+  [0,1,2].forEach(j=>{ const s = INDS['ema'+j]; if (s){ s.setData(ptsOf(IND_V.ema[j])); } });
   if (INDS.macd){ INDS.macd.setData(ptsOf(IND_V.macd)); INDS.sig.setData(ptsOf(IND_V.sig));
     const h = []; IND_V.hist.forEach((x,i)=>{ if (x!=null) h.push({time:CH_BARS[i].time, value:x, color: x>=0 ? (i>0 && IND_V.hist[i-1]!=null && x<IND_V.hist[i-1] ? 'rgba(34,197,94,.45)' : 'rgba(34,197,94,.85)') : (i>0 && IND_V.hist[i-1]!=null && x>IND_V.hist[i-1] ? 'rgba(239,68,68,.45)' : 'rgba(239,68,68,.85)')}); });
     INDS.macdH.setData(h); }
@@ -2489,7 +2576,7 @@ function indLive(){
     if (INDS.macd){ up(INDS.macd, IND_V.macd); up(INDS.sig, IND_V.sig); const x = IND_V.hist[i]; if (x!=null) INDS.macdH.update({time:t, value:x, color: x>=0 ? 'rgba(34,197,94,.85)' : 'rgba(239,68,68,.85)'}); }
     up(INDS.rsi, IND_V.rsi); up(INDS.stK, IND_V.k); up(INDS.stD, IND_V.d);
   }
-  panelVals(null);
+  panelVals(null); if (IND_PANELS.length) requestAnimationFrame(panelAxis);
 }
 // Volume Profile ของช่วงที่เห็นบนจอ (วาดบน canvas ทับกราฟ ชิดขวา)
 function drawVP(){
@@ -2613,7 +2700,11 @@ function paintChartSrc(){ const f=SRC()==='futures'; $('chSym').textContent = SR
 
 /* ---------- realtime (Binance WebSocket: Spot หรือ Futures ตามที่เลือก) ---------- */
 let WS=null, WS_KEY='', wsRetry=null;
-function setLive(on){ if (!chIsLive()){ $('chLive').innerHTML = '<span style="color:var(--muted)">ย้อนหลัง</span>'; return; } $('chLive').innerHTML = on ? '<span style="color:var(--green)">● Live</span>' : (WS_KEY ? '<span style="color:var(--muted)">กำลังเชื่อมต่อ…</span>' : ''); }
+function setLive(on){
+  const el = $('chLive');
+  if (!chIsLive()){ el.innerHTML = '<span class="liveB off"><i></i>ย้อนหลัง</span>'; return; }
+  el.innerHTML = on ? '<span class="liveB on"><i></i>LIVE</span>' : (WS_KEY ? '<span class="liveB off"><i></i>กำลังเชื่อมต่อ…</span>' : '');
+}
 function liveConnect(iv){
   const key = SRC()+':'+iv;
   if (WS && WS_KEY===key && WS.readyState<=1){ setLive(WS.readyState===1); return; }   // ใช้การเชื่อมต่อเดิม (เช่น กลับจากดูย้อนหลัง) → อัปเดตสถานะ Live
@@ -2790,11 +2881,7 @@ function initDraw(){
     if (k==='fs'){ toggleChartFs(); return; }
     if (k==='ind'){ toggleIndMenu(); return; }
     if (k==='undo'){ DRAW.items.pop(); DRAW.sel=-1; saveDraw(); drawHLines(); renderDraw(); return; }
-    if (k==='clear'){
-      if (DRAW.sel>=0){ DRAW.items.splice(DRAW.sel,1); DRAW.sel=-1; }
-      else if (DRAW.items.length || DRAW.measure){ DRAW.items=[]; DRAW.measure=null; }
-      saveDraw(); drawHLines(); renderDraw(); return;
-    }
+    if (k==='clear'){ clearDrawings(); return; }
     if (k==='cursor' && DRAW.tool==='cursor'){ setXh(!DRAW.xh); return; }   // แตะปุ่มเล็งซ้ำ = โหมดเล็งแบบ MT5 (ลากนิ้วดูราคา/เวลา)
     setTool(k);
   });
@@ -2807,7 +2894,8 @@ function initDraw(){
     if (DRAW.tool!=='cursor'){ if (DRAW.pending){ DRAW.hover = loc(e); renderDraw(); } return; }
     // กดบนเส้น/กล่องที่วาดไว้ → ลากย้าย หรือลากปลายเพื่อปรับ
     const q = loc(e), i = hitDraw(q.x, q.y);
-    if (i<0){ if (DRAW.xh){ DRAW.xhDrag = true; moveXh(q.x, q.y); } return; }
+    // โหมดเล็ง: นิ้วลากตรงไหนก็ได้ เส้นเล็งขยับตามระยะที่ลาก (ไม่กระโดดไปใต้นิ้ว) · เมาส์ = ตามเมาส์
+    if (i<0){ if (DRAW.xh){ const o = DRAW.xhPos || q; DRAW.xhDrag = {abs: e.pointerType==='mouse', sx:q.x, sy:q.y, ox:o.x, oy:o.y}; if (DRAW.xhDrag.abs || !DRAW.xhPos) moveXh(q.x, q.y); } return; }
     // ต้องเลือก (active) เส้นก่อนด้วยดับเบิลคลิก / แตะสองครั้ง จึงลากย้าย/ปรับได้ (กันเลื่อนเส้นโดยไม่ตั้งใจ)
     if (DRAW.sel !== i) return;
     const d = DRAW.items[i]; let mode='move';
@@ -2826,7 +2914,7 @@ function initDraw(){
     renderDraw();
   }, true);
   window.addEventListener('pointermove', e=>{
-    if (DRAW.xhDrag){ const q=loc(e); moveXh(q.x, q.y); return; }
+    if (DRAW.xhDrag){ const q=loc(e), g=DRAW.xhDrag; if (g.abs) moveXh(q.x, q.y); else moveXh(g.ox + q.x - g.sx, g.oy + q.y - g.sy); return; }
     if (DRAW.pending && e.pointerType!=='mouse'){ DRAW.hover = loc(e); renderDraw(); }   // มือถือ: ตัวอย่างเส้นตามนิ้ว
     const g = DRAW.drag; if (!g) return;
     const q = loc(e), t = drT(q.x), pr = CS.coordinateToPrice(q.y); if (t==null || pr==null) return;
@@ -2891,20 +2979,32 @@ function paintInfo(p){
 }
 // โหมดเล็ง (เหมือน MT5): ปิดการเลื่อนกราฟ แล้วลากนิ้ว/เมาส์เพื่อย้ายเส้นเล็ง
 function setXh(on){
-  DRAW.xh = !!on; DRAW.xhDrag = false;
+  DRAW.xh = !!on; DRAW.xhDrag = false; DRAW.xhPos = null;
   LWC.applyOptions({handleScroll:!on, handleScale:!on});
   paintPan();
   paintDrawBar();
-  if (on) toast('โหมดเล็ง: ลากบนกราฟเพื่อดูเวลา/ราคา · แตะปุ่มเล็งอีกครั้งเพื่อเลื่อนกราฟตามปกติ');
+  if (on){ const el = $('chart'); moveXh((el.clientWidth - LWC.priceScale('right').width())*0.6, (el.clientHeight - LWC.timeScale().height())*0.45); }   // วาง + ไว้กลางกราฟ
+  if (on) toast('โหมดเล็ง: ลากตรงไหนก็ได้บนกราฟเพื่อขยับเส้นเล็ง · แตะปุ่มเล็งอีกครั้งเพื่อเลื่อนกราฟตามปกติ');
   else { try{ LWC.clearCrosshairPosition(); }catch(e){} paintInfo(null); }
 }
 function moveXh(x, y){
   if (!CH_BARS.length) return;
+  const el = $('chart'), W = el.clientWidth - LWC.priceScale('right').width(), H = el.clientHeight - LWC.timeScale().height();
+  x = Math.max(2, Math.min(W-2, x)); y = Math.max(2, Math.min(H-2, y)); DRAW.xhPos = {x, y};
   const l = LWC.timeScale().coordinateToLogical(x); if (l==null) return;
   const bar = CH_BARS[Math.max(0, Math.min(CH_BARS.length-1, Math.round(l)))], price = CS.coordinateToPrice(y);
   if (price==null) return;
   try{ LWC.setCrosshairPosition(price, bar.time, CS); }catch(e){}
   paintInfo({point:{x, y}, time:bar.time, seriesData:new Map([[CS, bar]])});
+}
+// ปุ่มลบในกล่องเครื่องมือ: ยืนยันก่อนเสมอ (เลือกเส้นอยู่ = ลบเส้นนั้น · ไม่ได้เลือก = ลบทั้งหมดของ Broker นี้)
+async function clearDrawings(){
+  const sel = DRAW.sel, n = DRAW.items.length, bk = SRC()==='mexc' ? 'MEXC' : 'Binance';
+  if (sel<0 && !n){ if (DRAW.measure){ DRAW.measure = null; renderDraw(); } else toast('ยังไม่มีเส้นที่วาด'); return; }
+  const ok = await askConfirm(sel>=0 ? 'ลบเส้นที่เลือก?' : `ลบเส้นที่วาดทั้งหมด ${n} เส้น บนกราฟ ${bk}? (กู้คืนไม่ได้)`);
+  if (!ok) return;
+  if (sel>=0 && DRAW.items[sel]) DRAW.items.splice(sel,1); else { DRAW.items = []; DRAW.measure = null; }
+  DRAW.sel = -1; saveDraw(); drawHLines(); renderDraw();
 }
 function setTool(k){ if (k!=='cursor' && DRAW.xh) setXh(false); DRAW.tool=k; DRAW.pending=null; if (k!=='measure') DRAW.measure=null; if (k!=='cursor') DRAW.sel=-1; paintDrawBar(); renderDraw(); }
 // ปุ่มในกล่องเครื่องมือสูงเกินกราฟ → แบ่ง 2 คอลัมน์ (เช็กใหม่ทุกครั้งที่กราฟเปลี่ยนขนาด)
@@ -3099,7 +3199,7 @@ function placeBand(){
   const need = CH_BARS.length && !HI_TF(CH_IV) ? CH_ROWS.length*2 : 0;
   while (BAND.els.length < need){ const k=BAND.els.length%2; BAND.els.push(mkBand(k? 'rgba(58,160,255,0.20)':'rgba(255,140,26,0.24)', k? 'rgba(58,160,255,0.9)':'rgba(255,140,26,0.95)')); }
   BAND.els.forEach(el=>el.style.display='none');
-  if (!need){ if (BAND.seps) BAND.seps.forEach(e=>e.style.display='none'); placeLabels(); drawVP(); placePanels(); return; }
+  if (!need){ if (BAND.seps) BAND.seps.forEach(e=>e.style.display='none'); placeLabels(); drawVP(); placePanels(); panelAxis(); return; }
   const last=CH_BARS[CH_BARS.length-1].time+INT_MS[CH_IV]/1000;
   const h=$('chart').clientHeight - LWC.timeScale().height(), w=$('chart').clientWidth - LWC.priceScale('right').width();
   const put=(el,a,b)=>{
@@ -3113,7 +3213,7 @@ function placeBand(){
     BAND.els[i*2].style.opacity=op; BAND.els[i*2+1].style.opacity=op;
     put(BAND.els[i*2],t0,t0+1800); put(BAND.els[i*2+1],t0+1800,t0+3600); });
   placeDaySeps(h,w,last);
-  placeLabels(); drawVP(); placePanels();
+  placeLabels(); drawVP(); placePanels(); panelAxis();
 }
 // เส้นแบ่งวัน (00:00 เวลาไทย) ในโหมดย้อนหลัง
 function placeDaySeps(h,w,last){
@@ -3359,7 +3459,7 @@ function paintSpread(){
   if (!OV.bars.length || !CH_BARS.length) return;
   const a = CH_BARS[CH_BARS.length-1].close, b = OV.bars[OV.bars.length-1].value, d = a-b;
   const nA = SRC()==='mexc'?'MEXC':'Binance', nB = OV.src==='mexc'?'MEXC':'Binance';
-  $('chSpread').innerHTML = `${nA} − ${nB}: <b class="${d>0?'pos':d<0?'neg':''}">${d>=0?'+':''}${f2(d,2)}</b> (${(d/b*100).toFixed(3)}%)`;
+  $('chSpread').innerHTML = `<span class="sp">${nA} − ${nB} <b class="${d>0?'pos':d<0?'neg':''}">${d>=0?'+':''}${f2(d,2)}</b><span>${d>=0?'+':''}${(d/b*100).toFixed(3)}%</span></span>`;
 }
 
 let LAST_PL = null;
@@ -3462,6 +3562,27 @@ async function runExport(){
 }
 async function disconnect(){ toggleProfMenu(false); closeExport(); cacheClear(); VIEW_AS = null; if (sb){ try{ await sb.auth.signOut(); }catch(e){} } SB_USER = null; SB_PROFILE = null; AUTH_MODE = 'login'; CFG=null; paintMode(); PORTS=[]; DATA={trades:[],capital:null}; paintPort(); renderAll(); showGate(); }
 
+// ดึงหน้าลงจากบนสุด (มือถือ) → รีเฟรชเหมือนแอป · ไม่ทำงานตอนแตะบนกราฟ / เปิดหน้าต่าง / หน้าเข้าสู่ระบบ / เต็มจอ
+(function(){
+  const P = $('ptr'), TH = 70; let y0 = null, d = 0, busy = false;
+  const blocked = t => busy || window.scrollY > 0 || document.body.classList.contains('gated') || document.body.classList.contains('chFs')
+    || document.querySelector('.overlay.on') || (t && t.closest && t.closest('#chart,#indMenu,.portMenu,input,textarea,select,.tbl-wrap'));
+  const paint = () => { const k = Math.min(d, TH*1.6); P.style.transition = 'none'; P.style.opacity = Math.min(1, d/TH); P.style.transform = `translateY(${k*0.9 - 20}px) rotate(${d*3}deg)`; P.classList.toggle('ready', d>=TH); };
+  const reset = () => { P.style.transition = 'transform .25s, opacity .25s'; P.style.transform = 'translateY(-70px)'; P.style.opacity = 0; P.classList.remove('ready'); d = 0; y0 = null; };
+  addEventListener('touchstart', e=>{ y0 = (e.touches.length===1 && !blocked(e.target)) ? e.touches[0].clientY : null; d = 0; }, {passive:true});
+  addEventListener('touchmove', e=>{
+    if (y0==null) return;
+    const dy = e.touches[0].clientY - y0;
+    if (dy <= 0 || window.scrollY > 0){ if (d) reset(); y0 = dy<=0 ? y0 : null; return; }
+    d = dy * 0.55; paint(); if (e.cancelable) e.preventDefault();   // กันหน้าเด้งระหว่างดึง
+  }, {passive:false});
+  addEventListener('touchend', ()=>{
+    if (y0==null) return;
+    if (d >= TH){ busy = true; P.classList.add('go'); P.style.transition = 'transform .2s'; P.style.transform = 'translateY(40px)'; setTimeout(hardReload, 250); }
+    else reset();
+  }, {passive:true});
+  addEventListener('touchcancel', reset, {passive:true});
+})();
 async function hardReload(){
   try{
     if ('caches' in window) { const ks = await caches.keys(); await Promise.all(ks.map(k=>caches.delete(k))); }
@@ -3787,6 +3908,7 @@ function toggleProfMenu(force){
     const p = curPort(), item = (icn, label, fn, extra) => `<button class="pmItem" role="menuitem" onclick="toggleProfMenu(false);${fn}"><span class="ck">${ic(icn,14)}</span><span class="nm" style="font-weight:500">${label}</span>${extra||''}</button>`;
     m.innerHTML = `<div class="pmHead"><div class="em">${esc(SB_USER ? SB_USER.email : (DEMO ? 'โหมดตัวอย่าง' : ''))}</div>${SB_PROFILE ? `<span class="roleB ${SB_PROFILE.role}">${ROLE_TH[SB_PROFILE.role]||SB_PROFILE.role}</span>` : ''}</div>`
       + (isAdminRole() ? item('users','จัดการผู้ใช้','openAdmin()', ADMIN_PENDING ? `<span class="cnt">${ADMIN_PENDING}</span>` : '') : '')
+      + (isSuper() ? item('database','สถานะฐานข้อมูล','openDbUsage()') : '')
       + (VIEW_AS ? item('arrow-left','กลับไปพอร์ตของฉัน','exitViewAs()') : '')
       + (p && p.access==='owner' && !VIEW_AS ? item('share-2','แชร์พอร์ต "'+esc(p.name)+'"',`openShare()`) : '')
       + item('download','ดาวน์โหลดข้อมูล','openExport()')
@@ -3890,6 +4012,43 @@ async function setUserRole(id, role){
   try{ ADMIN_USERS = await apiRaw('setRole', id, role); renderAdmin(); toast('เปลี่ยนบทบาทเป็น '+(ROLE_TH[role]||role)+' แล้ว'); }
   catch(e){ $('adm_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; renderAdmin(); }
 }
+
+// ---------- สถานะฐานข้อมูล (Super Admin) ----------
+// โควตาแพ็กเกจฟรีของ Supabase (ต่อโปรเจกต์) · ปริมาณรับส่งข้อมูล (Egress) ต้องดูในหน้า Usage ของ Supabase
+const SB_FREE = {db: 500*1024*1024, storage: 1024*1024*1024, mau: 50000};
+const SB_USAGE_URL = 'https://supabase.com/dashboard/org/whzxlmtxeizxmyfjzfah/usage';
+const fmtBytes = b => { b = +b||0; return b>=1073741824 ? (b/1073741824).toFixed(2)+' GB' : b>=1048576 ? (b/1048576).toFixed(1)+' MB' : b>=1024 ? (b/1024).toFixed(0)+' KB' : b+' B'; };
+async function openDbUsage(){
+  if (!isSuper()) return;
+  $('dbBox').classList.add('on');
+  $('db_body').innerHTML = '<div class="admEmpty"><span class="spin sm"></span>กำลังโหลดสถานะฐานข้อมูล…</div>';
+  try{ renderDbUsage(await apiRaw('dbUsage')); }
+  catch(e){
+    const m = e.message||String(e);
+    $('db_body').innerHTML = '<div class="admEmpty neg">'+esc(/admin_db_usage|Could not find the function|schema cache/i.test(m) ? 'ยังไม่ได้เพิ่มฟังก์ชัน admin_db_usage ในฐานข้อมูล — รัน SQL ในไฟล์ supabase/admin.sql ก่อน' : m)+'</div>';
+  }
+}
+function closeDbUsage(){ $('dbBox').classList.remove('on'); }
+function renderDbUsage(u){
+  const pct = (a,b) => Math.min(100, a/b*100), bar = p => `<div class="dbBar"><i class="${p>=90?'bad':p>=70?'warn':''}" style="width:${Math.max(1.5,p).toFixed(1)}%"></i></div>`;
+  const dbP = pct(u.db_bytes, SB_FREE.db), stP = pct(u.storage_bytes, SB_FREE.storage), mP = pct(u.seen_30d, SB_FREE.mau);
+  const card = (icn, l, v, extra) => `<div class="dbCard"><div class="l">${ic(icn,14)} ${l}</div><div class="v">${v}</div>${extra||''}</div>`;
+  $('db_sub').textContent = 'อัปเดต '+new Date(u.at).toLocaleString('th-TH')+' · เทียบโควตาแพ็กเกจฟรี';
+  $('db_body').innerHTML = '<div class="dbGrid">'
+    + card('database','ขนาดฐานข้อมูล', fmtBytes(u.db_bytes), bar(dbP)+`<div class="s">${dbP.toFixed(1)}% ของ 500 MB · เหลือ ${fmtBytes(Math.max(0, SB_FREE.db-u.db_bytes))}</div>`)
+    + card('download','ไฟล์ใน Storage', fmtBytes(u.storage_bytes), bar(stP)+`<div class="s">${stP.toFixed(1)}% ของ 1 GB</div>`)
+    + card('users','ผู้ใช้ที่เข้าใช้ใน 30 วัน', fN(u.seen_30d,0), bar(mP)+`<div class="s">โควตา 50,000 คน/เดือน · 7 วัน: ${fN(u.seen_7d,0)} คน</div>`)
+    + '</div>'
+    + '<div class="dbSec">ข้อมูลในระบบ</div><div class="dbGrid">'
+    + card('users','บัญชีทั้งหมด', fN(u.users,0), `<div class="s">ใช้งาน ${fN(u.active,0)} · รออนุมัติ ${fN(u.pending,0)} · ระงับ ${fN(u.disabled,0)}</div>`)
+    + card('chart-pie','พอร์ต', fN(u.portfolios,0), `<div class="s">แชร์ ${fN(u.shares,0)} รายการ · เส้นที่วาด ${fN(u.drawings,0)} พอร์ต</div>`)
+    + card('pencil','เทรด', fN(u.trades,0), `<div class="s">เฉลี่ย ${u.portfolios ? fN(u.trades/u.portfolios,1) : 0} เทรด/พอร์ต</div>`)
+    + '</div>'
+    + '<div class="dbSec">ตารางที่ใหญ่ที่สุด</div><table class="dbT">'
+    + (u.tables||[]).map(t=>`<tr><td>${esc(t.name)}</td><td>${fmtBytes(t.bytes)}</td></tr>`).join('') + '</table>'
+    + `<div class="dbNote">ขนาดฐานข้อมูลรวมข้อมูลระบบของ Supabase ด้วย (ประมาณ 10–20 MB แม้ยังไม่มีข้อมูล) · ปริมาณรับส่งข้อมูล (Egress 5 GB/เดือน) และผู้ใช้รายเดือนที่แม่นยำ ดูได้ที่ <a href="${SB_USAGE_URL}" target="_blank" rel="noopener">Supabase → Usage</a></div>`;
+}
+document.addEventListener('keydown', e=>{ if (e.key==='Escape' && $('dbBox').classList.contains('on')) closeDbUsage(); });
 
 // ---------- ลบบัญชีถาวร (Super Admin) ----------
 let DEL_USER = null;

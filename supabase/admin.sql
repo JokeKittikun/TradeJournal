@@ -239,6 +239,36 @@ end $$;
 revoke execute on function public.admin_delete_user(uuid) from anon, public;
 grant execute on function public.admin_delete_user(uuid) to authenticated;
 
+-- สถานะการใช้ฐานข้อมูล (Super Admin เท่านั้น) · ขนาดฐานข้อมูล / ขนาดแต่ละตาราง / ไฟล์ใน Storage / จำนวนผู้ใช้และข้อมูล
+create or replace function public.admin_db_usage() returns json
+language plpgsql stable security definer set search_path = public, auth as $$
+declare r json;
+begin
+  if not public.is_super() then raise exception 'เฉพาะ Super Admin ดูสถานะฐานข้อมูลได้'; end if;
+  select json_build_object(
+    'db_bytes', pg_database_size(current_database()),
+    'tables', (select coalesce(json_agg(t order by t.bytes desc), '[]'::json) from (
+        select n.nspname || '.' || c.relname as name, pg_total_relation_size(c.oid) as bytes
+          from pg_class c join pg_namespace n on n.oid = c.relnamespace
+         where c.relkind = 'r' and n.nspname in ('public','auth','storage')
+         order by pg_total_relation_size(c.oid) desc limit 12) t),
+    'storage_bytes', (select coalesce(sum((metadata->>'size')::bigint), 0) from storage.objects),
+    'users', (select count(*) from auth.users),
+    'active', (select count(*) from public.profiles where status = 'active'),
+    'pending', (select count(*) from public.profiles where status = 'pending'),
+    'disabled', (select count(*) from public.profiles where status = 'disabled'),
+    'seen_7d', (select count(*) from public.profiles where last_seen_at > now() - interval '7 days'),
+    'seen_30d', (select count(*) from public.profiles where last_seen_at > now() - interval '30 days'),
+    'portfolios', (select count(*) from public.portfolios),
+    'trades', (select count(*) from public.trades),
+    'drawings', (select count(*) from public.drawings),
+    'shares', (select count(*) from public.portfolio_shares),
+    'at', now()) into r;
+  return r;
+end $$;
+revoke execute on function public.admin_db_usage() from anon, public;
+grant execute on function public.admin_db_usage() to authenticated;
+
 revoke execute on function public.touch_me(), public.admin_list_users(), public.admin_set_status(uuid,text),
   public.admin_set_role(uuid,text), public.share_portfolio(uuid,text,text), public.unshare_portfolio(uuid,uuid),
   public.portfolio_share_list(uuid), public.my_shared_ports() from anon, public;

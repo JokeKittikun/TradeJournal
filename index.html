@@ -1960,7 +1960,7 @@ function chLoading(on, updating){
   el.classList.toggle('on', !!on);
 }
 async function loadChart(){
-  paintChartSrc();
+  paintChartSrc(); drawSrcSync();
   if (!ensureChart()) return;
   const req = ++CH_REQ, days=chDayList(), now=Date.now();
   CH_ALL = true;
@@ -2334,34 +2334,42 @@ const DRAW = {tool:'cursor', items:[], pending:null, hover:null, measure:null, s
 // เส้นที่วาด: เก็บแยกตามพอร์ตในฐานข้อมูล (ตาราง drawings) + สำเนาในเครื่อง (แสดงทันที / ใช้ตอนออฟไลน์)
 let DRAW_TIP = false;   // แสดงคำแนะนำ "ดับเบิลคลิกเพื่อเลือก" ครั้งเดียว
 let DRAW_PORT = null, DRAW_DIRTY = false, DRAW_TIMER = null;
+// แยกเส้นตาม Broker (ราคา Binance กับ MEXC ต่างกัน): เก็บรวมในที่เดียว แต่แสดง/แก้เฉพาะของ Broker ที่เลือก
+// DRAW.items = เส้นของ Broker ที่เลือก · DRAW_OTHER = ของ Broker อื่น · เส้นเก่าที่ยังไม่มีป้าย (s) ถือเป็นของ Binance
+let DRAW_OTHER = [], DRAW_SRC = null;
+const drawSrcKey = () => SRC()==='mexc' ? 'mexc' : 'bn';
+function drawSplit(all){ const k = drawSrcKey(); DRAW_SRC = k; DRAW_OTHER = []; DRAW.items = []; (all||[]).forEach(d=>{ if ((d.s||'bn')===k) DRAW.items.push(d); else DRAW_OTHER.push(d); }); }
+function drawAll(){ DRAW.items.forEach(d=>{ if (!d.s) d.s = DRAW_SRC || drawSrcKey(); }); return DRAW_OTHER.concat(DRAW.items); }
+// สลับ Broker → สลับชุดเส้นที่แสดง
+function drawSrcSync(){ if (DRAW_SRC && DRAW_SRC!==drawSrcKey()){ const all = drawAll(); DRAW.sel = -1; DRAW.pending = null; DRAW.drag = null; DRAW.measure = null; drawSplit(all); drawRedraw(); } }
 const drawKey = p => 'chDraw:'+p;
 function drawLocal(p){ try{ const v = JSON.parse(localStorage.getItem(drawKey(p))||'null'); return Array.isArray(v) ? v : null; }catch(e){ return null; } }
 function drawRedraw(){ if (typeof LWC!=='undefined' && LWC){ try{ drawHLines(); renderDraw(); }catch(e){} } }
 // เรียกทุกครั้งที่ข้อมูลพอร์ตเปลี่ยน (โหลด/สลับพอร์ต/บันทึกไม้)
 function syncDrawFromData(){
-  if (PORT==null){ if (DRAW_PORT!==null){ DRAW_PORT = null; DRAW.items = []; DRAW.sel = -1; drawRedraw(); } return; }
+  if (PORT==null){ if (DRAW_PORT!==null){ DRAW_PORT = null; DRAW.items = []; DRAW_OTHER = []; DRAW.sel = -1; drawRedraw(); } return; }
   const srv = DATA && Array.isArray(DATA.draw) ? DATA.draw : null;
   if (DRAW_PORT !== PORT){   // สลับพอร์ต → ใช้ชุดของพอร์ตนั้น
     // มีเส้นที่ยังไม่ได้ส่งของพอร์ตเดิม → ส่งไปที่พอร์ตเดิมทันที (ไม่ให้หาย)
-    if (DRAW_DIRTY && DRAW_PORT!=null && CFG && !DEMO && !VIEW_AS) sbCall('saveDrawings', [DRAW.items.slice(), DRAW_PORT]).catch(()=>{});
+    if (DRAW_DIRTY && DRAW_PORT!=null && CFG && !DEMO && !VIEW_AS) sbCall('saveDrawings', [drawAll(), DRAW_PORT]).catch(()=>{});
     DRAW_PORT = PORT; DRAW_DIRTY = false; clearTimeout(DRAW_TIMER); DRAW.sel = -1;
-    DRAW.items = srv || drawLocal(PORT) || [];
+    drawSplit(srv || drawLocal(PORT) || []);
     // ย้ายเส้นเดิม (ก่อนแยกพอร์ต) มาไว้ที่พอร์ตแรกที่เปิด
-    try{ const old = JSON.parse(localStorage.getItem('chDraw')||'null'); if (Array.isArray(old) && old.length && !DRAW.items.length){ DRAW.items = old; localStorage.removeItem('chDraw'); saveDraw(); } }catch(e){}
+    try{ const old = JSON.parse(localStorage.getItem('chDraw')||'null'); if (Array.isArray(old) && old.length && !DRAW.items.length && !DRAW_OTHER.length){ drawSplit(old); localStorage.removeItem('chDraw'); saveDraw(); } }catch(e){}
     drawRedraw(); return;
   }
   // ข้อมูลใหม่จากฐานข้อมูล (เช่น วาดจากอีกเครื่อง) → อัปเดต ถ้าเครื่องนี้ไม่มีการแก้ค้างอยู่
-  if (srv && !DRAW_DIRTY && JSON.stringify(srv)!==JSON.stringify(DRAW.items)){ DRAW.items = srv; DRAW.sel = -1; try{ localStorage.setItem(drawKey(PORT), JSON.stringify(srv)); }catch(e){} drawRedraw(); }
+  if (srv && !DRAW_DIRTY && JSON.stringify(srv)!==JSON.stringify(drawAll())){ drawSplit(srv); DRAW.sel = -1; try{ localStorage.setItem(drawKey(PORT), JSON.stringify(srv)); }catch(e){} drawRedraw(); }
 }
 // บันทึกลงฐานข้อมูล (หน่วงเวลาเล็กน้อย รวมหลายการแก้เป็นครั้งเดียว)
 async function pushDraw(){
   clearTimeout(DRAW_TIMER);
-  const p = DRAW_PORT, items = DRAW.items.slice();
+  const p = DRAW_PORT, items = drawAll();
   if (p==null || !DRAW_DIRTY) return;
   if (!CFG || DEMO || isRO()){ DRAW_DIRTY = false; return; }
   try{
     await apiRaw('saveDrawings', items);
-    if (DRAW_PORT===p && JSON.stringify(items)===JSON.stringify(DRAW.items)) DRAW_DIRTY = false;
+    if (DRAW_PORT===p && JSON.stringify(items)===JSON.stringify(drawAll())) DRAW_DIRTY = false;
     if (DATA && DRAW_PORT===p) DATA.draw = items;
   }catch(e){
     toast('บันทึกเส้นที่วาดไม่ได้: '+(e.message||e), true); DRAW_TIMER = setTimeout(pushDraw, 10000);
@@ -2374,7 +2382,7 @@ const DRAW_TOOLS = [
 ];
 function saveDraw(){
   if (DRAW_PORT==null || isRO()) return;   // อ่านอย่างเดียว: ไม่บันทึกเส้นที่วาด
-  try{ localStorage.setItem(drawKey(DRAW_PORT), JSON.stringify(DRAW.items)); }catch(e){}
+  try{ localStorage.setItem(drawKey(DRAW_PORT), JSON.stringify(drawAll())); }catch(e){}
   DRAW_DIRTY = true; clearTimeout(DRAW_TIMER); DRAW_TIMER = setTimeout(pushDraw, 1200);
 }
 function drStep(){ return INT_MS[CH_IV]/1000; }

@@ -164,7 +164,7 @@ body.syncing #syncBtn .ic{animation:spin 1s linear infinite}
 .accB{font:600 10.5px 'IBM Plex Sans Thai',sans-serif;padding:1px 7px;border-radius:99px;background:rgba(58,160,255,.14);color:#3aa0ff}
 .pOwner{font-size:11px;color:var(--muted);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .viewAs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:rgba(58,160,255,.1);border:1px solid rgba(58,160,255,.35);color:#9cc4ff;margin-bottom:10px;font-size:13px}
-body.ro #saveBtn,body.ro #clearBtn,body.ro #drawBar button:not([data-tool=fs]),body.ro #drawBar .dbSep,body.ro #drawDel,body.ro .homeNew{display:none!important}
+body.ro #saveBtn,body.ro #clearBtn,body.ro #drawBar button:not([data-tool=fs]):not([data-tool=ind]),body.ro #drawBar .dbSep,body.ro #drawDel,body.ro .homeNew{display:none!important}
 .roNote{display:none;padding:10px 14px;border-radius:10px;background:rgba(58,160,255,.1);border:1px solid rgba(58,160,255,.35);color:#9cc4ff;font-size:13px;margin-bottom:12px}
 body.ro .roNote{display:block}
 /* พอร์ต */
@@ -322,7 +322,7 @@ body.is-loading{touch-action:none}
 .btn.busy .spin{width:15px;height:15px}
 .btn.primary.busy .spin{border-color:rgba(17,17,17,.25);border-top-color:#111}
 /* หน้าต่าง "ดูกราฟ" จากประวัติการเทรด: ซ่อนเครื่องมือวาด / เส้นที่วาด / ราคาปัจจุบัน / gap / Live */
-#chartCard.cm #drawBar button:not([data-tool=fs]),#chartCard.cm #drawBar .dbSep,#chartCard.cm #drawDel,#chartCard.cm #drawSvg,#chartCard.cm #chPrice,#chartCard.cm #chSpread,#chartCard.cm #chLive{display:none!important}
+#chartCard.cm #drawBar button:not([data-tool=fs]):not([data-tool=ind]),#chartCard.cm #drawBar .dbSep,#chartCard.cm #drawDel,#chartCard.cm #drawSvg,#chartCard.cm #chPrice,#chartCard.cm #chSpread,#chartCard.cm #chLive{display:none!important}
 .cmLbl{position:absolute;z-index:5;pointer-events:none;font:700 10px/1.2 'JetBrains Mono','IBM Plex Sans Thai',monospace;white-space:nowrap;padding:0 2px;letter-spacing:.2px;text-shadow:0 0 3px #0d1117,0 0 2px #0d1117}
 /* สถานะกำลังโหลดบนกราฟ: กลางกราฟ (ยังไม่มีแท่ง) / มุมบน (กำลังอัปเดต) */
 #chLoad{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:8;display:none;align-items:center;gap:9px;background:rgba(22,27,34,.94);border:1px solid var(--line);padding:9px 16px;border-radius:10px;font-size:12.5px;color:var(--text);pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.4);white-space:nowrap}
@@ -366,6 +366,30 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
 #drawBar button.on{background:rgba(247,166,0,.16);color:var(--accent)}
 #chart.drawing{cursor:crosshair}
 #drawBar .dbSep{height:1px;background:var(--line);margin:2px 3px}
+/* เมนู Indicator */
+#indMenu{position:absolute;left:46px;z-index:8;min-width:250px;max-width:calc(100% - 60px);max-height:calc(100% - 12px);overflow:auto;padding:6px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
+#indMenu .ih{font-size:11px;color:var(--muted);padding:4px 8px 6px}
+#indMenu label{display:flex;align-items:flex-start;gap:9px;margin:0;padding:6px 8px;min-width:0;border-radius:7px;cursor:pointer;font-size:13px;color:var(--text);width:auto}
+#indMenu label:hover{background:#1c232d}
+#indMenu input{width:auto;margin:2px 0 0;accent-color:#f7a600}
+#indMenu .d{display:block;font-size:11px;color:var(--muted);margin-top:1px}
+#indMenu label.off{opacity:.45;cursor:default}
+#indMenu .sw{display:inline-block;width:10px;height:3px;border-radius:2px;margin:0 6px 2px 0;vertical-align:middle}
+#vpCanvas{position:absolute;left:0;top:0;pointer-events:none;z-index:2}
+#indMenu .ir{display:flex;align-items:center;gap:6px;border-radius:7px}
+#indMenu .ir:hover{background:#1c232d}
+#indMenu .ir label{flex:1;min-width:0}
+#indMenu .ir label:hover{background:transparent}
+#indMenu .ir.off{opacity:.45}
+#indMenu .ps{display:flex;gap:4px;padding-right:6px}
+#indMenu .ps select{padding:3px 4px;font-size:12px;width:auto;border-radius:6px;margin:0}
+#indMenu .ps input{padding:3px 4px;font:500 12px 'JetBrains Mono',monospace;text-align:center;border-radius:6px;margin:0}
+#indPanels{position:absolute;inset:0;pointer-events:none;z-index:3}
+#indPanels .ipMask{position:absolute;background:#0d1117;border-left:1px solid #2a3441}
+#indPanels .ipSep{position:absolute;left:0;height:0;border-top:1px solid rgba(139,152,168,.22)}
+#indPanels .ipLbl{position:absolute;left:48px;font:500 10.5px 'JetBrains Mono','IBM Plex Sans Thai',monospace;color:#8b98a8;background:rgba(13,17,23,.7);padding:0 4px;border-radius:3px;white-space:nowrap}
+#indPanels .ipLbl b{font-weight:600}
+@media (pointer:coarse){ #indPanels .ipLbl{left:54px} }
 #chart.nopan{touch-action:none}
 /* กราฟเต็มจอ */
 #chartCard.fs{position:fixed;inset:0;z-index:50;margin:0!important;border-radius:0;border:0;display:flex;flex-direction:column;overflow:hidden;
@@ -1679,10 +1703,11 @@ const MEXC_IV_BACK = {Min1:'1m',Min5:'5m',Min15:'15m',Min30:'30m',Min60:'1h',Hou
 // คืนค่าเป็นรูปแบบเดียวกับ Binance: [[openTimeMs, open, high, low, close], ...]
 // MEXC ไม่อนุญาตให้เบราว์เซอร์เรียกตรง (CORS) → ดึงผ่าน Cloudflare Worker (โค้ดอยู่ที่ cloudflare/mexc-worker.js)
 const mexcUrl = (iv, a, b) => `https://contract.mexc.com/api/v1/contract/kline/BTC_USDT?interval=${MEXC_IV[iv]}&start=${Math.floor(a/1000)}&end=${Math.floor(b/1000)}`;
+const MX_CT = 0.0001;   // MEXC BTC_USDT: 1 สัญญา = 0.0001 BTC (แปลง Volume เป็นหน่วย BTC ให้เทียบกับ Binance ได้)
 function mexcParse(j, from, to){
   if (!j || !j.success || !j.data) throw new Error('MEXC: '+((j&&j.message)||'ไม่มีข้อมูล'));
   const d=j.data, out=[];
-  for (let i=0;i<d.time.length;i++){ const t=d.time[i]*1000; if (t>=from && t<=to) out.push([t, d.open[i], d.high[i], d.low[i], d.close[i]]); }
+  for (let i=0;i<d.time.length;i++){ const t=d.time[i]*1000; if (t>=from && t<=to) out.push([t, d.open[i], d.high[i], d.low[i], d.close[i], (+d.vol[i]||0)*MX_CT]); }
   return out;
 }
 const MEXC_WORKER = 'https://mexc-proxy.jokerlive-channel.workers.dev';
@@ -1699,10 +1724,10 @@ async function mexcFetchAll(urls){
 // แคชแท่งที่ปิดแล้วไว้ในเครื่อง → ครั้งต่อไปดึงเฉพาะแท่งใหม่ (เร็วขึ้นมาก)
 const MX_CHUNK = 2000, MX_INFLIGHT = {};
 const mxKeep = iv => ((iv==='30m' ? 32 : (TF_DAYS[iv]||6)) + 2)*864e5;   // เก็บในเครื่องเท่าช่วงที่โหลดครั้งแรกของ TF นั้น (30m ใช้คำนวณกรอบของ 1h ด้วย)
-function mxLoad(iv){ try{ return JSON.parse(localStorage.getItem('mxc_'+iv)||'[]'); }catch(e){ return []; } }
+function mxLoad(iv){ try{ return JSON.parse(localStorage.getItem('mxc2_'+iv)||'[]'); }catch(e){ return []; } }
 function mxSave(iv, arr){
   const cut = Date.now() - mxKeep(iv); arr = arr.filter(k=>k[0]>=cut);
-  try{ localStorage.setItem('mxc_'+iv, JSON.stringify(arr)); }catch(e){ try{ localStorage.removeItem('mxc_'+iv); }catch(x){} }
+  try{ localStorage.setItem('mxc2_'+iv, JSON.stringify(arr)); }catch(e){ try{ localStorage.removeItem('mxc2_'+iv); }catch(x){} }
 }
 async function mexcFetchSpan(iv, from, to){
   const ms = INT_MS[iv] || 18e5, urls=[], spans=[];
@@ -1744,11 +1769,11 @@ function openKlineWS(src, iv, onBar){
     ws.onmessage = e=>{
       let m; try{ m=JSON.parse(e.data); }catch(x){ return; }
       if (m.channel!=='push.kline' || !m.data) return;
-      const k=m.data; onBar({t:k.t*1000, o:+k.o, h:+k.h, l:+k.l, c:+k.c, i:MEXC_IV_BACK[k.interval]});
+      const k=m.data; onBar({t:k.t*1000, o:+k.o, h:+k.h, l:+k.l, c:+k.c, v:(+k.q||0)*MX_CT, i:MEXC_IV_BACK[k.interval]});
     };
   } else {
     ws = new WebSocket(src==='futures' ? `wss://fstream.binance.com/ws/btcusdt@kline_${iv}` : `wss://stream.binance.com:9443/ws/btcusdt@kline_${iv}`);
-    ws.onmessage = e=>{ const k=(JSON.parse(e.data)||{}).k; if (k) onBar({t:k.t, o:+k.o, h:+k.h, l:+k.l, c:+k.c, i:k.i}); };
+    ws.onmessage = e=>{ const k=(JSON.parse(e.data)||{}).k; if (k) onBar({t:k.t, o:+k.o, h:+k.h, l:+k.l, c:+k.c, v:+k.v, bv:+k.V, i:k.i}); };
   }
   const _close = ()=>clearInterval(ws._ping);
   ws.addEventListener('close', _close);
@@ -1895,7 +1920,7 @@ function ensureChart(){
   });
   BAND = {els:[]};
   LWC.timeScale().subscribeVisibleLogicalRangeChange(lr=>{ placeBand(); levelCheck(); if (lr && lr.from < OLD_EDGE) oldCheck(); });
-  new ResizeObserver(()=>placeBand()).observe($('chart'));
+  new ResizeObserver(()=>{ placeBand(); placePanels(); }).observe($('chart'));
   if (!window.__ovLoop){ window.__ovLoop = true; requestAnimationFrame(overlayLoop); }   // เริ่มครั้งเดียว
   // ปิดเส้น/ป้ายราคาล่าสุดของ series แล้ววาดเองด้วย price line ตัวเดียว → เส้นประกับป้ายราคาอยู่ระดับเดียวกันเสมอ
   setTimeout(initDraw, 0);
@@ -1949,7 +1974,8 @@ function rangesFromBars(rows, bars){
 }
 // ลำดับแท่งแรกที่ time >= t (ค้นแบบแบ่งครึ่ง — เร็วแม้มีหลายหมื่นแท่ง)
 function barAt(bars, t){ let lo=0, hi=bars.length; while (lo<hi){ const m=(lo+hi)>>1; if (bars[m].time<t) lo=m+1; else hi=m; } return lo; }
-const toBar = k=>({time:k[0]/1000+CH_TZ, open:+k[1], high:+k[2], low:+k[3], close:+k[4]});
+// v = Volume (BTC) · bv = Volume ฝั่งซื้อ (taker buy — มีเฉพาะ Binance)
+const toBar = k=>({time:k[0]/1000+CH_TZ, open:+k[1], high:+k[2], low:+k[3], close:+k[4], v:+k[5]||0, bv:k[9]!=null ? +k[9] : undefined});
 let CH_REQ = 0;
 // สถานะกำลังโหลดบนกราฟ (spinner เดียวกับส่วนอื่น)
 function chLoading(on, updating){
@@ -1973,7 +1999,7 @@ async function loadChart(){
   let shown = false;
   const paint = (raw, raw30) => {
     CH_BARS = raw.map(toBar);
-    CS.setData(CH_BARS);
+    CS.setData(CH_BARS); indApply(true);
     CH_30 = raw30 ? raw30.map(toBar) : null;
     rangesFromBars(CH_ROWS, CH_30 || CH_BARS);
     const step = INT_MS[iv]/1000;
@@ -2149,6 +2175,305 @@ async function fetchKlines(iv, from, to){
   }
   throw err;
 }
+/* ================= Indicator: Volume / CVD / VWAP / Volume Profile =================
+   คำนวณจากแท่งเทียนที่โหลดอยู่แล้ว (ไม่ดึงข้อมูลเพิ่ม) · แรงซื้อ/ขาย (taker buy) มีเฉพาะ Binance
+   CVD / VWAP เริ่มนับใหม่ทุกวันเวลา 07:00 น. (00:00 UTC) */
+const IND_OPT = {cvdR:[['day','เริ่มใหม่ทุกวัน'],['week','ทุกสัปดาห์'],['all','สะสมทั้งหมด']], vwapR:[['day','รายวัน'],['week','รายสัปดาห์']]};
+const IND_LIM = {volP:[[5,200],[1.2,10]], vpP:[[12,150],[8,60]]};   // ช่วงค่าที่ปรับได้ [ต่ำสุด, สูงสุด]
+const IND_DEF = {vol:false, cvd:false, vwap:false, vp:false,
+  volP:[20,2], cvdR:'day', vwapR:'day', vpP:[40,24],   // Volume: ค่าเฉลี่ยกี่แท่ง · กี่เท่า = แท่งเด่น | CVD/VWAP: เริ่มนับใหม่ | Volume Profile: จำนวนช่องราคา · ความกว้าง %
+  ema:[{on:false,p:20},{on:false,p:50},{on:false,p:200}],
+  macd:false, macdP:[12,26,9], rsi:false, rsiP:14, stoch:false, stochP:[14,3,3]};
+const IND = (()=>{ const d = JSON.parse(JSON.stringify(IND_DEF));
+  try{ const v = JSON.parse(localStorage.getItem('chInd')||'{}');
+    Object.keys(d).forEach(k=>{ if (k==='ema'){ if (Array.isArray(v.ema)) v.ema.slice(0,3).forEach((e,i)=>{ if (e){ d.ema[i].on = !!e.on; if (+e.p>=2) d.ema[i].p = +e.p; } }); }
+      else if (Array.isArray(d[k])){ if (Array.isArray(v[k]) && v[k].length===d[k].length && v[k].every(x=>+x>=1)) d[k] = v[k].map(Number); }
+      else if (typeof d[k]==='string'){ if (typeof v[k]==='string' && IND_OPT[k] && IND_OPT[k].some(o=>o[0]===v[k])) d[k] = v[k]; }
+      else if (v[k]!=null) d[k] = typeof d[k]==='boolean' ? !!v[k] : +v[k] || d[k]; });
+  }catch(e){}
+  return d; })();
+const INDS = {};      // series ที่สร้างแล้ว
+let IND_V = {};       // ค่าที่คำนวณ (เรียงตามลำดับแท่ง) ใช้แสดงตัวเลขบนป้ายของแต่ละช่อง
+const EMA_COL = ['#fbbf24','#60a5fa','#a3e635'];
+const IND_INFO = [
+  ['vol','Volume','แรงซื้อ (เขียว) / แรงขาย (แดง) · แท่งสีเข้ม = Volume เกิน 2 เท่าของค่าเฉลี่ย', '#22c55e'],
+  ['cvd','CVD','เส้นสะสม แรงซื้อ − แรงขาย (เริ่มใหม่ทุกวัน) · ดูเงินไหลเข้า/ออก', '#38bdf8'],
+  ['vwap','VWAP','ราคาเฉลี่ยถ่วงด้วย Volume รายวัน · ราคาเหนือ VWAP = ฝั่งซื้อคุม', '#e879f9'],
+  ['vp','Volume Profile','ปริมาณซื้อขายตามระดับราคา (ช่วงที่เห็นบนจอ) · เส้น POC = ราคาที่ซื้อขายมากที่สุด', '#f7a600'],
+];
+const hasBuyVol = () => CH_BARS.length > 0 && CH_BARS[CH_BARS.length-1].bv != null;   // Binance มี · MEXC ไม่มี
+const indDay = t => Math.floor((t - 7*3600)/86400);   // วันตามเวลา 07:00 น. ไทย (t = วินาที เวลาไทย)
+function saveInd(){ try{ localStorage.setItem('chInd', JSON.stringify(IND)); }catch(e){} }
+function toggleIndMenu(force){
+  let m = $('indMenu');
+  const open = force!=null ? force : !m;
+  if (!open){ if (m) m.remove(); $('indBtn') && $('indBtn').classList.remove('on'); return; }
+  if (!m){ m = document.createElement('div'); m.id = 'indMenu'; $('chart').appendChild(m);
+    m.addEventListener('pointerdown', e=>e.stopPropagation());
+    m.addEventListener('wheel', e=>e.stopPropagation(), {passive:true});
+    m.addEventListener('change', e=>{
+      const t = e.target, k = t.dataset.k, pk = t.dataset.p;
+      if (k){   // เปิด/ปิด
+        if (k.startsWith('ema')) IND.ema[+k.slice(3)].on = t.checked; else IND[k] = t.checked;
+        saveInd(); indApply(); return;
+      }
+      if (pk && t.tagName==='SELECT'){ IND[pk] = t.value; saveInd(); indApply(true, true); return; }
+      if (pk){   // ปรับค่า
+        const [name, idx] = pk.split(':'), lim = name==='ema' ? [2,500] : (IND_LIM[name] ? IND_LIM[name][+idx] : [1,200]);
+        let v = +t.value; v = (name==='volP' && idx==='1') ? Math.round(v*10)/10 : Math.round(v);
+        if (!(v>=lim[0])) v = lim[0]; if (v>lim[1]) v = lim[1]; t.value = v;
+        if (name==='ema') IND.ema[+idx].p = v; else if (idx!=null) IND[name][+idx] = v; else IND[name] = v;
+        if (name==='macdP' && IND.macdP[0] >= IND.macdP[1]){ IND.macdP[1] = IND.macdP[0]+1; const x = m.querySelector('[data-p="macdP:1"]'); if (x) x.value = IND.macdP[1]; }
+        saveInd(); indApply(true, true);
+      }
+    });
+    m.addEventListener('keydown', e=>{ if (e.key==='Enter' && e.target.dataset.p) e.target.blur(); });
+  }
+  paintIndMenu();
+  m.style.top = '6px';   // ชิดบน (เลื่อนดูในเมนูได้ถ้ายาวกว่ากราฟ)
+  $('indBtn') && $('indBtn').classList.add('on');
+}
+function paintIndMenu(){
+  const m = $('indMenu'); if (!m) return;
+  const bv = hasBuyVol(), hi = HI_TF(CH_IV), st = m.scrollTop;
+  const num = (p, v, w) => `<input type="number" inputmode="numeric" data-p="${p}" value="${v}" style="width:${w||46}px" aria-label="ค่า">`;
+  const row = (k, on, name, col, params, desc, off) => `<div class="ir ${off?'off':''}"><label><input type="checkbox" data-k="${k}" ${on?'checked':''} ${off?'disabled':''}><span><span class="sw" style="background:${col}"></span>${name}${desc||off ? `<span class="d">${off||desc}</span>` : ''}</span></label>${params ? `<span class="ps">${params}</span>` : ''}</div>`;
+  const sel = (p, v) => `<select data-p="${p}" aria-label="ตั้งค่า">${IND_OPT[p].map(([x,l])=>`<option value="${x}" ${x===v?'selected':''}>${l}</option>`).join('')}</select>`;
+  const numf = (p, v, w) => `<input type="number" inputmode="decimal" step="0.1" data-p="${p}" value="${v}" style="width:${w||46}px" aria-label="ค่า">`;
+  const PAR = {vol: num('volP:0',IND.volP[0])+numf('volP:1',IND.volP[1]), cvd: sel('cvdR',IND.cvdR), vwap: sel('vwapR',IND.vwapR), vp: num('vpP:0',IND.vpP[0])+num('vpP:1',IND.vpP[1])};
+  const PD = {vol:'ค่าเฉลี่ยกี่แท่ง · กี่เท่า = แท่งเด่น (สีเข้ม)', cvd:'แรงซื้อ − แรงขาย สะสม · ดูเงินไหลเข้า/ออก', vwap:'ราคาเฉลี่ยถ่วง Volume · ราคาเหนือ VWAP = ฝั่งซื้อคุม', vp:'จำนวนช่องราคา · ความกว้าง % · เส้น POC = ราคาที่ซื้อขายมากที่สุด'};
+  m.innerHTML = '<div class="ih">เม็ดเงิน / ปริมาณซื้อขาย · ปรับค่าได้</div>' + IND_INFO.map(([k,name,desc,col])=>{
+      const off = (k==='cvd' && !bv) ? 'ใช้ได้เฉพาะ Binance (MEXC ไม่มีข้อมูลแรงซื้อ/ขาย)' : (k==='vwap' && hi) ? 'ใช้กับ TF ไม่เกิน 1h' : '';
+      return row(k, IND[k], name, col, off ? '' : PAR[k], PD[k], off); }).join('')
+    + '<div class="ih" style="margin-top:4px;border-top:1px solid var(--line);padding-top:8px">พื้นฐาน · ปรับค่าได้</div>'
+    + IND.ema.map((e,i)=>row('ema'+i, e.on, 'EMA', EMA_COL[i], num('ema:'+i, e.p, 52))).join('')
+    + row('macd', IND.macd, 'MACD', '#60a5fa', num('macdP:0',IND.macdP[0])+num('macdP:1',IND.macdP[1])+num('macdP:2',IND.macdP[2]), 'Fast · Slow · Signal')
+    + row('rsi', IND.rsi, 'RSI', '#c084fc', num('rsiP',IND.rsiP), 'เส้น 70 / 30')
+    + row('stoch', IND.stoch, 'Stochastic', '#f59e0b', num('stochP:0',IND.stochP[0])+num('stochP:1',IND.stochP[1])+num('stochP:2',IND.stochP[2]), '%K · Smooth · %D · เส้น 80 / 20');
+  m.scrollTop = st;
+}
+document.addEventListener('pointerdown', e=>{ if ($('indMenu') && !e.target.closest('#indMenu,#indBtn')) toggleIndMenu(false); });
+
+/* ---------- คำนวณ ---------- */
+function emaArr(src, p){   // EMA (เริ่มจากค่าเฉลี่ย p ค่าแรก) · ค่า null = ยังไม่พอ
+  const out = new Array(src.length).fill(null), k = 2/(p+1); let prev = null, sum = 0, n = 0;
+  for (let i=0;i<src.length;i++){ const v = src[i]; if (v==null) continue;
+    if (prev==null){ sum += v; n++; if (n===p){ prev = sum/p; out[i] = prev; } }
+    else { prev = v*k + prev*(1-k); out[i] = prev; } }
+  return out;
+}
+function smaArr(src, p){
+  const out = new Array(src.length).fill(null); let sum = 0, q = [];
+  for (let i=0;i<src.length;i++){ const v = src[i]; if (v==null){ continue; } q.push(v); sum += v; if (q.length > p) sum -= q.shift(); if (q.length===p) out[i] = sum/p; }
+  return out;
+}
+function rsiArr(c, p){
+  const out = new Array(c.length).fill(null); let ag = 0, al = 0;
+  for (let i=1;i<c.length;i++){ const d = c[i]-c[i-1], g = d>0?d:0, l = d<0?-d:0;
+    if (i<=p){ ag += g; al += l; if (i===p){ ag/=p; al/=p; out[i] = al===0 ? 100 : 100 - 100/(1+ag/al); } }
+    else { ag = (ag*(p-1)+g)/p; al = (al*(p-1)+l)/p; out[i] = al===0 ? 100 : 100 - 100/(1+ag/al); } }
+  return out;
+}
+function stochArr(bars, kp, sm, dp){
+  const raw = bars.map((b,i)=>{ if (i < kp-1) return null; let hh = -Infinity, ll = Infinity;
+    for (let j=i-kp+1;j<=i;j++){ if (bars[j].high>hh) hh = bars[j].high; if (bars[j].low<ll) ll = bars[j].low; }
+    return hh===ll ? 50 : (b.close-ll)/(hh-ll)*100; });
+  const k = smaArr(raw, sm); return {k, d: smaArr(k, dp)};
+}
+function indCompute(){
+  const c = CH_BARS.map(b=>b.close), V = {};
+  V.ema = IND.ema.map(e=>e.on ? emaArr(c, e.p) : null);
+  if (IND.macd){ const [f,sl,sg] = IND.macdP, a = emaArr(c,f), b = emaArr(c,sl), m = a.map((x,i)=>x!=null && b[i]!=null ? x-b[i] : null), s = emaArr(m, sg);
+    V.macd = m; V.sig = s; V.hist = m.map((x,i)=>x!=null && s[i]!=null ? x-s[i] : null); }
+  if (IND.rsi) V.rsi = rsiArr(c, IND.rsiP);
+  if (IND.stoch){ const r = stochArr(CH_BARS, ...IND.stochP); V.k = r.k; V.d = r.d; }
+  IND_V = V;
+}
+// ค่าของแต่ละแท่ง (ตั้งแต่ลำดับ from) — CVD/VWAP สะสมภายในวัน
+// รอบการเริ่มนับใหม่: day = ทุกวัน 07:00 น. · week = ทุกวันจันทร์ 07:00 น. (00:00 UTC) · all = ไม่เริ่มใหม่
+const indPeriod = (t, mode) => mode==='all' ? 0 : mode==='week' ? Math.floor((indDay(t)+3)/7) : indDay(t);
+function indCalc(from){
+  const out = [], hi = HI_TF(CH_IV), cm = hi && IND.cvdR==='day' ? 'all' : IND.cvdR, vm = IND.vwapR;
+  let cp = null, vp = null, cvd = 0, pv = 0, vv = 0;
+  for (let i=0; i<CH_BARS.length; i++){
+    const b = CH_BARS[i], c = indPeriod(b.time, cm), w = indPeriod(b.time, vm);
+    if (c!==cp){ cp = c; cvd = 0; }
+    if (w!==vp){ vp = w; pv = 0; vv = 0; }
+    if (b.bv!=null) cvd += 2*b.bv - b.v;
+    pv += (b.high+b.low+b.close)/3 * b.v; vv += b.v;
+    if (i>=from) out.push({i, cvd, vwap: vv ? pv/vv : (b.high+b.low+b.close)/3});
+  }
+  return out;
+}
+function volPoint(i){
+  const b = CH_BARS[i]; let sum = 0, n = 0;
+  const [len, mult] = IND.volP;
+  for (let j=Math.max(0,i-len); j<i; j++){ sum += CH_BARS[j].v; n++; }
+  const spike = n >= Math.min(10, len) && b.v > mult*sum/n, a = spike ? 0.95 : 0.45;
+  if (b.bv!=null) return [{time:b.time, value:b.v, color:`rgba(239,68,68,${a})`}, {time:b.time, value:b.bv, color:`rgba(34,197,94,${spike?1:0.55})`}];
+  return [{time:b.time, value:b.v, color: b.close>=b.open ? `rgba(34,197,94,${a})` : `rgba(239,68,68,${a})`}, null];
+}
+
+/* ---------- series + ช่องด้านล่างกราฟ ---------- */
+const LS_DASH = () => LightweightCharts.LineStyle.Dashed;
+const fixedRange = (lo, hi) => ()=>({priceRange:{minValue:lo, maxValue:hi}});
+function mkLine(scale, color, w, extra){ return LWC.addLineSeries(Object.assign({priceScaleId:scale, color, lineWidth:w||1, priceLineVisible:false, lastValueVisible:false, crosshairMarkerVisible:false}, extra||{})); }
+const IND_MK = {
+  volS: ()=>LWC.addHistogramSeries({priceScaleId:'vol', priceFormat:{type:'volume'}, priceLineVisible:false, lastValueVisible:false}),
+  volB: ()=>LWC.addHistogramSeries({priceScaleId:'vol', priceFormat:{type:'volume'}, priceLineVisible:false, lastValueVisible:false}),
+  cvd:  ()=>mkLine('cvd', '#38bdf8', 1, {priceFormat:{type:'volume'}}),
+  vwap: ()=>mkLine('right', '#e879f9', 2, {lastValueVisible:true, title:'VWAP', priceFormat:{type:'price',precision:2,minMove:0.01}}),
+  ema0: ()=>mkLine('right', EMA_COL[0], 1, {priceFormat:{type:'price',precision:2,minMove:0.01}}),
+  ema1: ()=>mkLine('right', EMA_COL[1], 1, {priceFormat:{type:'price',precision:2,minMove:0.01}}),
+  ema2: ()=>mkLine('right', EMA_COL[2], 1, {priceFormat:{type:'price',precision:2,minMove:0.01}}),
+  macdH:()=>LWC.addHistogramSeries({priceScaleId:'macd', priceLineVisible:false, lastValueVisible:false, priceFormat:{type:'price',precision:2,minMove:0.01}}),
+  macd: ()=>mkLine('macd', '#60a5fa', 1),
+  sig:  ()=>mkLine('macd', '#f97316', 1),
+  rsi:  ()=>{ const x = mkLine('rsi', '#c084fc', 1, {autoscaleInfoProvider:fixedRange(0,100)}); [70,30].forEach(v=>x.createPriceLine({price:v, color:'rgba(139,152,168,.45)', lineWidth:1, lineStyle:LS_DASH(), axisLabelVisible:false})); return x; },
+  stK:  ()=>{ const x = mkLine('stoch', '#f59e0b', 1, {autoscaleInfoProvider:fixedRange(0,100)}); [80,20].forEach(v=>x.createPriceLine({price:v, color:'rgba(139,152,168,.45)', lineWidth:1, lineStyle:LS_DASH(), axisLabelVisible:false})); return x; },
+  stD:  ()=>mkLine('stoch', '#38bdf8', 1, {autoscaleInfoProvider:fixedRange(0,100)}),
+};
+let IND_PANELS = [];   // ช่องด้านล่าง (ล่าง → บน): {k, name, top, h} (px)
+// สร้าง/ลบ series ตามที่เปิด แล้วจัดความสูงกราฟ + ช่องด้านล่าง
+function indApply(noFit, keepMenu){
+  if (!LWC || !CS) return;
+  const bv = hasBuyVol(), hi = HI_TF(CH_IV);
+  const want = {vol:IND.vol, cvd:IND.cvd && bv, vwap:IND.vwap && !hi, macd:IND.macd, rsi:IND.rsi, stoch:IND.stoch};
+  const need = {volS:want.vol, volB:want.vol && bv, cvd:want.cvd, vwap:want.vwap, ema0:IND.ema[0].on, ema1:IND.ema[1].on, ema2:IND.ema[2].on,
+    macdH:want.macd, macd:want.macd, sig:want.macd, rsi:want.rsi, stK:want.stoch, stD:want.stoch};
+  Object.keys(need).forEach(k=>{
+    if (need[k] && !INDS[k]) INDS[k] = IND_MK[k]();
+    if (!need[k] && INDS[k]){ try{ LWC.removeSeries(INDS[k]); }catch(e){} delete INDS[k]; }
+  });
+  indLayout();
+  indAll(); if (!noFit) refitScale(); drawVP(); if (!keepMenu) paintIndMenu();
+}
+function indLayout(){
+  if (!LWC) return;
+  const bv = hasBuyVol(), el = $('chart'), mob = innerWidth <= 720, fs = isChartFs();
+  const list = [['vol', IND.vol, 'Volume'], ['cvd', IND.cvd && bv, 'CVD'+({week:' (สัปดาห์)', all:' (สะสม)'}[IND.cvdR]||'')], ['macd', IND.macd, 'MACD '+IND.macdP.join(' ')], ['rsi', IND.rsi, 'RSI '+IND.rsiP], ['stoch', IND.stoch, 'Stoch '+IND.stochP.join(' ')]].filter(x=>x[1]);
+  const base = mob ? 300 : 360, ph = mob ? 72 : 88;
+  if (fs) el.style.removeProperty('height');   // เต็มจอ: ให้ CSS ยืดเต็มพื้นที่
+  else if (list.length) el.style.setProperty('height', (base + ph*list.length)+'px', 'important');   // เพิ่มความสูงตามจำนวนช่อง แท่งราคาไม่ถูกบีบ
+  else { el.style.removeProperty('height'); el.style.height = '360px'; }
+  const Hp = Math.max(100, (fs ? el.clientHeight : (list.length ? base + ph*list.length : el.clientHeight)) - 28);   // พื้นที่ราคา (ไม่รวมแกนเวลา)
+  const ph2 = fs ? Math.min(ph*1.2, Hp*0.6/Math.max(1,list.length)) : ph, f = ph2/Hp;
+  let off = 0; IND_PANELS = [];
+  list.forEach(([k,,name])=>{
+    LWC.priceScale(k).applyOptions({scaleMargins:{top: Math.max(0, 1-off-f+0.1*f), bottom: off+0.06*f}, visible:false});
+    IND_PANELS.push({k, name, top: Hp*(1-off-f), h: ph2});
+    off += f;
+  });
+  LWC.priceScale('right').applyOptions({scaleMargins:{top:0.08, bottom: list.length ? off+0.02 : 0.1}});
+  placePanels();
+}
+addEventListener('resize', ()=>{ clearTimeout(window.__indRs); window.__indRs = setTimeout(()=>{ if (IND_PANELS.length || isChartFs()) indLayout(); }, 200); });
+// ป้ายชื่อ + เส้นคั่นของแต่ละช่องด้านล่าง
+function placePanels(){
+  const el = $('chart'); if (!el || !LWC) return;
+  let box = $('indPanels'); if (!box){ box = document.createElement('div'); box.id = 'indPanels'; el.appendChild(box); }
+  const W = el.clientWidth - LWC.priceScale('right').width(), sig = W+'|'+el.clientHeight+'|'+JSON.stringify(IND_PANELS);
+  if (box._sig===sig) return; box._sig = sig;
+  box.innerHTML = IND_PANELS.map(p=>`<div class="ipSep" style="top:${Math.round(p.top)}px;width:${W}px"></div><div class="ipLbl" data-k="${p.k}" style="top:${Math.round(p.top)+2}px">${p.name}<span></span></div>`).join('')
+    // บังตัวเลขแกนราคาหลักในช่วงของช่องด้านล่าง (ตัวเลขตรงนั้นไม่ใช่ค่าของ indicator)
+    + (IND_PANELS.length ? (()=>{ const t = Math.round(Math.min(...IND_PANELS.map(p=>p.top))), H = el.clientHeight - LWC.timeScale().height(); return `<div class="ipMask" style="left:${W}px;top:${t}px;height:${Math.max(0,H-t)}px;width:${el.clientWidth-W}px"></div>`; })() : '');
+  panelVals(null);
+}
+// ตัวเลขล่าสุด (หรือของแท่งที่ชี้อยู่) บนป้ายของแต่ละช่อง
+function panelVals(i){
+  const box = $('indPanels'); if (!box || !CH_BARS.length) return;
+  if (i==null || i<0 || i>=CH_BARS.length) i = CH_BARS.length-1;
+  const V = IND_V, v = (a, d=2) => a && a[i]!=null ? fN(a[i], d) : '–';
+  box.querySelectorAll('.ipLbl').forEach(l=>{
+    const k = l.dataset.k, sp = l.lastChild, b = CH_BARS[i];
+    if (k==='vol') sp.innerHTML = ` <b>${fN(b.v,2)}</b>` + (b.bv!=null && b.v ? ` <span class="${b.bv*2>=b.v?'pos':'neg'}">ซื้อ ${fN(b.bv/b.v*100,0)}%</span>` : '');
+    else if (k==='cvd'){ const r = V.cvdArr; sp.innerHTML = ` <b style="color:#38bdf8">${r && r[i]!=null ? fN(r[i],2) : '–'}</b>`; }
+    else if (k==='macd') sp.innerHTML = ` <b style="color:#60a5fa">${v(V.macd)}</b> <b style="color:#f97316">${v(V.sig)}</b> <b class="${V.hist && V.hist[i]>=0?'pos':'neg'}">${v(V.hist)}</b>`;
+    else if (k==='rsi') sp.innerHTML = ` <b style="color:#c084fc">${v(V.rsi,1)}</b>`;
+    else if (k==='stoch') sp.innerHTML = ` <b style="color:#f59e0b">${v(V.k,1)}</b> <b style="color:#38bdf8">${v(V.d,1)}</b>`;
+  });
+}
+const ptsOf = (arr) => { const out = []; arr.forEach((x,i)=>{ if (x!=null) out.push({time:CH_BARS[i].time, value:x}); }); return out; };
+function indAll(){
+  if (!CS || !CH_BARS.length) return;
+  indCompute();
+  if (INDS.volS){ const s=[], bb=[]; CH_BARS.forEach((b,i)=>{ const [x,y] = volPoint(i); s.push(x); if (y) bb.push(y); }); INDS.volS.setData(s); if (INDS.volB) INDS.volB.setData(bb); }
+  if (INDS.vwap) INDS.vwap.applyOptions({title: IND.vwapR==='week' ? 'VWAP W' : 'VWAP'});
+  if (INDS.cvd || INDS.vwap){
+    const r = indCalc(0);
+    IND_V.cvdArr = r.map(x=>x.cvd);
+    if (INDS.cvd) INDS.cvd.setData(r.map(x=>({time:CH_BARS[x.i].time, value:x.cvd})));
+    if (INDS.vwap) INDS.vwap.setData(r.map(x=>({time:CH_BARS[x.i].time, value:x.vwap})));
+  }
+  [0,1,2].forEach(j=>{ const s = INDS['ema'+j]; if (s){ s.applyOptions({title:'EMA '+IND.ema[j].p}); s.setData(ptsOf(IND_V.ema[j])); } });
+  if (INDS.macd){ INDS.macd.setData(ptsOf(IND_V.macd)); INDS.sig.setData(ptsOf(IND_V.sig));
+    const h = []; IND_V.hist.forEach((x,i)=>{ if (x!=null) h.push({time:CH_BARS[i].time, value:x, color: x>=0 ? (i>0 && IND_V.hist[i-1]!=null && x<IND_V.hist[i-1] ? 'rgba(34,197,94,.45)' : 'rgba(34,197,94,.85)') : (i>0 && IND_V.hist[i-1]!=null && x>IND_V.hist[i-1] ? 'rgba(239,68,68,.45)' : 'rgba(239,68,68,.85)')}); });
+    INDS.macdH.setData(h); }
+  if (INDS.rsi) INDS.rsi.setData(ptsOf(IND_V.rsi));
+  if (INDS.stK){ INDS.stK.setData(ptsOf(IND_V.k)); INDS.stD.setData(ptsOf(IND_V.d)); }
+  panelVals(null);
+}
+// แท่งสด: อัปเดตเฉพาะแท่งล่าสุด
+function indLive(){
+  const i = CH_BARS.length-1; if (i<0) return;
+  const t = CH_BARS[i].time, up = (s, a) => { if (s && a && a[i]!=null) s.update({time:t, value:a[i]}); };
+  if (INDS.volS){ const [x,y] = volPoint(i); INDS.volS.update(x); if (INDS.volB && y) INDS.volB.update(y); }
+  if (INDS.cvd || INDS.vwap){
+    const r = indCalc(i)[0];
+    if (r){ if (IND_V.cvdArr) IND_V.cvdArr[i] = r.cvd; if (INDS.cvd) INDS.cvd.update({time:t, value:r.cvd}); if (INDS.vwap) INDS.vwap.update({time:t, value:r.vwap}); }
+  }
+  if (IND.ema.some(e=>e.on) || IND.macd || IND.rsi || IND.stoch){
+    const keep = IND_V.cvdArr; indCompute(); IND_V.cvdArr = keep;
+    [0,1,2].forEach(j=>up(INDS['ema'+j], IND_V.ema[j]));
+    if (INDS.macd){ up(INDS.macd, IND_V.macd); up(INDS.sig, IND_V.sig); const x = IND_V.hist[i]; if (x!=null) INDS.macdH.update({time:t, value:x, color: x>=0 ? 'rgba(34,197,94,.85)' : 'rgba(239,68,68,.85)'}); }
+    up(INDS.rsi, IND_V.rsi); up(INDS.stK, IND_V.k); up(INDS.stD, IND_V.d);
+  }
+  panelVals(null);
+}
+// Volume Profile ของช่วงที่เห็นบนจอ (วาดบน canvas ทับกราฟ ชิดขวา)
+function drawVP(){
+  let cv = $('vpCanvas');
+  if (!IND.vp || !LWC || !CS || !CH_BARS.length){ if (cv) cv.style.display = 'none'; return; }
+  const el = $('chart'), W = el.clientWidth - LWC.priceScale('right').width(), H = el.clientHeight - LWC.timeScale().height();
+  if (W<=0 || H<=0) return;
+  if (!cv){ cv = document.createElement('canvas'); cv.id = 'vpCanvas'; el.appendChild(cv); }
+  const dpr = window.devicePixelRatio || 1;
+  if (cv.width !== Math.round(W*dpr) || cv.height !== Math.round(H*dpr)){ cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr); cv.style.width = W+'px'; cv.style.height = H+'px'; }
+  cv.style.display = 'block';
+  const g = cv.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0); g.clearRect(0,0,W,H);
+  const lr = LWC.timeScale().getVisibleLogicalRange(); if (!lr) return;
+  const a = Math.max(0, Math.floor(lr.from)), z = Math.min(CH_BARS.length-1, Math.ceil(lr.to));
+  const pTop = CS.coordinateToPrice(0), pBot = CS.coordinateToPrice(H); if (pTop==null || pBot==null || z<a) return;
+  const N = IND.vpP[0], step = (pTop - pBot)/N;
+  const tot = new Float64Array(N), buy = new Float64Array(N);
+  let bvOk = true;
+  for (let i=a; i<=z; i++){
+    const b = CH_BARS[i]; if (!b.v) continue; if (b.bv==null) bvOk = false;
+    let lo = Math.floor((b.low - pBot)/step), hi = Math.floor((b.high - pBot)/step);
+    if (hi < 0 || lo >= N) continue;
+    lo = Math.max(0, lo); hi = Math.min(N-1, hi);
+    const per = b.v/(hi-lo+1), pb = b.bv!=null ? b.bv/(hi-lo+1) : 0;
+    for (let k=lo; k<=hi; k++){ tot[k] += per; buy[k] += pb; }
+  }
+  let max = 0, poc = -1; for (let k=0;k<N;k++) if (tot[k] > max){ max = tot[k]; poc = k; }
+  if (!max) return;
+  const maxW = W*IND.vpP[1]/100, rowH = H/N;
+  for (let k=0;k<N;k++){
+    if (!tot[k]) continue;
+    const w = tot[k]/max*maxW, y = H - (k+1)*rowH, x = W - w, isP = k===poc;
+    if (bvOk){ const wb = buy[k]/max*maxW;
+      g.fillStyle = isP ? 'rgba(34,197,94,.55)' : 'rgba(34,197,94,.26)'; g.fillRect(x, y+0.5, wb, rowH-1);
+      g.fillStyle = isP ? 'rgba(239,68,68,.55)' : 'rgba(239,68,68,.26)'; g.fillRect(x+wb, y+0.5, w-wb, rowH-1); }
+    else { g.fillStyle = isP ? 'rgba(247,166,0,.55)' : 'rgba(139,152,168,.28)'; g.fillRect(x, y+0.5, w, rowH-1); }
+  }
+  // POC
+  const py = H - (poc+0.5)*rowH, pp = pBot + (poc+0.5)*step;
+  g.strokeStyle = 'rgba(247,166,0,.85)'; g.lineWidth = 1; g.setLineDash([4,3]); g.beginPath(); g.moveTo(0, py); g.lineTo(W, py); g.stroke(); g.setLineDash([]);
+  g.font = "500 10px 'JetBrains Mono', monospace"; const t = 'POC '+f2(pp,2), tw = g.measureText(t).width;
+  g.fillStyle = 'rgba(13,17,23,.8)'; g.fillRect(W - maxW - tw - 12, py - 7, tw + 8, 14);
+  g.fillStyle = '#f7a600'; g.fillText(t, W - maxW - tw - 8, py + 3.5);
+}
+
 /* ---------- กันโดนตลาดบล็อก ----------
    ตลาดตอบ 429 (ดึงถี่เกิน) / 418 (ถูกแบน IP ชั่วคราว) → หยุดดึงแท่งเทียนทั้งหมดตามเวลาที่ตลาดบอก (ไม่บอก = 1 นาที) */
 let KL_BACKOFF_UNTIL = 0;
@@ -2198,7 +2523,7 @@ function prependBars(add, add30){
   const lr = LWC.timeScale().getVisibleLogicalRange();
   CH_BARS = add.concat(CH_BARS);
   if (add30 && CH_30){ const f = CH_30.length ? CH_30[0].time : Infinity; CH_30 = add30.filter(b=>b.time < f).concat(CH_30); }
-  CS.setData(CH_BARS);
+  CS.setData(CH_BARS); indAll();
   if (lr) try{ LWC.timeScale().setVisibleLogicalRange({from: lr.from + add.length, to: lr.to + add.length}); }catch(e){}
   if (!HI_TF(CH_IV)){
     // เพิ่มวันที่ใหม่ (กรอบ M30/H1 ของวันเก่า)
@@ -2232,7 +2557,7 @@ function liveConnect(iv){
   const key = SRC()+':'+iv;
   if (WS && WS_KEY===key && WS.readyState<=1){ setLive(WS.readyState===1); return; }   // ใช้การเชื่อมต่อเดิม (เช่น กลับจากดูย้อนหลัง) → อัปเดตสถานะ Live
   liveClose(); WS_KEY=key; setLive(false);
-  try{ WS = openKlineWS(SRC(), iv, b=>{ if (b.i===CH_IV) onLiveBar({time:b.t/1000+CH_TZ, open:b.o, high:b.h, low:b.l, close:b.c}); }); }catch(e){ return; }
+  try{ WS = openKlineWS(SRC(), iv, b=>{ if (b.i===CH_IV) onLiveBar({time:b.t/1000+CH_TZ, open:b.o, high:b.h, low:b.l, close:b.c, v:b.v||0, bv:b.bv}); }); }catch(e){ return; }
   const _open = WS.onopen; WS.onopen = e=>{ _open && _open(e); setLive(true); };
   WS.onerror = ()=>{ try{ WS.close(); }catch(e){} };
   WS.onclose = ()=>{ setLive(false); if (WS_KEY){ clearTimeout(wsRetry); wsRetry=setTimeout(()=>{ WS=null; const k=WS_KEY; WS_KEY=''; liveConnect(k.split(':')[1]); }, 3000); } };
@@ -2244,7 +2569,7 @@ function onLiveBar(b){
   if (last && b.time < last.time) return;
   let isNew = false;
   if (last && b.time===last.time) CH_BARS[CH_BARS.length-1]=b; else { CH_BARS.push(b); isNew=true; }
-  CS.update(b);
+  CS.update(b); indLive();
   updLast(b); paintSpread(); renderBreakout();
   $('chPrice').textContent = f2(b.close,2);
   requestAnimationFrame(placeLabels);
@@ -2393,7 +2718,7 @@ function initDraw(){
   $('chart').addEventListener('touchmove', e=>{ if (drawNoPan()) e.preventDefault(); }, {passive:false});
   const bar = document.createElement('div'); bar.id='drawBar';
   bar.innerHTML = DRAW_TOOLS.map(([k,ic,tt])=>`<button type="button" data-tool="${k}" title="${tt}">${ic}</button>`).join('')
-    + `<div class="dbSep"></div><button type="button" data-tool="fs" id="chFsBtn" title="ขยายกราฟเต็มจอ" aria-label="ขยายกราฟเต็มจอ">${ic(isChartFs()?'minimize':'maximize',16,1.75)}</button>`;
+    + `<div class="dbSep"></div><button type="button" data-tool="ind" id="indBtn" title="Indicator (Volume / CVD / VWAP / Volume Profile)" aria-label="Indicator">${ic('chart-column',16,1.75)}</button><button type="button" data-tool="fs" id="chFsBtn" title="ขยายกราฟเต็มจอ" aria-label="ขยายกราฟเต็มจอ">${ic(isChartFs()?'minimize':'maximize',16,1.75)}</button>`;
   $('chart').appendChild(bar);
   // ใช้ pointerup (แตะบน iPad/มือถือตอบสนองแน่นอน แม้กราฟกำลังจับนิ้วอยู่)
   bar.addEventListener('pointerdown', e=>e.stopPropagation());
@@ -2401,6 +2726,7 @@ function initDraw(){
     e.stopPropagation();
     const b=e.target.closest('button'); if(!b) return; const k=b.dataset.tool;
     if (k==='fs'){ toggleChartFs(); return; }
+    if (k==='ind'){ toggleIndMenu(); return; }
     if (k==='undo'){ DRAW.items.pop(); DRAW.sel=-1; saveDraw(); drawHLines(); renderDraw(); return; }
     if (k==='clear'){
       if (DRAW.sel>=0){ DRAW.items.splice(DRAW.sel,1); DRAW.sel=-1; }
@@ -2415,7 +2741,7 @@ function initDraw(){
   const loc = e=>{ const r=el.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; };
   el.addEventListener('pointerdown', e=>{
     dn = {x:e.clientX, y:e.clientY, touch: e.pointerType!=='mouse'};
-    if (e.target.closest('#drawBar,#drawDel') || !CH_BARS.length) return;
+    if (e.target.closest('#drawBar,#drawDel,#indMenu') || !CH_BARS.length) return;
     if (DRAW.tool!=='cursor'){ if (DRAW.pending){ DRAW.hover = loc(e); renderDraw(); } return; }
     // กดบนเส้น/กล่องที่วาดไว้ → ลากย้าย หรือลากปลายเพื่อปรับ
     const q = loc(e), i = hitDraw(q.x, q.y);
@@ -2461,7 +2787,7 @@ function initDraw(){
   el.addEventListener('pointerup', e=>{
     if (DRAW.xhDrag){ DRAW.xhDrag=false; dn=null; return; }
     if (DRAW.drag){ endDrag(); dn=null; return; }
-    if (!dn || e.target.closest('#drawBar,#drawDel')) { dn=null; return; }
+    if (!dn || e.target.closest('#drawBar,#drawDel,#indMenu')) { dn=null; return; }
     const moved = Math.hypot(e.clientX-dn.x, e.clientY-dn.y) > 4; dn=null; if (moved) return;
     const r = el.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
     const w = el.clientWidth - LWC.priceScale('right').width(), h = el.clientHeight - LWC.timeScale().height();
@@ -2487,6 +2813,7 @@ function initDraw(){
 }
 // ชี้เมาส์บนกราฟ → บอกวันเวลา (ไทย) / ราคา ณ ตำแหน่งเมาส์ / O H L C ของแท่งนั้น
 function paintInfo(p){
+  if (IND_PANELS.length) panelVals(p && p.time!=null ? barAt(CH_BARS, p.time) : null);
   let el=$('chInfo');
   if (!el){ el=document.createElement('div'); el.id='chInfo'; $('chart').appendChild(el); }
   if (!p || !p.point || p.time==null){ el.style.display='none'; return; }
@@ -2495,7 +2822,9 @@ function paintInfo(p){
   const dt = d.slice(8,10)+'/'+d.slice(5,7)+' '+d.slice(11,16);
   const c = b ? (b.close>=b.open ? 'pos' : 'neg') : '';
   el.innerHTML = `<b>${dt}</b> · ราคา <b>${price!=null?f2(price,2):'–'}</b>`
-    + (b ? ` <span class="${c}">O ${f2(b.open,2)} H ${f2(b.high,2)} L ${f2(b.low,2)} C ${f2(b.close,2)}</span>` : '');
+    + (b ? ` <span class="${c}">O ${f2(b.open,2)} H ${f2(b.high,2)} L ${f2(b.low,2)} C ${f2(b.close,2)}</span>` : '')
+    + (()=>{ if (!IND.vol && !IND.cvd) return ''; const x = CH_BARS[barAt(CH_BARS, p.time)]; if (!x || x.time!==p.time) return '';
+        return ` · V <b>${fN(x.v,2)}</b>` + (x.bv!=null && x.v ? ` <span class="${x.bv*2>=x.v?'pos':'neg'}">ซื้อ ${fN(x.bv/x.v*100,0)}%</span>` : ''); })();
   el.style.display='block';
 }
 // โหมดเล็ง (เหมือน MT5): ปิดการเลื่อนกราฟ แล้วลากนิ้ว/เมาส์เพื่อย้ายเส้นเล็ง
@@ -2516,7 +2845,7 @@ function moveXh(x, y){
   paintInfo({point:{x, y}, time:bar.time, seriesData:new Map([[CS, bar]])});
 }
 function setTool(k){ if (k!=='cursor' && DRAW.xh) setXh(false); DRAW.tool=k; DRAW.pending=null; if (k!=='measure') DRAW.measure=null; if (k!=='cursor') DRAW.sel=-1; paintDrawBar(); renderDraw(); }
-function paintDrawBar(){ document.querySelectorAll('#drawBar button').forEach(b=>{ if (b.dataset.tool==='fs') return; b.classList.toggle('on', b.dataset.tool===DRAW.tool); if (b.dataset.tool==='cursor') b.classList.toggle('lock', !!DRAW.xh && DRAW.tool==='cursor'); }); $('chart').classList.toggle('drawing', DRAW.tool!=='cursor'); paintPan(); }
+function paintDrawBar(){ document.querySelectorAll('#drawBar button').forEach(b=>{ if (b.dataset.tool==='fs' || b.dataset.tool==='ind') return; b.classList.toggle('on', b.dataset.tool===DRAW.tool); if (b.dataset.tool==='cursor') b.classList.toggle('lock', !!DRAW.xh && DRAW.tool==='cursor'); }); $('chart').classList.toggle('drawing', DRAW.tool!=='cursor'); paintPan(); }
 // กันหน้าเว็บเลื่อนตามนิ้ว ขณะ: เลือกเส้นอยู่ / ลากเส้น / ใช้เครื่องมือวาด / โหมดเล็ง
 function drawNoPan(){ return !!DRAW.xh || DRAW.tool!=='cursor' || DRAW.sel>=0 || !!DRAW.drag || !!DRAW.xhDrag || !!DRAW.pending; }
 function paintPan(){ const c = $('chart'); if (c) c.classList.toggle('nopan', drawNoPan()); }
@@ -2700,7 +3029,7 @@ function placeBand(){
   const need = CH_BARS.length && !HI_TF(CH_IV) ? CH_ROWS.length*2 : 0;
   while (BAND.els.length < need){ const k=BAND.els.length%2; BAND.els.push(mkBand(k? 'rgba(58,160,255,0.20)':'rgba(255,140,26,0.24)', k? 'rgba(58,160,255,0.9)':'rgba(255,140,26,0.95)')); }
   BAND.els.forEach(el=>el.style.display='none');
-  if (!need){ if (BAND.seps) BAND.seps.forEach(e=>e.style.display='none'); placeLabels(); return; }
+  if (!need){ if (BAND.seps) BAND.seps.forEach(e=>e.style.display='none'); placeLabels(); drawVP(); placePanels(); return; }
   const last=CH_BARS[CH_BARS.length-1].time+INT_MS[CH_IV]/1000;
   const h=$('chart').clientHeight - LWC.timeScale().height(), w=$('chart').clientWidth - LWC.priceScale('right').width();
   const put=(el,a,b)=>{
@@ -2714,7 +3043,7 @@ function placeBand(){
     BAND.els[i*2].style.opacity=op; BAND.els[i*2+1].style.opacity=op;
     put(BAND.els[i*2],t0,t0+1800); put(BAND.els[i*2+1],t0+1800,t0+3600); });
   placeDaySeps(h,w,last);
-  placeLabels();
+  placeLabels(); drawVP(); placePanels();
 }
 // เส้นแบ่งวัน (00:00 เวลาไทย) ในโหมดย้อนหลัง
 function placeDaySeps(h,w,last){
@@ -2814,7 +3143,7 @@ function toggleChartFs(force){
     if (on && card.requestFullscreen && !document.fullscreenElement) card.requestFullscreen({navigationUI:'hide'}).catch(()=>{});
     if (!on && document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(()=>{});
   }catch(e){}
-  const fit = ()=>{ try{ if (range) LWC.timeScale().setVisibleLogicalRange(range); placeBand(); renderDraw(); }catch(e){} };
+  const fit = ()=>{ try{ indLayout(); if (range) LWC.timeScale().setVisibleLogicalRange(range); placeBand(); renderDraw(); }catch(e){} };
   requestAnimationFrame(fit); setTimeout(fit, 250);   // เต็มจอจริงของเบราว์เซอร์เปลี่ยนขนาดช้ากว่าเล็กน้อย
 }
 document.addEventListener('fullscreenchange', ()=>{ if (!document.fullscreenElement && isChartFs()) toggleChartFs(false); });

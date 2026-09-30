@@ -366,6 +366,13 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
 #drawBar button.on{background:rgba(247,166,0,.16);color:var(--accent)}
 #chart.drawing{cursor:crosshair}
 #chart.nopan{touch-action:none}
+/* กราฟเต็มจอ */
+#chartCard.fs{position:fixed;inset:0;z-index:50;margin:0!important;border-radius:0;border:0;display:flex;flex-direction:column;overflow:hidden;
+  padding:calc(10px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left))}
+#chartCard.fs #chart{flex:1;height:auto!important;min-height:0}
+#chartCard.fs #chLegend,#chartCard.fs #chMsg{display:none}
+body.chFs{overflow:hidden}
+body.chFs #confirmBox{z-index:55}
 #drawBar button.lock{background:#f7a600;color:#0d1117}
 @media (pointer:coarse){ #drawBar button{width:34px;height:34px;line-height:34px;font-size:16px} #chInfo{left:52px} }
 #drawDel{position:absolute;transform:translateX(-50%);z-index:7;display:none;align-items:center;gap:8px;padding:3px 4px 3px 10px;border-radius:8px;border:1px solid var(--line);background:rgba(13,17,23,.92);color:var(--muted);font:500 12px 'IBM Plex Sans Thai',sans-serif;cursor:default;box-shadow:0 4px 14px rgba(0,0,0,.35)}
@@ -380,7 +387,7 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
   <div class="wrap">
     <div class="top">
       <div class="logo" onclick="hardReload()" title="Hard reload (ข้ามแคช)" style="cursor:pointer"><svg width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="32" fill="#F7931A"/><g transform="translate(32 32) translate(-34 -30)" fill="#fff"><path d="M24 16h12.5c5 0 8.5 2.9 8.5 7.2 0 3-1.7 5.1-4.2 6 3.3.8 5.4 3.3 5.4 6.8 0 4.9-3.8 8-9.6 8H24zm6.2 11.5h5.4c2.3 0 3.7-1.2 3.7-3.1s-1.4-3-3.7-3h-5.4zm0 11.6h6.2c2.6 0 4.1-1.3 4.1-3.4s-1.5-3.4-4.1-3.4h-6.2z"/><rect x="27" y="11" width="3.4" height="7" rx="1"/><rect x="33.4" y="11" width="3.4" height="7" rx="1"/><rect x="27" y="42" width="3.4" height="7" rx="1"/><rect x="33.4" y="42" width="3.4" height="7" rx="1"/></g></svg> <span>Trade <b>Journal</b></span></div>
-      <span class="demo" id="demoTag" hidden>โหมดตัวอย่าง · กดเพื่อเชื่อม Google Sheet</span>
+      <span class="demo" id="demoTag" hidden>โหมดตัวอย่าง</span>
       <div class="spacer"></div>
       <div class="portDD"><button class="portChip" id="portChip" hidden onclick="togglePortMenu()" title="สลับพอร์ต" aria-haspopup="menu"><i data-ic="chart-pie"></i><span id="portName"></span><i data-ic="chevron-down" data-sz="12"></i></button><div class="portMenu" id="portMenu" role="menu" hidden></div></div>
       <a class="btn sm guideBtn" href="guide.html" title="คู่มือการใช้งาน"><i data-ic="circle-help"></i><span class="bl">คู่มือ</span></a>
@@ -398,8 +405,7 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
 
 <main class="wrap">
   <div class="roNote" id="roNote"></div>
-  <div id="verWarn" class="hint" style="display:none;margin:0 0 12px;padding:10px 14px;border-radius:10px;background:#3a1d1d;border:1px solid #7f2d2d;color:#ffb4b4;font-size:13px"></div>
-  <!-- ============ FORM ============ -->
+    <!-- ============ FORM ============ -->
   <!-- ============ HOME ============ -->
   <section class="view on" id="v-home">
     <div class="card homeCard">
@@ -438,6 +444,7 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
         <label hidden style="display:none;align-items:center;gap:6px;margin:0;width:auto;font-size:12px;color:var(--muted)">ไปวันที่<input type="text" id="chDate" class="dp" style="width:128px;padding:4px 8px" placeholder="เลือกวันที่"></label>
         <span id="chHist" class="hint" style="display:none;margin:0;padding:4px 8px;border-radius:8px;background:#10243f;color:#9cc4ff"></span>
         <button class="btn sm" id="chReset" onclick="resetView()" title="รีเซ็ตมุมมอง (เหมือนดับเบิลคลิกบนกราฟ)"><i data-ic="rotate-ccw"></i>Reset</button>
+        <button class="btn sm icon" id="chFsBtn" onclick="toggleChartFs()" title="ขยายกราฟเต็มจอ" aria-label="ขยายกราฟเต็มจอ"><i data-ic="maximize"></i></button>
       </div>
       <div id="chart" style="height:360px;border:1px solid var(--line);border-radius:10px;overflow:hidden;position:relative"></div>
       <div class="hint" id="chLegend" style="display:flex;gap:14px;flex-wrap:wrap">
@@ -579,7 +586,7 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
     </div>
     <div class="actions">
       <button class="btn" id="clearBtn" onclick="resetForm()">ล้างฟอร์ม</button><button class="btn" id="cancelEditBtn" onclick="closeEdit()" hidden>ยกเลิก</button>
-      <button class="btn primary" id="saveBtn" onclick="save()">บันทึกลง Google Sheet</button>
+      <button class="btn primary" id="saveBtn" onclick="save()">บันทึกไม้</button>
     </div>
     </div>
   </section>
@@ -746,6 +753,8 @@ const ICONS = {
   'check':'<path d="M20 6 9 17l-5-5"/>',
   'triangle-alert':'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
   'chart-candlestick':'<path d="M9 5v4"/><rect width="4" height="6" x="7" y="9" rx="1"/><path d="M9 15v2"/><path d="M17 3v2"/><rect width="4" height="8" x="15" y="5" rx="1"/><path d="M17 13v3"/><path d="M3 3v16a2 2 0 0 0 2 2h16"/>',
+  'maximize':'<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>',
+  'minimize':'<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>',
   'rotate-ccw':'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
   'undo-2':'<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/>',
   'trash-2':'<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/>',
@@ -757,27 +766,21 @@ const ICONS = {
 };
 function ic(n, sz=14, sw=2){ return `<svg class="ic" width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]||''}</svg>`; }
 document.querySelectorAll('i[data-ic]').forEach(el=>{ el.outerHTML = ic(el.dataset.ic, +(el.dataset.sz||14)); });
-/* ================= Backend bridge ================= */
-/* การเชื่อมต่อเก็บใน localStorage ของเครื่องนี้ */
-function getCfg(){ try{ return JSON.parse(localStorage.getItem('tjConn')||'null'); }catch(e){ return null; } }
-function setCfg(c){ try{ c ? localStorage.setItem('tjConn', JSON.stringify(c)) : localStorage.removeItem('tjConn'); }catch(e){} }
 /* ================= Supabase (ระบบบัญชี + ฐานข้อมูล) ================= */
 // URL และ publishable key ของโปรเจกต์ — ใส่ในหน้าเว็บได้ (ไม่ใช่ความลับ) · ข้อมูลปลอดภัยด้วย Row Level Security ในฐานข้อมูล
 const SB_URL = 'https://awglhvdmmatfpcfencfi.supabase.co';
 const SB_KEY = 'sb_publishable_viCpipJBFjw_LnccufMRuQ_scGZAmuU';
-const USE_SB = true;          // false = กลับไปใช้ Google Sheet (Apps Script) แบบเดิม
-const SB_VERSION = 99;        // ให้ผ่านการเช็กเวอร์ชัน Code.gs เดิมทั้งหมด
-const sb = (USE_SB && window.supabase) ? window.supabase.createClient(SB_URL, SB_KEY, {auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:true}}) : null;
+const SB_VERSION = 1;         // ใช้เป็นเครื่องหมายว่าโหลดข้อมูลพอร์ตแล้ว (DATA.version)
+const sb = window.supabase ? window.supabase.createClient(SB_URL, SB_KEY, {auth:{persistSession:true, autoRefreshToken:true, detectSessionInUrl:true}}) : null;
 let SB_USER = null, SB_PROFILE = null, ADMIN_PENDING = 0;
 let VIEW_AS = null;   // Super Admin กำลังดูพอร์ตของผู้ใช้อื่น {id, email} (อ่านอย่างเดียว)
-const OLD_CFG = getCfg();     // การเชื่อม Apps Script เดิม (ใช้เมื่อ USE_SB = false)
-let CFG = USE_SB ? null : OLD_CFG;
-// ---------- พอร์ต (1 พอร์ต = 1 ชีต) ----------
-let PORT = (()=>{ try{ return localStorage.getItem('tjPort'); }catch(e){ return null; } })();   // sheetId ของพอร์ตที่เลือก
+let CFG = null;   // {sb:true, url:<ใช้แยกแคชในเครื่องตามบัญชี>} หลังเข้าสู่ระบบ
+try{ localStorage.removeItem('tjConn'); }catch(e){}   // ล้างค่าการเชื่อมต่อแบบเก่าที่ค้างในเครื่อง
+// ---------- พอร์ต ----------
+let PORT = (()=>{ try{ return localStorage.getItem('tjPort'); }catch(e){ return null; } })();   // id ของพอร์ตที่เลือก
 let PORTS = [];         // [{id,name,capital,balance,trades,closed,wins,losses}]
-let LEGACY = false;     // Code.gs เก่า (ยังไม่รองรับหลายพอร์ต) → ใช้ชีต Data พอร์ตเดียว
 const PORT_FNS = ['getTrades','addTrade','updateTrade','deleteTrade','setCapital','saveDrawings'];
-const PORT_POS = {getTrades:0, addTrade:1, updateTrade:2, deleteTrade:1, setCapital:1, saveDrawings:1};   // ตำแหน่ง argument ของพอร์ตในแต่ละคำสั่งของ Code.gs
+const PORT_POS = {getTrades:0, addTrade:1, updateTrade:2, deleteTrade:1, setCapital:1, saveDrawings:1};   // ตำแหน่ง argument ของพอร์ตในแต่ละคำสั่ง
 const esc = v => String(v==null?'':v).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function setPort(id){ PORT = id==null ? null : String(id); try{ PORT==null ? localStorage.removeItem('tjPort') : localStorage.setItem('tjPort', PORT); }catch(e){} paintPort(); }
 function curPort(){ return PORTS.find(p=>String(p.id)===PORT) || null; }
@@ -799,14 +802,14 @@ function togglePortMenu(force){
 async function pickPort(id){ togglePortMenu(false); if (String(id)!==PORT) await selectPort(id); }
 document.addEventListener('click', e=>{ if ($('portMenu') && !$('portMenu').hidden && !e.target.closest('.portDD')) togglePortMenu(false); });
 document.addEventListener('keydown', e=>{ if (e.key==='Escape' && $('portMenu') && !$('portMenu').hidden) togglePortMenu(false); });
-// แคชข้อมูลล่าสุดไว้ในเครื่อง → เปิดหน้า/สลับพอร์ตได้ทันที แล้วค่อยอัปเดตจาก Sheet เบื้องหลัง
+// แคชข้อมูลล่าสุดไว้ในเครื่อง → เปิดหน้า/สลับพอร์ตได้ทันที แล้วค่อยอัปเดตจากฐานข้อมูลเบื้องหลัง
 const CACHE_KEY = 'tjCache';
 function cacheGet(){ try{ const c = JSON.parse(localStorage.getItem(CACHE_KEY)||'null'); return (c && CFG && c.url===CFG.url) ? c : null; }catch(e){ return null; } }
 function cacheSave(){
   if (!CFG || DEMO || VIEW_AS) return;
   try{
     const c = cacheGet() || {url:CFG.url, data:{}};
-    c.legacy = LEGACY; c.ports = LEGACY ? null : PORTS;
+    c.ports = PORTS;
     if (PORT!=null && DATA && DATA.version!=null) c.data[PORT] = DATA;
     localStorage.setItem(CACHE_KEY, JSON.stringify(c));
   }catch(e){}
@@ -823,20 +826,8 @@ const DEMO = /[?&]demo\b/.test(location.search);   // โหมดตัวอ�
 function paintMode(){ document.getElementById('demoTag').hidden = !!CFG || !DEMO; }
 paintMode();
 
-async function remote(cfg, fn, args){
-  if (cfg && cfg.sb) return sbCall(fn, args || []);
-  let r;
-  // คำสั่งอ่านอย่างเดียวใช้ GET (เสถียรกว่า POST กับ Apps Script)
-  if (fn==='getTrades' || fn==='listPorts' || fn==='boot') r = await fetch(`${cfg.url}?action=${fn}&key=${encodeURIComponent(cfg.key)}${args.length?'&args='+encodeURIComponent(JSON.stringify(args)):''}`);
-  else if (fn==='proxyGetMany' || fn==='proxyGet') r = await fetch(`${cfg.url}?action=${fn}&key=${encodeURIComponent(cfg.key)}&args=${encodeURIComponent(JSON.stringify(args))}`);
-  else r = await fetch(cfg.url, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify({key:cfg.key, action:fn, args}), keepalive: fn==='saveDrawings'});   // keepalive: ส่งเส้นที่วาดได้แม้กำลังปิดหน้า
-  if (!r.ok){ const er = new Error(r.status===404 ? 'Apps Script ตอบ 404 — URL ของ Apps Script อาจเปลี่ยนหรือถูกปิด (เช็ก Deploy → Manage deployments)' : 'Apps Script HTTP '+r.status); er.status = r.status; throw er; }
-  let j; try{ j = await r.json(); }catch(e){ throw new Error('ตอบกลับไม่ใช่ JSON — เช็กว่า Deploy เป็น Web app และตั้ง Who has access = Anyone'); }
-  if (!j.ok) throw new Error(j.error);
-  return j.data;
-}
 
-// ---------- ชั้นข้อมูล Supabase: ให้ผลลัพธ์รูปแบบเดียวกับ Code.gs (หน้าเว็บส่วนอื่นไม่ต้องเปลี่ยน) ----------
+// ---------- ชั้นข้อมูล Supabase ----------
 // ช่องในฟอร์ม → คอลัมน์ในตาราง trades
 const SB_COLS = {date:'date', capital:'capital', t30:'t30', b30:'b30', t1:'t1', b1:'b1', risk:'risk',
   aPos:'a_pos', aTf:'a_tf', brk:'brk', ret:'ret', mPos:'m_pos', mTf:'m_tf', open:'open',
@@ -871,18 +862,18 @@ const SBDB = {
   updateTrade: (id, row) => sbq(sb.from('trades').update(row).eq('id', id)),
   deleteTrade: id => sbq(sb.from('trades').delete().eq('id', id)),
   insertPort: row => sbq(sb.from('portfolios').insert(row).select('id,name,start_capital,sort,created_at').single()),
-  updatePort: (id, patch) => sbq(sb.from('portfolios').update(patch).eq('id', id)),
-  deletePort: id => sbq(sb.from('portfolios').delete().eq('id', id)),
+  updatePort: async (id, patch) => { const r = await sbq(sb.from('portfolios').update(patch).eq('id', id).select('id')); if (!r || !r.length) throw new Error('เฉพาะเจ้าของพอร์ตเท่านั้นที่แก้ชื่อ/ทุนเริ่มต้นของพอร์ตได้'); return r; },
+  deletePort: async id => { const r = await sbq(sb.from('portfolios').delete().eq('id', id).select('id')); if (!r || !r.length) throw new Error('ลบไม่ได้ — เฉพาะเจ้าของพอร์ตเท่านั้นที่ลบพอร์ตได้ (หรือพอร์ตถูกลบไปแล้ว)'); return r; },
   getDraw: async pid => { const r = await sbq(sb.from('drawings').select('items').eq('portfolio_id', pid).maybeSingle()); return r && Array.isArray(r.items) ? r.items : []; },
   saveDraw: (pid, items) => sbq(sb.from('drawings').upsert({portfolio_id:pid, items}, {onConflict:'portfolio_id'})),
 };
-// แถวในฐานข้อมูล → ไม้แบบเดียวกับ getTrades ของ Code.gs (เลขแถว 4,5,… · ทุนต่อเนื่อง · ช่องคำนวณ)
+// แถวในฐานข้อมูล → ไม้ที่หน้าเว็บใช้ (row = ลำดับ 4,5,… · ทุนต่อเนื่อง · ช่องคำนวณ)
 function sbBuild(port, rows){
   const trades = [], cnt = {}; let prevBal = null, prevCap = null;
   rows.forEach((r,i)=>{
     const d = sbFromRow(r);
     cnt[d.date] = (cnt[d.date]||0) + 1;
-    // ทุน: ไม้แรก = ทุนเริ่มต้นของพอร์ต · ไม้ถัดไป = กำหนดเอง > Balance ไม้ก่อนหน้า > ทุนไม้ก่อนหน้า (เหมือนสูตรช่อง C ในชีต)
+    // ทุน: ไม้แรก = ทุนเริ่มต้นของพอร์ต · ไม้ถัดไป = กำหนดเอง > Balance ไม้ก่อนหน้า > ทุนไม้ก่อนหน้า 
     const cap = i===0 ? num(port.start_capital) : (num(d.capital)!=null ? +d.capital : (prevBal!=null ? prevBal : prevCap));
     const c = compute(Object.assign({}, d));
     const t = Object.assign({row:4+i, n:cnt[d.date], cap, _id:r.id}, d, c);
@@ -919,11 +910,11 @@ async function sbTrades(pid, skipDraw){
   const [p, rows, draw] = await Promise.all([sbPort(pid), SBDB.rows(pid), skipDraw ? null : SBDB.getDraw(pid)]);
   const out = sbBuild(p, rows); if (!skipDraw) out.draw = draw; out._rows = rows; return out;
 }
-// หาแถวในฐานข้อมูลจากเลขแถวแบบชีต + เช็กว่ายังเป็นไม้เดิม (กันแก้/ลบผิดไม้)
+// หาไม้จากลำดับ (row) + เช็กว่ายังเป็นไม้เดิม (กันแก้/ลบผิดไม้)
 function sbPick(data, row, expectDate){
   const t = data.trades[row-4];
   if (!t) throw new Error('ไม่พบไม้ที่ต้องการ (อาจถูกลบไปแล้ว)');
-  if (expectDate && String(t.date)!==String(expectDate)) throw new Error('ไม้ในแถว '+row+' เปลี่ยนไปแล้ว — กดรีเฟรชแล้วลองใหม่');
+  if (expectDate && String(t.date)!==String(expectDate)) throw new Error('ไม้นี้ถูกแก้จากที่อื่นไปแล้ว — กดรีเฟรชแล้วลองใหม่');
   return t;
 }
 async function sbCall(fn, a){
@@ -937,13 +928,13 @@ async function sbCall(fn, a){
     case 'getTrades': return sbTrades(a[0] || (PORT||''), a[1]);
     case 'addTrade': {
       const d = a[0], pid = a[1] || PORT, cur = await sbTrades(pid, true), row = sbToRow(d);
-      if (!cur.trades.length){ if (num(d.capital)>0) await SBDB.updatePort(pid, {start_capital:+d.capital}); row.capital = null; }
+      if (!cur.trades.length){ if (num(d.capital)>0 && +d.capital!==cur.capital) await SBDB.updatePort(pid, {start_capital:+d.capital}); row.capital = null; }
       await SBDB.insertTrades([Object.assign(row, {portfolio_id:pid})]);
       return sbTrades(pid, true);
     }
     case 'updateTrade': {
       const r = a[0], d = a[1], pid = a[2] || PORT, cur = await sbTrades(pid, true), t = sbPick(cur, r, d && d._orig), row = sbToRow(d);
-      if (r===4){ if (num(d.capital)>0) await SBDB.updatePort(pid, {start_capital:+d.capital}); row.capital = null; }
+      if (r===4){ if (num(d.capital)>0 && +d.capital!==cur.capital) await SBDB.updatePort(pid, {start_capital:+d.capital}); row.capital = null; }
       await SBDB.updateTrade(t._id, row);
       return sbTrades(pid, true);
     }
@@ -972,7 +963,7 @@ async function sbCall(fn, a){
       return {version:SB_VERSION, ports: await sbPorts()};
     }
     case 'deletePort': {
-      await SBDB.deletePort(a[0]);   // Supabase ลบพอร์ตสุดท้ายได้ (ข้อจำกัดเดิมมาจาก Google Sheet ที่ลบชีตสุดท้ายไม่ได้)
+      await SBDB.deletePort(a[0]);
       return {ok:true, removed:a[0], version:SB_VERSION};
     }
     case 'shareList':  return SBDB.rpc('portfolio_share_list', {pid:a[0]});
@@ -986,16 +977,16 @@ async function sbCall(fn, a){
   throw new Error('ไม่รู้จักคำสั่ง '+fn);
 }
 
-// โหมดตัวอย่าง: ใช้ข้อมูลจำลองเมื่อเปิดไฟล์นอก Apps Script
+// โหมดตัวอย่าง (?demo): ใช้ข้อมูลจำลองในเครื่อง ไม่เชื่อมฐานข้อมูล
 const demo = {
   capital: 127.45,
   rows: [
-    {date:'2026-09-26',t30:84299,b30:83719.6,t1:84901.6,b1:83719.6,risk:5,aPos:'Long',aTf:'M30',brk:'',mPos:'Long',mTf:'M30',open:86597.97,liq:'',bal:133.54,note:'ตัวอย่างจากชีตเดิม'},
+    {date:'2026-09-26',t30:84299,b30:83719.6,t1:84901.6,b1:83719.6,risk:5,aPos:'Long',aTf:'M30',brk:'',mPos:'Long',mTf:'M30',open:86597.97,liq:'',bal:133.54,note:'ไม้ตัวอย่าง'},
     {date:'2026-09-26',risk:5,bal:145,note:''},
     {date:'2026-09-27',risk:5,note:''},
   ],
 };
-const DEMO_PORTS = [{id:'0', name:'Data', store:demo}];
+const DEMO_PORTS = [{id:'0', name:'พอร์ตตัวอย่าง', store:demo}];
 function demoStore(){ const p = DEMO_PORTS.find(x=>x.id===String(PORT)) || DEMO_PORTS[0]; return p.store; }
 function demoList(){ return {version:7, ports: DEMO_PORTS.map(p=>{ const d = demoTrades(p.store), c = d.trades.filter(t=>num(t.diff)!=null);
   let bal = p.store.capital; d.trades.forEach(t=>{ if (num(t.bal)!=null) bal=+t.bal; });
@@ -1010,7 +1001,7 @@ function demoTrades(store){
     t.diff = num(d.bal)!=null ? (d.bal-cap)/cap : ''; t.result = t.diff===''?'':(t.diff>0?'Win':t.diff<0?'Loss':'BE');
     if (num(d.bal)!=null) cap = d.bal; return t; })};
 }
-const API_MSG = {addPort:'กำลังสร้างพอร์ต…', deletePort:'กำลังลบพอร์ต…', renamePort:'กำลังเปลี่ยนชื่อพอร์ต…', addTrade:'กำลังบันทึกลง Google Sheet…', updateTrade:'กำลังบันทึกการแก้ไข…', deleteTrade:'กำลังลบ…', setCapital:'กำลังบันทึกทุน…'};
+const API_MSG = {addPort:'กำลังสร้างพอร์ต…', deletePort:'กำลังลบพอร์ต…', renamePort:'กำลังเปลี่ยนชื่อพอร์ต…', addTrade:'กำลังบันทึก…', updateTrade:'กำลังบันทึกการแก้ไข…', deleteTrade:'กำลังลบ…', setCapital:'กำลังบันทึกทุน…'};
 function api(fn, ...args){
   const p = apiRaw(fn, ...args);
   if (API_MSG[fn]){ setLoading(true, API_MSG[fn]); p.then(()=>setLoading(false), ()=>setLoading(false)); }
@@ -1019,16 +1010,16 @@ function api(fn, ...args){
 // เรียกคำสั่งของพอร์ตที่ระบุ (ไม่ใช่พอร์ตที่เลือกอยู่) เช่น ดาวน์โหลดข้อมูลทุกพอร์ต
 function apiFor(port, fn, ...args){ const keep = PORT; PORT = port==null ? null : String(port); try{ return apiRaw(fn, ...args); } finally { PORT = keep; } }
 function apiRaw(fn, ...args){
-  if (PORT_FNS.includes(fn) && !LEGACY && PORT!=null){ args = [...args]; while (args.length < PORT_POS[fn]) args.push(''); args.splice(PORT_POS[fn], 0, PORT); }   // ส่งพอร์ตที่เลือกไปด้วยเสมอ
-  if (CFG) return remote(CFG, fn, args);
-  if (!DEMO) return Promise.reject(new Error('ยังไม่ได้เชื่อม Google Sheet'));
+  if (PORT_FNS.includes(fn) && PORT!=null){ args = [...args]; while (args.length < PORT_POS[fn]) args.push(''); args.splice(PORT_POS[fn], 0, PORT); }   // ส่งพอร์ตที่เลือกไปด้วยเสมอ
+  if (CFG) return sbCall(fn, args);
+  if (!DEMO) return Promise.reject(new Error('ยังไม่ได้เข้าสู่ระบบ'));
   return new Promise((res, rej)=>setTimeout(()=>{
     if (fn==='listPorts') return res(demoList());
     if (fn==='getTrades' && args[0]!=null){ const dp = DEMO_PORTS.find(x=>x.id===String(args[0])); if (dp) return res(demoTrades(dp.store)); }
     if (fn==='boot'){ const o = demoList(); o.data = (args[0]!=null && DEMO_PORTS.some(p=>p.id===String(args[0]))) ? demoTrades(DEMO_PORTS.find(p=>p.id===String(args[0])).store) : null; return res(o); }
-    if (fn==='addPort'){ const n=String(args[0]||'').trim(); if(!n) return rej(new Error('ใส่ชื่อพอร์ต')); if (DEMO_PORTS.some(p=>p.name.toLowerCase()===n.toLowerCase())) return rej(new Error('มีชีตชื่อ "'+n+'" อยู่แล้ว'));
+    if (fn==='addPort'){ const n=String(args[0]||'').trim(); if(!n) return rej(new Error('ใส่ชื่อพอร์ต')); if (DEMO_PORTS.some(p=>p.name.toLowerCase()===n.toLowerCase())) return rej(new Error('มีพอร์ตชื่อ "'+n+'" อยู่แล้ว'));
       const id = String(Date.now()%1e6); DEMO_PORTS.push({id, name:n, store:{capital:+args[1], rows:[]}}); const o = demoList(); o.added = id; return res(o); }
-    if (fn==='deletePort'){ if (DEMO_PORTS.length<=1) return rej(new Error('ต้องมีอย่างน้อย 1 พอร์ต — ลบพอร์ตสุดท้ายไม่ได้')); const i = DEMO_PORTS.findIndex(x=>x.id===String(args[0])); if (i>=0) DEMO_PORTS.splice(i,1); return res(demoList()); }
+    if (fn==='deletePort'){ const i = DEMO_PORTS.findIndex(x=>x.id===String(args[0])); if (i>=0) DEMO_PORTS.splice(i,1); return res(demoList()); }
     if (fn==='renamePort'){ const p = DEMO_PORTS.find(x=>x.id===String(args[0])); if (p) p.name = String(args[1]).trim(); return res(demoList()); }
     const demo = demoStore();
     if (fn==='addTrade') demo.rows.push(args[0]);
@@ -1050,7 +1041,7 @@ const pct = v => num(v)==null ? '–' : ((v>0?'+':'')+fN(v*100,2)+'%');
 const cls = v => num(v)==null ? '' : (v>0?'pos':v<0?'neg':'');
 function toast(msg, err){ const t=$('toast'); t.innerHTML=ic(err?'triangle-alert':'check',15,err?2:2.5)+' '; t.appendChild(document.createTextNode(msg)); t.className='toast on'+(err?' err':''); clearTimeout(t._t); t._t=setTimeout(()=>t.className='toast',2800); }
 
-/* ================= Calculations (ตรงกับสูตรใน Sheet) ================= */
+/* ================= Calculations ================= */
 function lev(risk, price, range){ return (num(risk)==null||!range||!price) ? null : Math.max(1, Math.floor((risk/100)*price/range*100)/100); }   // ทศนิยม 2 ตำแหน่ง (ปัดลง)
 const LX = v => fN(v,2)+'x';
 function compute(d){
@@ -1086,7 +1077,7 @@ function compute(d){
 }
 
 /* ================= State ================= */
-let DATA = {trades:[], capital:null}, EDIT_ROW = null, EDIT_ORIG = null;   // EDIT_ORIG = วันที่เดิมของไม้ที่แก้ (ให้ Code.gs เช็กว่าแก้ถูกแถว)
+let DATA = {trades:[], capital:null}, EDIT_ROW = null, EDIT_ORIG = null;   // EDIT_ORIG = วันที่เดิมของไม้ที่แก้ (เช็กว่าแก้ถูกไม้)
 const seg = {mode:'Auto',pos:'',tf:'',style:'ret',bias:''};
 let KEEP = {};
 let CAP_MANUAL = false;   // ผู้ใช้แก้ช่องทุนเอง → ไม่เติมค่าอัตโนมัติทับ
@@ -1113,6 +1104,7 @@ document.querySelectorAll('#v-form input, #v-form textarea').forEach(i=>i.addEve
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>showView(t.dataset.view)));
 let FORM_SEEN = false;
 function showView(v){
+  if (typeof isChartFs==='function' && isChartFs()) toggleChartFs(false);
   if (v!=='home' && !curPort()){ toast('เลือกพอร์ตก่อน', true); v = 'home'; }
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.view===v));
   document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));
@@ -1270,7 +1262,7 @@ function resetForm(){
   $('f_risk').value = num(lastRisk)!=null ? lastRisk : 5;
   if (!DATA.trades.length && num(DATA.capital)!=null) $('f_capital').value = DATA.capital;
   Object.assign(seg,{mode:'Auto',pos:'',tf:'',style:'ret',bias:''}); KEEP={}; paintSeg();
-  $('editBar').classList.remove('on'); $('saveBtn').textContent='บันทึกลง Google Sheet';
+  $('editBar').classList.remove('on'); $('saveBtn').textContent='บันทึกไม้';
   recalc();
 }
 let DRAFT = null;   // ฟอร์มบันทึกไม้ที่กรอกค้างไว้ ก่อนเปิดหน้าต่างแก้ไข
@@ -1285,7 +1277,7 @@ function editTrade(row){
   if (EDIT_ROW==null) DRAFT = snapForm();
   EDIT_ROW = row; EDIT_ORIG = t.date;
   FIELDS.forEach(k=>{ if(k==='capital') return; $('f_'+k).value = (t[k]===undefined||t[k]===null)?'':t[k]; });
-  // ไม้เก่า (ก่อนมีช่องรีเทส): ใช้ราคารีเทสเดิมจากชีต
+  // ไม้เก่า (ก่อนมีช่องรีเทส): ใช้ราคารีเทสที่คำนวณไว้
   if ($('f_ret').value==='' && t.aPos){ const r = num(t.retest)!=null ? t.retest : compute(t).edge; if (num(r)!=null) $('f_ret').value = r; }
   { const a = prevCapital(); $('f_capital').value = t.cap; CAP_MANUAL = a==null || num(t.cap)==null || Math.abs(t.cap-a) > 1e-9; }
   LEV_MANUAL = num(t.lev)!=null;   // ไม้ที่เคยกรอก Leverage เอง → คงค่าเดิม
@@ -1296,7 +1288,7 @@ function editTrade(row){
   paintSeg();
   // ย้ายฟอร์มเข้าไปในหน้าต่างแก้ไข (แยกจากการบันทึกไม้ใหม่)
   $('emBody').appendChild($('formWrap'));
-  $('emTxt').textContent = `${t.date} · ไม้ที่ ${t.n} · แถว ${t.row} ใน Sheet`;
+  $('emTxt').textContent = `${t.date} · ไม้ที่ ${t.n}`;
   $('saveBtn').textContent='บันทึกการแก้ไข'; $('clearBtn').hidden = true; $('cancelEditBtn').hidden = false;
   $('editModal').classList.add('on'); document.body.style.overflow='hidden';
   recalc(); $('editModal').querySelector('.modal').scrollTop = 0;
@@ -1306,7 +1298,7 @@ function closeEdit(){
   EDIT_ROW = null;
   $('editModal').classList.remove('on'); document.body.style.overflow='';
   $('formHome').after($('formWrap'));
-  $('saveBtn').textContent='บันทึกลง Google Sheet'; $('clearBtn').hidden = false; $('cancelEditBtn').hidden = true;
+  $('saveBtn').textContent='บันทึกไม้'; $('clearBtn').hidden = false; $('cancelEditBtn').hidden = true;
   if (DRAFT){ restoreForm(DRAFT); DRAFT = null; } else resetForm();
 }
 document.addEventListener('keydown', e=>{ if (e.key==='Escape' && $('editModal').classList.contains('on')) closeEdit(); });
@@ -1323,12 +1315,11 @@ async function save(){
   delete d.mode;
   const isFirst = EDIT_ROW===FIRST_ROW() || (EDIT_ROW==null && !DATA.trades.length);
   if (isFirst && num(d.capital)==null) return toast('ไม้แรกต้องกรอกทุนเริ่มต้น', true);
-  // ทุน = ค่าอัตโนมัติ → ส่งว่าง (ชีตใช้สูตรดึงจาก Balance ไม้ก่อนหน้าเหมือนเดิม) · ต่างจากนั้น = ทุนกำหนดเอง
+  // ทุน = ค่าอัตโนมัติ → ส่งว่าง (ใช้ Balance ไม้ก่อนหน้า) · ต่างจากนั้น = ทุนกำหนดเอง
   { const a = levCalc(), v = num(d.lev); if (v!=null && a!=null && Math.abs(v-a) <= 1e-9) d.lev=''; }   // Leverage = ค่าที่คำนวณ → ส่งว่างเหมือนเดิม
   if (!isFirst){ const a = prevCapital(), v = num(d.capital); if (v==null || (a!=null && Math.abs(v-a) <= 1e-9)) d.capital=''; }
-  if (!isFirst && num(d.capital)!=null && CFG && !DEMO && !(DATA.version >= CAP_API)) return toast('ต้องอัปเดต Code.gs (version '+CAP_API+') ก่อน จึงจะกำหนดทุนเองรายไม้ได้ — หรือเว้นช่องทุนว่างไว้', true);
   if (!isFirst && num(d.capital)==null) d.capital='';
-  // บันทึกแบบทันที: แสดงไม้ในรายการ/ล้างฟอร์มเลย แล้วส่งขึ้น Sheet เบื้องหลัง (ถ้าส่งไม่ได้ → เอาไม้ออก และคืนข้อมูลกลับเข้าฟอร์ม)
+  // บันทึกแบบทันที: แสดงไม้ในรายการ/ล้างฟอร์มเลย แล้วบันทึกเบื้องหลัง (ถ้าบันทึกไม่ได้ → เอาไม้ออก และคืนข้อมูลกลับเข้าฟอร์ม)
   if (EDIT_ROW) d._orig = EDIT_ORIG;
   return saveOptimistic(d, EDIT_ROW, snapForm());
 }
@@ -1380,7 +1371,7 @@ function openQuickEdit(row, kind){
   setTimeout(()=>{ const i=$('qe_fields').querySelector('input'); if (i){ i.focus(); i.select(); } }, 50);
 }
 function closeQuickEdit(){ $('qeBox').classList.remove('on'); QE = null; }
-// ค่าที่แก้ + ผลที่จะได้ (คำนวณแบบเดียวกับชีต)
+// ค่าที่แก้ + ผลที่จะได้
 function qeValues(){
   const t = DATA.trades.find(x=>x.row===QE.row), d = tradePayload(t), g = id => $(id) ? ($(id).value==='' ? '' : +$(id).value) : undefined;
   if (QE.kind==='entry'){ ['open','brk','ret','avgReal'].forEach(k=>{ const v = g('qe_'+k); if (v!==undefined) d[k] = v; }); }
@@ -1412,7 +1403,6 @@ async function saveQuickEdit(){
     if (sd.mode==='Auto' && !(num(d.ret)>0)) return bad('ใส่ราคารีเทส');
     if (d.avgReal!=='' && !(num(d.avgReal)>0)) return bad('ราคาเฉลี่ยจริงต้องมากกว่า 0 หรือเว้นว่าง');
   } else if (d.bal!=='' && !(num(d.bal)>0)) return bad('Balance ต้องมากกว่า 0 หรือเว้นว่าง (ยังไม่ปิดไม้)');
-  if (num(d.capital)!=null && t.row!==FIRST_ROW() && CFG && !DEMO && !(DATA.version >= CAP_API)) return bad('ไม้นี้ใช้ทุนกำหนดเอง ต้องอัปเดต Code.gs ก่อน');
   const b = $('qe_btn'); btnBusy(b, true, 'กำลังบันทึก…');
   try{
     const row = QE.row, fp = fpOf(d);
@@ -1425,8 +1415,8 @@ async function saveQuickEdit(){
 document.addEventListener('keydown', e=>{ if (e.key==='Escape' && $('qeBox').classList.contains('on')) closeQuickEdit(); });
 
 // ---------- เขียนข้อมูลอย่างปลอดภัย ----------
-// Apps Script บางครั้งทำงานสำเร็จแล้ว แต่คำตอบที่ส่งกลับ (ผ่าน redirect) หาย → ได้ 404 / เน็ตหลุด
-// ห้ามส่งซ้ำทันที (เช่น ลบซ้ำ = ลบไม้ถัดไป) → อ่านสถานะล่าสุดจาก Sheet มาเช็กก่อน: ทำแล้ว = ถือว่าสำเร็จ · ยังไม่ทำ = ส่งอีกครั้ง
+// บางครั้งฐานข้อมูลทำงานสำเร็จแล้ว แต่คำตอบหายระหว่างทาง (เน็ตหลุด)
+// ห้ามส่งซ้ำทันที (เช่น ลบซ้ำ = ลบไม้ถัดไป) → อ่านสถานะล่าสุดมาเช็กก่อน: ทำแล้ว = ถือว่าสำเร็จ · ยังไม่ทำ = ส่งอีกครั้ง
 const isLostReply = e => e && (e.status===404 || e.status===502 || e.status===503 || /Failed to fetch|NetworkError|Load failed|network/i.test(e.message||''));
 async function safeWrite(fn, args, verify, quiet){   // quiet = ไม่แสดงหน้าต่างกำลังโหลด (ใช้กับบันทึกแบบทันที)
   const msg = quiet ? '' : API_MSG[fn]; if (msg) setLoading(true, msg);
@@ -1441,14 +1431,14 @@ async function safeWrite(fn, args, verify, quiet){   // quiet = ไม่แส�
     }
   } finally { if (msg) setLoading(false); }
 }
-// ลายนิ้วมือของไม้ (ช่องที่กรอก) ใช้เช็กว่าไม้นี้มี/ไม่มีอยู่ใน Sheet
+// ลายนิ้วมือของไม้ (ช่องที่กรอก) ใช้เช็กว่าไม้นี้มี/ไม่มีอยู่ในฐานข้อมูล
 const FP_KEYS = ['date','t30','b30','t1','b1','aPos','aTf','brk','ret','mPos','mTf','open','liq','bal','note'];
 const fpOf = t => FP_KEYS.map(k=>{ const v = t[k]; return (v===''||v==null) ? '' : (isNaN(+v) ? String(v) : String(+v)); }).join('|');
 const fpCount = (trades, fp) => trades.filter(x=>!x._pending && fpOf(x)===fp).length;
 
 // ---------- บันทึกแบบทันที (optimistic) ----------
-let PENDING = [];   // [{id, kind:'add'|'edit', row, t, orig}]  ไม้ที่แสดงแล้วแต่ Sheet ยังไม่ยืนยัน
-// สร้างข้อมูลไม้ฝั่งเครื่อง (คำนวณแบบเดียวกับสูตรในชีต) เพื่อแสดงได้ทันที
+let PENDING = [];   // [{id, kind:'add'|'edit', row, t, orig}]  ไม้ที่แสดงแล้วแต่ฐานข้อมูลยังไม่ยืนยัน
+// สร้างข้อมูลไม้ฝั่งเครื่อง เพื่อแสดงได้ทันที
 function localTrade(d, row, n){
   const t = Object.assign({}, d), isFirst = row===FIRST_ROW() || !DATA.trades.length;
   t.row = row; t.n = n;
@@ -1459,7 +1449,7 @@ function localTrade(d, row, n){
   t.retest = d.ret; t._pending = true;
   return t;
 }
-// รวมข้อมูลจาก Sheet กับไม้ที่ยังรอยืนยันอยู่ (ไม่ให้หายระหว่างรอ)
+// รวมข้อมูลจากฐานข้อมูลกับไม้ที่ยังรอยืนยันอยู่ (ไม่ให้หายระหว่างรอ)
 function mergePending(data){
   PENDING.forEach(p=>{
     if (p.kind==='add'){ p.t.row = (data.trades.length ? data.trades[data.trades.length-1].row : 3) + 1; data.trades.push(p.t); }
@@ -1482,7 +1472,7 @@ async function saveOptimistic(d, editRow, snap){
   PENDING.push(entry);
   if (wasEdit) closeEdit(); else resetForm();
   renderAll(); setSync(true);
-  toast(wasEdit ? 'แก้ไขแล้ว · กำลังบันทึกลง Sheet…' : 'บันทึกแล้ว · กำลังส่งขึ้น Sheet…');
+  toast(wasEdit ? 'แก้ไขแล้ว · กำลังบันทึก…' : 'บันทึกแล้ว · กำลังบันทึก…');
   const p = PORT;
   try{
     const fp = fpOf(d), before = fpCount(DATA.trades, fp);
@@ -1491,7 +1481,6 @@ async function saveOptimistic(d, editRow, snap){
       : await safeWrite('addTrade', [d], async()=>{ const x = await apiRaw('getTrades'); return fpCount(x.trades, fp) > before ? x : null; }, true);
     PENDING = PENDING.filter(x=>x.id!==id);
     if (PORT===p){ DATA = mergePending(res); renderAll(); if (EDIT_ROW==null) recalc(); }
-    if (!checkApiVersion()) toast('บันทึกแล้ว แต่ Code.gs เป็นเวอร์ชันเก่า — บางช่องไม่ถูกบันทึก (ดูแถบแดงด้านบน)', true);
   }catch(e){
     PENDING = PENDING.filter(x=>x.id!==id);
     if (PORT===p){
@@ -1502,7 +1491,7 @@ async function saveOptimistic(d, editRow, snap){
       if (!wasEdit && EDIT_ROW==null){ restoreForm(snap); showView('form'); }
       else if (wasEdit && EDIT_ROW==null) editTrade(editRow);
     }
-    toast('บันทึกลง Sheet ไม่สำเร็จ: '+(e.message||e)+' — ข้อมูลกลับมาในฟอร์มแล้ว ลองกดบันทึกอีกครั้ง', true);
+    toast('บันทึกไม่สำเร็จ: '+(e.message||e)+' — ข้อมูลกลับมาในฟอร์มแล้ว ลองกดบันทึกอีกครั้ง', true);
   }
   if (!PENDING.length) setSync(false);
 }
@@ -1513,7 +1502,7 @@ function closeConfirm(v){ $('confirmBox').classList.remove('on'); _confirmRes&&_
 async function delTrade(row){
   if (roBlock()) return;
   const t = DATA.trades.find(x=>x.row===row);
-  if (!await askConfirm(`ลบไม้ ${t.date} ไม้ที่ ${t.n} ออกจาก Sheet? (แถว ${row})`)) return;
+  if (!await askConfirm(`ลบไม้ ${t.date} ไม้ที่ ${t.n}?`)) return;
   const fp = fpOf(t), before = fpCount(DATA.trades, fp);
   try{ DATA = await safeWrite('deleteTrade', [row, t.date], async()=>{ const x = await apiRaw('getTrades'); return fpCount(x.trades, fp) < before ? x : null; }); toast('ลบแล้ว'); if(EDIT_ROW===row) closeEdit(); renderAll(); }
   catch(e){ toast('ผิดพลาด: '+(e.message||e), true); }
@@ -1526,16 +1515,7 @@ function side(t){
   return {mode:'', pos:'', tf:''};
 }
 function closed(){ return DATA.trades.filter(t=>num(t.diff)!=null); }
-const NEED_API = 5;
-const CAP_API = 7;   // Code.gs ที่รับทุนกำหนดเองรายไม้
-function checkApiVersion(){
-  const el=$('verWarn'); if (!el) return true;
-  const old = CFG && !DEMO && DATA && DATA.version!=null && !(DATA.version >= NEED_API);
-  el.style.display = old ? '' : 'none';
-  if (old) el.innerHTML = ic('triangle-alert')+' <b>Code.gs ใน Apps Script ยังเป็นเวอร์ชันเก่า</b> — ช่อง ราคารีเทส / Bias / Leverage ที่ใช้จริง / ราคาเฉลี่ยจริง จะ<b>ไม่ถูกบันทึก</b>ลงชีต<br><span style="color:var(--muted)">วาง Code.gs ล่าสุด → Deploy → Manage deployments → '+ic('pencil',12)+' Edit → Version: New version → Deploy แล้วกด '+ic('refresh-cw',12)+' รีเฟรช</span>';
-  return !old;
-}
-function renderAll(){ checkApiVersion(); syncPortSummary(); try{ syncDrawFromData(); }catch(e){} cacheSave(); renderKpis(); renderList(); try{ renderPorts(); }catch(e){} if($('v-home').classList.contains('on')) try{ renderHome(); }catch(e){} if (typeof drawSaved==='function') try{ drawSaved(); }catch(e){} if($('v-stats').classList.contains('on')) renderStats(); recalc(); }
+function renderAll(){ syncPortSummary(); try{ syncDrawFromData(); }catch(e){} cacheSave(); renderKpis(); renderList(); try{ renderPorts(); }catch(e){} if($('v-home').classList.contains('on')) try{ renderHome(); }catch(e){} if (typeof drawSaved==='function') try{ drawSaved(); }catch(e){} if($('v-stats').classList.contains('on')) renderStats(); recalc(); }
 function lastBalance(){
   let b = num(DATA.capital); DATA.trades.forEach(t=>{ if(num(t.bal)!=null) b=+t.bal; }); return b;
 }
@@ -1636,17 +1616,10 @@ async function clientCandles(src, starts){
   }
   return out;
 }
-// ลำดับการลอง: เบราว์เซอร์ → เซิร์ฟเวอร์ Google
+// ดึงแท่งเทียนจากเบราว์เซอร์โดยตรง
 async function getCandlesAny(src, starts){
-  const errs = [];
-  const tries = [[src,'browser']];
-  for (const [s,via] of tries){
-    try{
-      const data = via==='browser' ? await clientCandles(s, starts) : await api('getCandles', s, starts);
-      return {data, used:s, via};   // ข้อมูลว่างได้ (เช่น เพิ่งเริ่มแท่งแรก) — WebSocket จะเติมให้
-    }catch(e){ errs.push(e.message||String(e)); }
-  }
-  throw new Error(errs.join(' | '));
+  const data = await clientCandles(src, starts);
+  return {data, used:src, via:'browser'};   // ข้อมูลว่างได้ (เช่น เพิ่งเริ่มแท่งแรก) — WebSocket จะเติมให้
 }
 function loadMktPrefs(){ try{ const p=JSON.parse(localStorage.getItem('mktPrefs4')||'{}'); const old=JSON.parse(localStorage.getItem('mktPrefs3')||localStorage.getItem('mktPrefs2')||localStorage.getItem('mktPrefs')||'{}');   /* mktPrefs4: เริ่มต้นเป็น Binance */ if(p.Src) $('mktSrc').value = p.Src==='futures' ? 'spot' : p.Src; /* Binance = Spot */ const st=p.Start||old.Start; if(st) $('mktStart').value=st; }catch(e){} }
 function saveMktPrefs(){ try{ localStorage.setItem('mktPrefs4', JSON.stringify({Src:$('mktSrc').value,Start:$('mktStart').value,Days:$('mktDays').value})); }catch(e){} }
@@ -1698,17 +1671,13 @@ function mkRange(c1,c2,started){
 /* ---------- แหล่งข้อมูลราคา: MEXC Futures (REST + WebSocket) ---------- */
 // ข้อความ error ที่เข้าใจง่าย
 function friendlyErr(m){
-  if (/external_request|UrlFetchApp/.test(m)) return 'Apps Script ยังไม่ได้รับสิทธิ์ "Connect to an external service"<br><span style="color:var(--muted)">ใน Apps Script: เลือกฟังก์ชัน <b>authorize</b> → กด ▶ Run → Allow แล้ว Deploy → Manage deployments → '+ic('pencil',12)+' Edit → New version</span>';
-  if (/Apps Script ตอบ 404/.test(m)) return m + '<br><span style="color:var(--muted)">ถ้ากด New deployment จะได้ URL ใหม่ — กด '+ic('settings',12)+' ตั้งค่า → ยกเลิกการเชื่อม แล้วใส่ URL ใหม่ที่ "ขั้นสูง" ในหน้าเชื่อมต่อ (ครั้งต่อไปให้ใช้ Manage deployments → Edit → New version เพื่อคง URL เดิม)</span>';
-  if (/ไม่รู้จักคำสั่ง|อัปเดต Code\.gs/.test(m)) return 'ต้องอัปเดต Code.gs เวอร์ชันล่าสุด แล้ว Deploy เป็น New version';
   if (SRC()==='mexc') return m + '<br><span style="color:var(--muted)">ลองกด '+ic('refresh-cw',12)+' รีเฟรช หรือสลับไปใช้ Binance ชั่วคราว</span>';
   return m + '<br><span style="color:var(--muted)">ลองกด '+ic('refresh-cw',12)+' รีเฟรช หรือเช็กว่าเปิด binance.com ในเครื่องนี้ได้ไหม (VPN ประเทศ US จะถูกบล็อก)</span>';
 }
 const MEXC_IV = {'1m':'Min1','5m':'Min5','15m':'Min15','30m':'Min30','1h':'Min60'};
 const MEXC_IV_BACK = {Min1:'1m',Min5:'5m',Min15:'15m',Min30:'30m',Min60:'1h'};
 // คืนค่าเป็นรูปแบบเดียวกับ Binance: [[openTimeMs, open, high, low, close], ...]
-// MEXC ไม่อนุญาตให้เบราว์เซอร์เรียกตรง (CORS) → ดึงผ่าน Apps Script (proxyGetMany) ทีเดียวหลายช่วง
-let MEXC_DIRECT = false;  // MEXC บล็อกการเรียกจากเบราว์เซอร์ (CORS) → ดึงผ่าน Apps Script เสมอ
+// MEXC ไม่อนุญาตให้เบราว์เซอร์เรียกตรง (CORS) → ดึงผ่าน Cloudflare Worker (โค้ดอยู่ที่ cloudflare/mexc-worker.js)
 const mexcUrl = (iv, a, b) => `https://contract.mexc.com/api/v1/contract/kline/BTC_USDT?interval=${MEXC_IV[iv]}&start=${Math.floor(a/1000)}&end=${Math.floor(b/1000)}`;
 function mexcParse(j, from, to){
   if (!j || !j.success || !j.data) throw new Error('MEXC: '+((j&&j.message)||'ไม่มีข้อมูล'));
@@ -1716,8 +1685,6 @@ function mexcParse(j, from, to){
   for (let i=0;i<d.time.length;i++){ const t=d.time[i]*1000; if (t>=from && t<=to) out.push([t, d.open[i], d.high[i], d.low[i], d.close[i]]); }
   return out;
 }
-// ตัวกลางดึง MEXC ที่เร็วกว่า Apps Script มาก: Cloudflare Worker (โค้ดอยู่ที่ cloudflare/mexc-worker.js)
-// ใส่ URL ของ Worker ตรงนี้ (เช่น 'https://mexc-proxy.xxxx.workers.dev') · ว่าง = ใช้ Apps Script ตามเดิม
 const MEXC_WORKER = 'https://mexc-proxy.jokerlive-channel.workers.dev';
 const mexcWorkerUrl = u => MEXC_WORKER.replace(/\/+$/,'') + u.replace('https://contract.mexc.com/api/v1/contract','');
 async function fetchJSON(u, timeoutMs){
@@ -1726,25 +1693,10 @@ async function fetchJSON(u, timeoutMs){
   finally{ clearTimeout(t); }
 }
 async function mexcFetchAll(urls){
-  // 1) Cloudflare Worker (เร็ว) → ถ้ามีปัญหา ใช้ Apps Script แทนอัตโนมัติ
-  if (MEXC_WORKER){
-    try{ return await Promise.all(urls.map(u=>fetchJSON(mexcWorkerUrl(u), 8000))); }
-    catch(e){ console.warn('MEXC Worker ใช้ไม่ได้ → ดึงผ่าน Apps Script แทน', e); }
-  }
-  if (MEXC_DIRECT!==false){
-    try{
-      const res = await Promise.all(urls.map(async u=>{ const r=await fetch(u); if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); }));
-      MEXC_DIRECT = true; return res;
-    }catch(e){ if (MEXC_DIRECT===true) throw e; MEXC_DIRECT = false; }
-  }
-  if (!CFG || CFG.sb) throw new Error('ดึงราคา MEXC ไม่ได้ในตอนนี้ — ลองใหม่อีกครั้ง หรือสลับไปใช้ Binance');
-  try{ return await apiRaw('proxyGetMany', urls); }
-  catch(e){
-    if (/ไม่รู้จักคำสั่ง/.test(e.message||'')) throw new Error('อัปเดต Code.gs เวอร์ชันล่าสุดใน Apps Script แล้ว Deploy เป็น New version ก่อน');
-    throw e;
-  }
+  try{ return await Promise.all(urls.map(u=>fetchJSON(mexcWorkerUrl(u), 8000))); }
+  catch(e){ console.warn('MEXC Worker', e); throw new Error('ดึงราคา MEXC ไม่ได้ในตอนนี้ — ลองใหม่อีกครั้ง หรือสลับไปใช้ Binance'); }
 }
-// แคชแท่งที่ปิดแล้วไว้ในเครื่อง → ครั้งต่อไปดึงผ่าน Apps Script เฉพาะแท่งใหม่ (เร็วขึ้นมาก)
+// แคชแท่งที่ปิดแล้วไว้ในเครื่อง → ครั้งต่อไปดึงเฉพาะแท่งใหม่ (เร็วขึ้นมาก)
 const MX_KEEP = 6*864e5, MX_CHUNK = 2000, MX_INFLIGHT = {};
 function mxLoad(iv){ try{ return JSON.parse(localStorage.getItem('mxc_'+iv)||'[]'); }catch(e){ return []; } }
 function mxSave(iv, arr){
@@ -2019,7 +1971,7 @@ async function loadChart(){
     if (CH_BARS.length){ $('chPrice').textContent = f2(CH_BARS[CH_BARS.length-1].close,2); updLast(CH_BARS[CH_BARS.length-1]); }
     shown = true;
   };
-  // MEXC: แสดงจากแคชในเครื่องทันที แล้วค่อยเติมแท่งล่าสุดผ่าน Apps Script
+  // MEXC: แสดงจากแคชในเครื่องทันที แล้วค่อยเติมแท่งล่าสุด
   $('chMsg').textContent = '';
   if (SRC()==='mexc'){
     const c = mxLoad(iv).filter(k=>k[0]>=from && k[0]<=to), c30 = iv==='1h' ? mxLoad('30m').filter(k=>k[0]>=from && k[0]<=to) : null;
@@ -2038,7 +1990,7 @@ async function loadChart(){
     if (req!==CH_REQ) return;
     chLoading(false);
     $('chMsg').textContent = '';   // ไม่แสดงข้อความ error ใต้กราฟ
-    if (live && CH_BARS.length){ liveConnect(iv); loadOverlay(); }   // มีแท่งจากที่เก็บไว้ในเครื่อง → ยังต่อราคา Live และ gap ได้ (ไม่ต้องผ่าน Apps Script)
+    if (live && CH_BARS.length){ liveConnect(iv); loadOverlay(); }   // มีแท่งจากที่เก็บไว้ในเครื่อง → ยังต่อราคา Live และ gap ได้ 
   }
 }
 function segment(price, color, style, width, title, tStart, tEnd, pos, side, pin){
@@ -2212,7 +2164,7 @@ function updateFormingRange(){
 }
 document.addEventListener('visibilitychange', ()=>{ if (document.visibilityState==='visible' && LWC) loadChart(); });
 
-// ไม้ที่บันทึกในชีต ของวันที่เลือกบนกราฟ: เส้นเข้า / TP / SL
+// ไม้ที่บันทึกไว้ ของวันที่เลือกบนกราฟ: เส้นเข้า / TP / SL
 function drawSaved(){
   if (!LWC) return;
   SAVED_LINES.forEach(x=>LWC.removeSeries(x)); SAVED_LINES=[]; SAVED_BOXES=[]; SAVED_EXT=[]; SAVED_PATHS=[]; CM_LBLS=[];
@@ -2276,9 +2228,9 @@ function placeExt(){
 }
 /* ================= กล่องเครื่องมือวาดบนกราฟ ================= */
 const DRAW = {tool:'cursor', items:[], pending:null, hover:null, measure:null, sel:-1, hl:[], drag:null, xh:false, xhDrag:false};
-// เส้นที่วาด: เก็บแยกตามพอร์ตใน Google Sheet (ชีตซ่อน _Drawings) + สำเนาในเครื่อง (แสดงทันที / ใช้ตอนออฟไลน์)
+// เส้นที่วาด: เก็บแยกตามพอร์ตในฐานข้อมูล (ตาราง drawings) + สำเนาในเครื่อง (แสดงทันที / ใช้ตอนออฟไลน์)
 let DRAW_TIP = false;   // แสดงคำแนะนำ "ดับเบิลคลิกเพื่อเลือก" ครั้งเดียว
-let DRAW_PORT = null, DRAW_DIRTY = false, DRAW_TIMER = null, DRAW_REMOTE_OK = true;
+let DRAW_PORT = null, DRAW_DIRTY = false, DRAW_TIMER = null;
 const drawKey = p => 'chDraw:'+p;
 function drawLocal(p){ try{ const v = JSON.parse(localStorage.getItem(drawKey(p))||'null'); return Array.isArray(v) ? v : null; }catch(e){ return null; } }
 function drawRedraw(){ if (typeof LWC!=='undefined' && LWC){ try{ drawHLines(); renderDraw(); }catch(e){} } }
@@ -2288,29 +2240,28 @@ function syncDrawFromData(){
   const srv = DATA && Array.isArray(DATA.draw) ? DATA.draw : null;
   if (DRAW_PORT !== PORT){   // สลับพอร์ต → ใช้ชุดของพอร์ตนั้น
     // มีเส้นที่ยังไม่ได้ส่งของพอร์ตเดิม → ส่งไปที่พอร์ตเดิมทันที (ไม่ให้หาย)
-    if (DRAW_DIRTY && DRAW_PORT!=null && CFG && !DEMO && !LEGACY && DRAW_REMOTE_OK) remote(CFG, 'saveDrawings', [DRAW.items.slice(), DRAW_PORT]).catch(()=>{});
+    if (DRAW_DIRTY && DRAW_PORT!=null && CFG && !DEMO && !VIEW_AS) sbCall('saveDrawings', [DRAW.items.slice(), DRAW_PORT]).catch(()=>{});
     DRAW_PORT = PORT; DRAW_DIRTY = false; clearTimeout(DRAW_TIMER); DRAW.sel = -1;
     DRAW.items = srv || drawLocal(PORT) || [];
     // ย้ายเส้นเดิม (ก่อนแยกพอร์ต) มาไว้ที่พอร์ตแรกที่เปิด
     try{ const old = JSON.parse(localStorage.getItem('chDraw')||'null'); if (Array.isArray(old) && old.length && !DRAW.items.length){ DRAW.items = old; localStorage.removeItem('chDraw'); saveDraw(); } }catch(e){}
     drawRedraw(); return;
   }
-  // ข้อมูลใหม่จาก Sheet (เช่น วาดจากอีกเครื่อง) → อัปเดต ถ้าเครื่องนี้ไม่มีการแก้ค้างอยู่
+  // ข้อมูลใหม่จากฐานข้อมูล (เช่น วาดจากอีกเครื่อง) → อัปเดต ถ้าเครื่องนี้ไม่มีการแก้ค้างอยู่
   if (srv && !DRAW_DIRTY && JSON.stringify(srv)!==JSON.stringify(DRAW.items)){ DRAW.items = srv; DRAW.sel = -1; try{ localStorage.setItem(drawKey(PORT), JSON.stringify(srv)); }catch(e){} drawRedraw(); }
 }
-// ส่งขึ้น Sheet (หน่วงเวลาเล็กน้อย รวมหลายการแก้เป็นครั้งเดียว)
+// บันทึกลงฐานข้อมูล (หน่วงเวลาเล็กน้อย รวมหลายการแก้เป็นครั้งเดียว)
 async function pushDraw(){
   clearTimeout(DRAW_TIMER);
   const p = DRAW_PORT, items = DRAW.items.slice();
   if (p==null || !DRAW_DIRTY) return;
-  if (!CFG || DEMO || LEGACY || !DRAW_REMOTE_OK){ DRAW_DIRTY = false; return; }
+  if (!CFG || DEMO || isRO()){ DRAW_DIRTY = false; return; }
   try{
     await apiRaw('saveDrawings', items);
     if (DRAW_PORT===p && JSON.stringify(items)===JSON.stringify(DRAW.items)) DRAW_DIRTY = false;
     if (DATA && DRAW_PORT===p) DATA.draw = items;
   }catch(e){
-    if (/ไม่รู้จักคำสั่ง/.test(e.message||'')){ DRAW_REMOTE_OK = false; DRAW_DIRTY = false; toast('เส้นที่วาดเก็บไว้ในเครื่องนี้เท่านั้น — อัปเดต Code.gs (version 12) เพื่อเก็บใน Google Sheet', true); }
-    else { toast('บันทึกเส้นที่วาดไม่ได้: '+(e.message||e), true); DRAW_TIMER = setTimeout(pushDraw, 10000); }
+    toast('บันทึกเส้นที่วาดไม่ได้: '+(e.message||e), true); DRAW_TIMER = setTimeout(pushDraw, 10000);
   }
 }
 document.addEventListener('visibilitychange', ()=>{ if (document.visibilityState==='hidden' && DRAW_DIRTY) pushDraw(); });
@@ -2737,8 +2688,28 @@ function focusTrade(t){
   }catch(e){ try{ LWC.timeScale().setVisibleRange({from, to}); }catch(x){} }
   refitScale();
 }
+// ---------- กราฟเต็มจอ ----------
+// ใช้ CSS เต็มหน้าต่างเสมอ (ใช้ได้ทุกเครื่องรวม iPhone) + ขอเต็มจอจริงจากเบราว์เซอร์ถ้ารองรับ (ซ่อนแถบเบราว์เซอร์)
+function isChartFs(){ return $('chartCard').classList.contains('fs'); }
+function toggleChartFs(force){
+  const on = force!=null ? !!force : !isChartFs(), card = $('chartCard');
+  if (on===isChartFs()) return;
+  let range = null; try{ range = LWC && LWC.timeScale().getVisibleLogicalRange(); }catch(e){}   // คงช่วงที่ดูอยู่ (ไม่ให้แท่งไปกองด้านซ้ายเมื่อกราฟกว้างขึ้น)
+  card.classList.toggle('fs', on); document.body.classList.toggle('chFs', on);
+  const b = $('chFsBtn'); b.innerHTML = ic(on ? 'minimize' : 'maximize'); b.title = on ? 'ออกจากเต็มจอ (Esc)' : 'ขยายกราฟเต็มจอ';
+  try{
+    if (on && card.requestFullscreen && !document.fullscreenElement) card.requestFullscreen({navigationUI:'hide'}).catch(()=>{});
+    if (!on && document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(()=>{});
+  }catch(e){}
+  const fit = ()=>{ try{ if (range) LWC.timeScale().setVisibleLogicalRange(range); placeBand(); renderDraw(); }catch(e){} };
+  requestAnimationFrame(fit); setTimeout(fit, 250);   // เต็มจอจริงของเบราว์เซอร์เปลี่ยนขนาดช้ากว่าเล็กน้อย
+}
+document.addEventListener('fullscreenchange', ()=>{ if (!document.fullscreenElement && isChartFs()) toggleChartFs(false); });
+// Esc: ออกจากเต็มจอก่อน (ไม่ปิดหน้าต่างกราฟไม้ทันที)
+document.addEventListener('keydown', e=>{ if (e.key==='Escape' && isChartFs() && !$('confirmBox').classList.contains('on')){ e.stopImmediatePropagation(); toggleChartFs(false); } }, true);
 function closeChartModal(){
   if (!$('chartModal').classList.contains('on')) return;
+  toggleChartFs(false);
   $('chartModal').classList.remove('on'); document.body.style.overflow='';
   $('chartHome').after($('chartCard'));
   CM_ROW = null; setCmMode(false); drawSaved();
@@ -2839,7 +2810,7 @@ function clearOverlay(){
 }
 async function loadOverlay(){
   // ไม่วาดเส้นของอีก Broker บนกราฟ — ใช้แค่ราคาล่าสุดเพื่อแสดงส่วนต่าง (gap) ข้าง Live
-  // ราคามาจาก WebSocket ของอีก Broker โดยตรง (ไม่ต้องผ่าน Apps Script) · หลุดแล้วต่อใหม่เอง · คงค่าเดิมไว้จนกว่าราคาใหม่มา
+  // ราคามาจาก WebSocket ของอีก Broker โดยตรง · หลุดแล้วต่อใหม่เอง · คงค่าเดิมไว้จนกว่าราคาใหม่มา
   // ใช้การเชื่อมต่อเดิมซ้ำถ้ายังเป็น Broker/TF เดิม (ไม่ปิด-เปิดใหม่ทุกครั้งที่โหลดกราฟ)
   if (!LWC || !CH_BARS.length){ clearOverlay(); return; }
   const src = otherSrc(), iv = CH_IV, step = INT_MS[iv], key = src+':'+iv, req = ++OV.req;
@@ -2861,7 +2832,7 @@ async function loadOverlay(){
     };
     connect();
   }
-  // ดึงราคาล่าสุดมาแสดงก่อน (ถ้าดึงไม่ได้ เช่น Apps Script มีปัญหา ก็รอราคาจาก WebSocket แทน)
+  // ดึงราคาล่าสุดมาแสดงก่อน (ถ้าดึงไม่ได้ ก็รอราคาจาก WebSocket แทน)
   if (OV.bars.length) return paintSpread();
   try{
     const raw = await klinesFor(src, iv, Date.now() - 3*step, Date.now());
@@ -2891,7 +2862,7 @@ loadChPrefs();
 loadMktPrefs(); window.__chKey=SRC()+'|'+$('mktStart').value; fillChartDays(); loadMarket();
 
 // ---------- ดาวน์โหลดข้อมูล (Excel / CSV) ----------
-// คอลัมน์เหมือนชีตเดิม (รวมช่องคำนวณ เช่น TP/SL, Diff, Result)
+// คอลัมน์ทั้งหมด (รวมช่องคำนวณ เช่น TP/SL, Diff, Result)
 const EXPORT_COLS = [
   ['Date','date'],['ไม้ที่','n'],['ทุน','cap'],['M30 กรอบบน','t30'],['M30 กรอบล่าง','b30'],['ระยะวิ่ง M30','r30'],
   ['H1 กรอบบน','t1'],['H1 กรอบล่าง','b1'],['ระยะวิ่ง H1','r1'],['Risk %','risk'],
@@ -2908,7 +2879,7 @@ function paintExport(){
   const p = curPort(), n = PORTS.length;
   $('ex_scope').querySelector('[data-v=cur]').disabled = !p;
   $('ex_desc').textContent = (EX.scope==='cur' ? (p ? 'พอร์ต "'+p.name+'"' : 'ยังไม่ได้เลือกพอร์ต') : n+' พอร์ต')
-    + (EX.fmt==='xlsx' ? ' · 1 ชีตต่อพอร์ต + ชีต "สรุป"' : ' · ไฟล์เดียว มีคอลัมน์ "พอร์ต" · เปิดใน Excel / Numbers ได้ ภาษาไทยไม่เพี้ยน');
+    + (EX.fmt==='xlsx' ? ' · แยกแท็บละ 1 พอร์ต + แท็บ "สรุป"' : ' · ไฟล์เดียว มีคอลัมน์ "พอร์ต" · เปิดใน Excel / Numbers ได้ ภาษาไทยไม่เพี้ยน');
 }
 document.querySelectorAll('#ex_scope button').forEach(b=>b.addEventListener('click', ()=>{ if (!b.disabled){ EX.scope = b.dataset.v; paintExport(); } }));
 document.querySelectorAll('#ex_fmt button').forEach(b=>b.addEventListener('click', ()=>{ EX.fmt = b.dataset.v; paintExport(); }));
@@ -2938,7 +2909,7 @@ async function runExport(){
     const sets = [];
     for (const p of ports){
       $('ex_msg').textContent = 'กำลังอ่าน "'+p.name+'"…';
-      const d = (String(p.id)===PORT && DATA && DATA.trades) ? DATA : await (LEGACY ? apiRaw('getTrades') : apiFor(p.id, 'getTrades', true));
+      const d = (String(p.id)===PORT && DATA && DATA.trades) ? DATA : await apiFor(p.id, 'getTrades', true);
       sets.push({p, trades: d.trades.filter(t=>!t._pending), capital: d.capital});
     }
     const stamp = new Date(Date.now()+7*3600e3).toISOString().slice(0,10);
@@ -2953,7 +2924,7 @@ async function runExport(){
       await loadXLSX();
       const wb = XLSX.utils.book_new(), used = new Set();
       const sheetName = n => { let x = String(n).replace(/[\\/:*?\[\]]/g,'-').slice(0,31) || 'Sheet'; let y = x, i = 2; while (used.has(y.toLowerCase())) y = x.slice(0,28)+' ('+(i++)+')'; used.add(y.toLowerCase()); return y; };
-      // ชีตสรุป
+      // แท็บสรุป
       const sum = [['พอร์ต','เจ้าของ','ทุนเริ่มต้น','Balance','ผลตอบแทน %','ไม้ทั้งหมด','ปิดแล้ว','Win','Loss','Win rate %']];
       sets.forEach(({p, trades, capital})=>{
         const c = trades.filter(t=>num(t.diff)!=null), w = c.filter(t=>t.diff>0).length, l = c.filter(t=>t.diff<0).length;
@@ -2962,7 +2933,7 @@ async function runExport(){
       });
       const ws0 = XLSX.utils.aoa_to_sheet(sum); ws0['!cols'] = sum[0].map((h,i)=>({wch: i<2 ? 22 : 12}));
       XLSX.utils.book_append_sheet(wb, ws0, sheetName('สรุป'));
-      // 1 ชีตต่อพอร์ต
+      // 1 แท็บต่อพอร์ต
       sets.forEach(({p, trades})=>{
         const aoa = [EXPORT_COLS.map(c=>c[0]), ...trades.map(t=>EXPORT_COLS.map(c=>exVal(t, c[1])))];
         const ws = XLSX.utils.aoa_to_sheet(aoa); ws['!cols'] = EXPORT_COLS.map(c=>({wch: Math.max(9, c[0].length+2)})); ws['!freeze'] = {xSplit:0, ySplit:1};
@@ -2975,7 +2946,7 @@ async function runExport(){
   }catch(e){ $('ex_msg').innerHTML = '<span class="neg">ดาวน์โหลดไม่ได้: '+esc(e.message||String(e))+'</span>'; }
   btnBusy(b, false);
 }
-async function disconnect(){ toggleProfMenu(false); closeExport(); cacheClear(); VIEW_AS = null; if (USE_SB && sb){ try{ await sb.auth.signOut(); }catch(e){} SB_USER = null; SB_PROFILE = null; AUTH_MODE = 'login'; } else setCfg(null); CFG=null; paintMode(); PORTS=[]; LEGACY=false; DATA={trades:[],capital:null}; paintPort(); renderAll(); showGate(); }
+async function disconnect(){ toggleProfMenu(false); closeExport(); cacheClear(); VIEW_AS = null; if (sb){ try{ await sb.auth.signOut(); }catch(e){} } SB_USER = null; SB_PROFILE = null; AUTH_MODE = 'login'; CFG=null; paintMode(); PORTS=[]; DATA={trades:[],capital:null}; paintPort(); renderAll(); showGate(); }
 
 async function hardReload(){
   try{
@@ -2986,13 +2957,6 @@ async function hardReload(){
   location.replace(u.toString());
 }
 
-// รายชื่อพอร์ต (Code.gs เก่า → พอร์ตเดียว = ชีต Data)
-async function loadPorts(){
-  try{ const r = await apiRaw('listPorts'); PORTS = r.ports || []; LEGACY = false; }
-  catch(e){ if (!/ไม่รู้จักคำสั่ง|ต้องใช้ POST/.test(e.message||'')) throw e; LEGACY = true; PORTS = [{id:'legacy', name:'Data'}]; }
-  if (PORT!=null && !curPort()) setPort(null);
-  paintPort();
-}
 // ข้อมูลไม้ของพอร์ตที่เลือก
 async function loadPortData(){
   DATA = PORT==null ? {trades:[], capital:null} : await apiRaw('getTrades');
@@ -3014,14 +2978,13 @@ async function selectPort(id){
   catch(e){ toast('โหลดพอร์ตไม่ได้: '+(e.message||e), true); }
   setLoading(false);
 }
-// ดึงรายชื่อพอร์ต + ไม้ของพอร์ตที่เลือก (Code.gs v8 = ครั้งเดียว, เวอร์ชันเก่า = 2 ครั้ง)
+// ดึงรายชื่อพอร์ต + ไม้ของพอร์ตที่เลือก (ครั้งเดียว)
 async function bootFetch(resetAfter){
-  const p = PORT; let r = null;
-  try{ r = await apiRaw('boot', ...(PORT!=null && PORT!=='legacy' ? [PORT] : [])); }
-  catch(e){ if (!/ไม่รู้จักคำสั่ง|ต้องใช้ POST/.test(e.message||'')) throw e; }
+  const p = PORT;
+  const r = await apiRaw('boot', ...(PORT!=null ? [PORT] : []));
   if (PORT!==p) return;   // ผู้ใช้สลับพอร์ตระหว่างรอ
-  if (r){ PORTS = r.ports || []; LEGACY = false; if (PORT!=null && !curPort()) setPort(null); DATA = (PORT!=null && r.data) || {trades:[], capital:null}; }
-  else { await loadPorts(); DATA = PORT==null ? {trades:[], capital:null} : await apiRaw('getTrades'); }
+  PORTS = r.ports || []; if (PORT!=null && !curPort()) setPort(null);
+  DATA = (PORT!=null && r.data) || {trades:[], capital:null};
   paintPort(); renderAll();
   if (resetAfter && EDIT_ROW==null) resetForm(); else recalc();
 }
@@ -3034,19 +2997,18 @@ function syncPortSummary(){
 function renderPorts(){
   if (!$('portList')) return;
   paintPort();
-  $('addPortBtn').hidden = LEGACY;
-  $('portNote').innerHTML = LEGACY ? ic('triangle-alert',12)+' Code.gs ยังเป็นเวอร์ชันเก่า — อัปเดตเป็น version 7 เพื่อเพิ่ม/เปลี่ยนชื่อพอร์ตได้' : (PORT==null && PORTS.length ? 'แตะพอร์ตเพื่อเลือก แล้วเริ่มบันทึกไม้' : '');
+  $('portNote').innerHTML = PORT==null && PORTS.length ? 'แตะพอร์ตเพื่อเลือก แล้วเริ่มบันทึกไม้' : '';
   const card = p=>{
     const on = String(p.id)===PORT, cap = num(p.capital), bal = num(p.balance);
     const ret = (cap && bal!=null) ? bal/cap-1 : null, wl = (p.wins||0)+(p.losses||0), own = !p.access || p.access==='owner';
     return `<div class="pCard ${on?'on':''}" onclick="selectPort('${esc(p.id)}')">
-      <div class="pTop"><b class="pName">${esc(p.name)}</b>${on?'<span class="badge open">ใช้งานอยู่</span>':''}${!own ? `<span class="accB">${p.access==='edit'?'แก้ไขได้':'ดูอย่างเดียว'}</span>` : ''}<span style="flex:1"></span>${LEGACY||!own||VIEW_AS?'':`<button class="btn sm icon" title="เปลี่ยนชื่อ" onclick="event.stopPropagation();openPortForm('${esc(p.id)}')">${ic('pencil',13)}</button>`}</div>
+      <div class="pTop"><b class="pName">${esc(p.name)}</b>${on?'<span class="badge open">ใช้งานอยู่</span>':''}${!own ? `<span class="accB">${p.access==='edit'?'แก้ไขได้':'ดูอย่างเดียว'}</span>` : ''}<span style="flex:1"></span>${!own||VIEW_AS?'':`<button class="btn sm icon" title="เปลี่ยนชื่อ" onclick="event.stopPropagation();openPortForm('${esc(p.id)}')">${ic('pencil',13)}</button>`}</div>
       ${!own && p.owner && !VIEW_AS ? `<div class="pOwner">ของ ${esc(p.owner)}</div>` : ''}
       <div class="pBal mono">${bal!=null?'$'+fN(bal):'–'}</div>
       <div class="pMeta">${p.trades!=null?`<span class="${cls(ret)}">${pct(ret)}</span> · ${p.trades} ไม้ · Win ${wl?fN(p.wins/wl*100,1)+'%':'–'}`:'แตะเพื่อเปิด'}</div>
     </div>`; };
   const mine = PORTS.filter(p=>!p.access || p.access==='owner' || VIEW_AS), shared = VIEW_AS ? [] : PORTS.filter(p=>p.access && p.access!=='owner');
-  $('addPortBtn').hidden = LEGACY || !!VIEW_AS;
+  $('addPortBtn').hidden = !!VIEW_AS;
   $('portList').innerHTML = (VIEW_AS ? `<div class="viewAs" style="grid-column:1 / -1">${ic('eye',14)} พอร์ตของ <b>${esc(VIEW_AS.email)}</b> · อ่านอย่างเดียว<span style="flex:1"></span><button class="btn sm" onclick="exitViewAs()">${ic('arrow-left',13)} กลับไปพอร์ตของฉัน</button></div>` : '')
     + (mine.length ? mine.map(card).join('') : `<div class="pEmpty">${VIEW_AS ? 'ผู้ใช้นี้ยังไม่มีพอร์ต' : 'ยังไม่มีพอร์ต · กด "เพิ่มพอร์ต"'}</div>`)
     + (shared.length ? `<div class="pSec" style="grid-column:1 / -1">แชร์ให้ฉัน</div>` + shared.map(card).join('') : '');
@@ -3057,24 +3019,24 @@ let PF_DEL = false;   // โหมดยืนยันการลบพอร�
 function openPortForm(id){
   PF_EDIT = id==null ? null : String(id); PF_DEL = false;
   $('pf_btn').style.cssText = ''; $('pf_name').placeholder = 'เช่น BTC หลัก, ทดลองระบบใหม่';
-  $('pf_del').hidden = !PF_EDIT || (!USE_SB && PORTS.length <= 1);   // Google Sheet เดิม: ต้องเหลืออย่างน้อย 1 พอร์ต
+  $('pf_del').hidden = !PF_EDIT;
   const p = PF_EDIT ? PORTS.find(x=>String(x.id)===PF_EDIT) : null;
   $('pf_title').textContent = p ? 'เปลี่ยนชื่อพอร์ต' : 'เพิ่มพอร์ต';
   $('pf_btn').textContent = p ? 'บันทึกชื่อ' : 'สร้างพอร์ต';
   $('pf_name').value = p ? p.name : ''; $('pf_cap').value = '';
   $('pf_capWrap').hidden = !!p;
-  $('pf_msg').textContent = p ? '' : 'สร้างชีตใหม่ใน Google Sheet เดิม (หัวตาราง/สูตรเหมือนชีต Data)';
+  $('pf_msg').textContent = '';
   $('portBox').classList.add('on'); setTimeout(()=>$('pf_name').focus(), 50);
 }
 function closePortForm(){ $('portBox').classList.remove('on'); }
-// ลบพอร์ต: ต้องพิมพ์ชื่อพอร์ตให้ตรงก่อน (ลบทั้งชีตพร้อมไม้ทั้งหมด)
+// ลบพอร์ต: ต้องพิมพ์ชื่อพอร์ตให้ตรงก่อน (ลบพอร์ตพร้อมไม้และเส้นที่วาดทั้งหมด)
 function startDeletePort(){
   const p = PORTS.find(x=>String(x.id)===PF_EDIT); if (!p) return;
   PF_DEL = true;
   $('pf_title').textContent = 'ลบพอร์ต';
   $('pf_del').hidden = true;
   $('pf_name').value = ''; $('pf_name').placeholder = p.name;
-  $('pf_msg').innerHTML = `<span class="neg">${ic('triangle-alert',12)} ลบชีต "<b>${esc(p.name)}</b>" ออกจาก Google Sheet พร้อมไม้ทั้งหมด${p.trades?` (${p.trades} ไม้)`:''}</span><br>พิมพ์ชื่อพอร์ตด้านบนเพื่อยืนยัน · กู้คืนได้จาก File → Version history ใน Google Sheet`;
+  $('pf_msg').innerHTML = `<span class="neg">${ic('triangle-alert',12)} ลบพอร์ต "<b>${esc(p.name)}</b>" พร้อมไม้ทั้งหมด${p.trades?` (${p.trades} ไม้)`:''} · กู้คืนไม่ได้</span><br>พิมพ์ชื่อพอร์ตด้านบนเพื่อยืนยัน (แนะนำให้ดาวน์โหลดข้อมูลเก็บไว้ก่อน)`;
   $('pf_btn').textContent = 'ลบถาวร';
   $('pf_btn').style.cssText = 'background:var(--red);border-color:var(--red);color:#fff';
   setTimeout(()=>$('pf_name').focus(), 50);
@@ -3082,7 +3044,7 @@ function startDeletePort(){
 async function deletePortNow(){
   const p = PORTS.find(x=>String(x.id)===PF_EDIT); if (!p) return;
   if ($('pf_name').value.trim() !== p.name) return $('pf_msg').innerHTML = '<span class="neg">ชื่อไม่ตรง — พิมพ์ "'+esc(p.name)+'" ให้ตรงทุกตัวอักษร</span>';
-  // ลบแบบทันที: เอาพอร์ตออกจากรายการเลย แล้วลบใน Sheet เบื้องหลัง (ไม่สำเร็จ → คืนพอร์ตกลับ)
+  // ลบแบบทันที: เอาพอร์ตออกจากรายการเลย แล้วลบในฐานข้อมูลเบื้องหลัง (ไม่สำเร็จ → คืนพอร์ตกลับ)
   const pid = PF_EDIT, idx = PORTS.findIndex(x=>String(x.id)===pid), wasCurrent = PORT===pid;
   PORTS = PORTS.filter(x=>String(x.id)!==pid);
   if (wasCurrent){ setPort(null); DATA = {trades:[], capital:null}; }
@@ -3090,14 +3052,14 @@ async function deletePortNow(){
   setSync(true); toast('กำลังลบพอร์ต "'+p.name+'"…');
   try{
     const r = await safeWrite('deletePort', [pid], async()=>{ const x = await apiRaw('listPorts'); return x.ports.some(q=>String(q.id)===pid) ? null : x; }, true);
-    if (r && Array.isArray(r.ports)) PORTS = r.ports;   // เวอร์ชันเก่าส่งรายการพอร์ตกลับมา · v13 ไม่ส่ง (ใช้รายการในเครื่อง)
+    if (r && Array.isArray(r.ports)) PORTS = r.ports;
     try{ const c = cacheGet(); if (c && c.data){ delete c.data[pid]; localStorage.setItem(CACHE_KEY, JSON.stringify(c)); } }catch(e){}
     renderPorts(); cacheSave();
     toast('ลบพอร์ต "'+p.name+'" แล้ว');
   }catch(e){
     if (!PORTS.some(x=>String(x.id)===pid)) PORTS.splice(Math.min(idx, PORTS.length), 0, p);   // คืนพอร์ตกลับ
     renderPorts();
-    toast('ลบพอร์ตไม่สำเร็จ: '+(/ไม่รู้จักคำสั่ง/.test(e.message||'') ? 'ต้องอัปเดต Code.gs ก่อน' : niceErr(e.message||String(e))), true);
+    toast('ลบพอร์ตไม่สำเร็จ: '+(e.message||String(e)), true);
   }
   setSync(false);
 }
@@ -3116,16 +3078,16 @@ async function submitPortForm(){
     if (PF_EDIT){ toast('เปลี่ยนชื่อพอร์ตแล้ว'); renderPorts(); }
     else {
       toast('สร้างพอร์ต "'+name+'" แล้ว');
-      if (r.added!=null && r.data){ setPort(r.added); DATA = r.data; renderAll(); resetForm(); renderHome(); }   // v8: ได้ข้อมูลมาพร้อมกัน ไม่ต้องโหลดซ้ำ
+      if (r.added!=null && r.data){ setPort(r.added); DATA = r.data; renderAll(); resetForm(); renderHome(); }   // ได้ข้อมูลมาพร้อมกัน ไม่ต้องโหลดซ้ำ
       else { renderPorts(); if (r.added!=null) await selectPort(r.added); }
     }
-  }catch(e){ $('pf_msg').innerHTML = '<span class="neg">'+esc(niceErr(e.message||String(e)))+'</span>'; }
+  }catch(e){ $('pf_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
   b.classList.remove('loading');
 }
 ['pf_name','pf_cap'].forEach(id=>$(id).addEventListener('keydown',e=>{ if (e.key==='Enter') submitPortForm(); }));
 
 async function load(){
-  if (USE_SB && !DEMO){
+  if (!DEMO){
     if (!sb) return showGate('โหลดระบบบัญชีไม่ได้ — เช็กอินเทอร์เน็ตแล้วรีเฟรช');
     const {data:{session}} = await sb.auth.getSession();
     if (!session) return showGate();
@@ -3134,20 +3096,20 @@ async function load(){
   }
   if (!CFG && !DEMO) return showGate();
   const c = cacheGet();
-  if (c){   // เปิดทันทีจากข้อมูลในเครื่อง แล้วอัปเดตจาก Sheet เบื้องหลัง
-    LEGACY = !!c.legacy; PORTS = c.legacy ? [{id:'legacy', name:'Data'}] : (c.ports || []);
+  if (c){   // เปิดทันทีจากข้อมูลในเครื่อง แล้วอัปเดตจากฐานข้อมูลเบื้องหลัง
+    PORTS = c.ports || [];
     if (PORT!=null && !curPort()) setPort(null);
     DATA = (PORT!=null && c.data && c.data[PORT]) || {trades:[], capital:null};
     paintPort(); renderAll(); if (EDIT_ROW==null) resetForm(); hideGate(); if (PORT==null) showView('home');
     setSync(true);
     try{ await bootFetch(false); }
-    catch(e){ toast('อัปเดตข้อมูลไม่ได้: '+niceErr(e.message||String(e)), true); }
+    catch(e){ toast('อัปเดตข้อมูลไม่ได้: '+(e.message||String(e)), true); }
     setSync(false); return;
   }
   setLoading(true, 'กำลังโหลดข้อมูล…');
   try{ await bootFetch(true); hideGate(); if (PORT==null) showView('home'); }
   catch(e){
-    if (CFG) showGate('โหลดข้อมูลไม่ได้: '+niceErr(e.message||String(e)));
+    if (CFG) showGate('โหลดข้อมูลไม่ได้: '+(e.message||String(e)));
     else toast('โหลดข้อมูลไม่ได้: '+(e.message||e), true);
   }
   setLoading(false);
@@ -3165,9 +3127,7 @@ function setLoading(on, txt){
   document.querySelectorAll('.overlay').forEach(o=>{ o.inert = !!on && o.classList.contains('on'); });
   if (on && document.activeElement && document.activeElement.closest && document.activeElement.closest('.overlay')) document.activeElement.blur();
 }
-/* ================= ต้องเชื่อม API ก่อนใช้งาน ================= */
-const niceErr = m => /API key|รหัสลับ/.test(m) ? 'Password ไม่ถูกต้อง' : m;
-const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbzwEw7U5_ta95nQDziW8Jblt07HbEtsopRKBsd-zt3l4VIC15KczrG2VXHgaJHFxyEt/exec';   // URL ของ Apps Script (ไม่ใช่ความลับ)
+/* ================= ต้องเข้าสู่ระบบก่อนใช้งาน ================= */
 function showGate(msg){
   if (AUTH_MODE==='pending') AUTH_MODE = 'login';
   authMode(AUTH_MODE==='reset' ? 'reset' : 'login');
@@ -3426,7 +3386,7 @@ $('sh_email').addEventListener('keydown', e=>{ if (e.key==='Enter') addShare(); 
 
 function sbSignedIn(user){
   SB_USER = user;
-  CFG = {sb:true, url: SB_URL+'#'+user.id, key:''};   // แคชในเครื่องแยกตามบัญชี
+  CFG = {sb:true, url: SB_URL+'#'+user.id};   // แคชในเครื่องแยกตามบัญชี
   paintMode();
 }
 if (sb) sb.auth.onAuthStateChange((ev, session)=>{

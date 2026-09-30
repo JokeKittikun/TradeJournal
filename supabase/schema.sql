@@ -21,7 +21,7 @@ create table if not exists public.trades (
   id           uuid primary key default gen_random_uuid(),
   portfolio_id uuid not null references public.portfolios(id) on delete cascade,
   user_id      uuid not null default auth.uid() references auth.users(id) on delete cascade,
-  seq          bigint generated always as identity,          -- ลำดับไม้ในพอร์ต (แทนเลขแถวในชีต)
+  seq          bigint generated always as identity,          -- ลำดับไม้ในพอร์ต
   date         date not null,
   capital      numeric,        -- ทุนกำหนดเองรายไม้ (ว่าง = ดึงจาก Balance ไม้ก่อนหน้า)
   t30 numeric, b30 numeric, t1 numeric, b1 numeric,          -- กรอบ M30 / H1

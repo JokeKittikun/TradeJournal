@@ -1,7 +1,6 @@
 /**
  * Cloudflare Worker — ตัวกลางดึงประวัติราคา (แท่งเทียน) ของ MEXC ให้หน้าเว็บ Trade Journal
- * เหตุผล: MEXC ไม่อนุญาตให้เบราว์เซอร์เรียก API ตรง (CORS) · เดิมต้องดึงผ่าน Apps Script ซึ่งช้า (1–4 วินาที)
- *         Worker นี้ตอบกลับประมาณ 0.1–0.3 วินาที
+ * เหตุผล: MEXC ไม่อนุญาตให้เบราว์เซอร์เรียก API ตรง (CORS) · Worker นี้ตอบกลับประมาณ 0.1–0.3 วินาที
  *
  * อนุญาตเฉพาะ:  GET /kline/<SYMBOL>_USDT?interval=Min15&start=<unix วินาที>&end=<unix วินาที>
  * → ส่งต่อไปที่ https://contract.mexc.com/api/v1/contract/kline/<SYMBOL>_USDT?...

@@ -116,16 +116,34 @@ const binance = {
     const sl = o.sl ? await cond('STOP_MARKET', o.sl) : null;
     return { orderId: entry.orderId, status: entry.status, qty, price: +entry.avgPrice || px, tp, sl };
   },
+  // สถานะที่เปิดอยู่ + คำสั่งที่รอ (Limit / TP / SL)
+  async open(c: any, testnet: boolean) {
+    const sym = 'BTCUSDT';
+    const pos: any[] = await bnReq(c, testnet, 'GET', '/fapi/v2/positionRisk', { symbol: sym });
+    const ords: any[] = await bnReq(c, testnet, 'GET', '/fapi/v1/openOrders', { symbol: sym });
+    let algo: any[] = [];
+    try { const a: any = await bnReq(c, testnet, 'GET', '/fapi/v1/openAlgoOrders', { symbol: sym }); algo = Array.isArray(a) ? a : (a.orders || []); } catch (_) { /* ยังไม่มีระบบ Algo Order ในบัญชีนี้ */ }
+    return {
+      positions: pos.filter(p => +p.positionAmt !== 0).map(p => ({ side: +p.positionAmt > 0 ? 'BUY' : 'SELL', qty: Math.abs(+p.positionAmt), entry: +p.entryPrice, mark: +p.markPrice, pnl: +p.unRealizedProfit, leverage: +p.leverage, liq: +p.liquidationPrice || null, margin: +p.isolatedMargin || null })),
+      orders: ords.map(o => ({ ...o, _algo: false })).concat(algo.map(o => ({ ...o, _algo: true }))).map(o => ({ id: o._algo ? o.algoId : o.orderId, algo: o._algo, side: o.side, type: o.type || o.orderType, price: +o.price || null, trigger: +(o.stopPrice || o.triggerPrice) || null, qty: +(o.origQty || o.quantity) || null, close: o.closePosition === true || o.closePosition === 'true' || o.reduceOnly === true, time: o.time || o.createTime })),
+    };
+  },
+  async cancel(c: any, testnet: boolean, id: string, algo: boolean) {
+    if (algo) return bnReq(c, testnet, 'DELETE', '/fapi/v1/algoOrder', { algoId: id });
+    return bnReq(c, testnet, 'DELETE', '/fapi/v1/order', { symbol: 'BTCUSDT', orderId: id });
+  },
 };
 
 // ============================================================
 // MEXC Futures (ไม่มี Testnet · API สั่งเทรดอาจถูกจำกัดสำหรับบัญชีทั่วไป)
 // ============================================================
 const MX = 'https://contract.mexc.com';
-async function mxReq(c: any, method: string, path: string, body?: Record<string, unknown>) {
-  const t = String(Date.now()), s = body ? JSON.stringify(body) : '';
+async function mxReq(c: any, method: string, path: string, body?: unknown, query?: Record<string, unknown>) {
+  // ลายเซ็น: GET = key + เวลา + query (เรียงชื่อ) · POST = key + เวลา + JSON body
+  const qs = query ? Object.keys(query).sort().map(k => k + '=' + encodeURIComponent(String(query[k]))).join('&') : '';
+  const t = String(Date.now()), s = body ? JSON.stringify(body) : qs;
   const sig = await hmacHex(c.secret, c.key + t + s);
-  const r = await fetch(MX + path, { method, headers: { ApiKey: c.key, 'Request-Time': t, Signature: sig, 'Content-Type': 'application/json' }, body: body ? s : undefined });
+  const r = await fetch(MX + path + (qs ? '?' + qs : ''), { method, headers: { ApiKey: c.key, 'Request-Time': t, Signature: sig, 'Content-Type': 'application/json' }, body: body ? s : undefined });
   const j: any = await r.json().catch(() => ({}));
   if (!r.ok || j.success === false) bad('MEXC: ' + (j.message || j.msg || 'HTTP ' + r.status) + (j.code ? ` (${j.code})` : ''));
   return j.data;
@@ -148,6 +166,19 @@ const mexc = {
     const d: any = await mxReq(c, 'POST', '/api/v1/private/order/submit', body);
     return { orderId: d?.orderId || d, qty: vol * MX_CT, price: o.type === 'LIMIT' ? body.price : null, tp: o.tp ? { ok: true } : null, sl: o.sl ? { ok: true } : null };
   },
+  async open(c: any) {
+    const pos: any[] = (await mxReq(c, 'GET', '/api/v1/private/position/open_positions', undefined, { symbol: 'BTC_USDT' })) || [];
+    const od: any = await mxReq(c, 'GET', '/api/v1/private/order/list/open_orders/BTC_USDT', undefined, { page_num: 1, page_size: 50 });
+    const tk: any = await (await fetch(MX + '/api/v1/contract/ticker?symbol=BTC_USDT')).json().catch(() => ({}));
+    const mark = +(tk?.data?.fairPrice || tk?.data?.lastPrice || 0);
+    // side ของ MEXC: 1 เปิด Long · 2 ปิด Short · 3 เปิด Short · 4 ปิด Long
+    return {
+      positions: pos.map((p: any) => { const L = +p.positionType === 1, q = +p.holdVol * MX_CT, e = +p.holdAvgPrice;
+        return { side: L ? 'BUY' : 'SELL', qty: q, entry: e, mark, pnl: mark ? (L ? 1 : -1) * (mark - e) * q : null, leverage: +p.leverage, liq: +p.liquidatePrice || null, margin: +p.im || null }; }),
+      orders: (Array.isArray(od) ? od : (od?.resultList || [])).map((o: any) => ({ id: String(o.orderId), algo: false, side: [1, 2].includes(+o.side) ? 'BUY' : 'SELL', type: +o.orderType === 5 ? 'MARKET' : 'LIMIT', price: +o.price || null, trigger: null, qty: +o.vol * MX_CT, close: [2, 4].includes(+o.side), time: o.createTime })),
+    };
+  },
+  async cancel(c: any, _t: boolean, id: string) { return mxReq(c, 'POST', '/api/v1/private/order/cancel', [id]); },
 };
 
 // ============================================================
@@ -226,6 +257,18 @@ Deno.serve(async (req) => {
       const { error } = await admin.from('exchange_keys').upsert({ user_id: user.id, exchange: ex, testnet, key_hint: hint, secret_enc: await encrypt(cred) }, { onConflict: 'user_id,exchange,testnet' });
       if (error) throw error;
       return json({ ok: true, testnet, info });
+    }
+
+    // ---------- สถานะที่เปิดอยู่ + คำสั่งที่รอ ----------
+    if (b.action === 'open') return json({ ok: true, ...(await A.open(await loadCred(!!b.testnet), !!b.testnet)) });
+
+    // ---------- ยกเลิกคำสั่งที่รอ ----------
+    if (b.action === 'cancel') {
+      const testnet = !!b.testnet, id = String(b.orderId || ''); if (!id) bad('ไม่พบเลขคำสั่ง');
+      if (!A.cancel) bad('ตลาดนี้ยังไม่รองรับการยกเลิกผ่านระบบ');
+      const log = { user_id: user.id, portfolio_id: b.portfolioId || null, exchange: ex, testnet, symbol: 'BTC', side: b.side || null, order_type: 'CANCEL', price: +b.price || null };
+      try { const r = await A.cancel(await loadCred(testnet), testnet, id, !!b.algo); await admin.from('order_log').insert({ ...log, ok: true, response: { orderId: id, status: 'CANCELED', kind: b.kind || null } }); return json({ ok: true, result: r }); }
+      catch (e: any) { await admin.from('order_log').insert({ ...log, ok: false, message: e.message }); throw e; }
     }
 
     // ---------- ยอดเงิน ----------

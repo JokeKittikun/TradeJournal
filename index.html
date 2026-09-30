@@ -361,6 +361,22 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
 /* ส่งออเดอร์ / บัญชีเทรด */
 .orderBtn{border-color:rgba(56,189,248,.45);color:#7dd3fc}
 .listTabs{margin-bottom:12px;max-width:420px}
+/* สถานะที่เปิดอยู่ (ดึงจากตลาดแบบสด) */
+.liveCard[hidden]{display:none!important}
+.lvHead{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.lvHead h3{margin:0}
+.lvHead .t{margin-left:auto;font:500 11px 'JetBrains Mono',monospace;color:var(--muted);display:flex;align-items:center;gap:6px}
+.lvAcc{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:8px;background:var(--panel2)}
+.lvAcc .h{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;margin-bottom:6px}
+.lvPos{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:6px 12px;padding:8px 0;border-top:1px dashed var(--line);font:500 12.5px 'JetBrains Mono',monospace}
+.lvPos:first-of-type{border-top:0}
+.lvPos .l{font:400 11px 'IBM Plex Sans Thai',sans-serif;color:var(--muted)}
+.lvPnl{font-size:15px;font-weight:600}
+.lvOrd{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:6px 0;border-top:1px dashed var(--line);font:500 12px 'JetBrains Mono',monospace;color:var(--muted)}
+.lvOrd b{color:var(--text)}
+.lvCx{margin-left:auto;padding:3px 10px}
+.lvEmpty{font-size:12.5px;color:var(--muted);padding:2px 0}
+.lvErr{font-size:12px;color:#fca5a5}
 .listTabs button.on{background:rgba(247,166,0,.16);color:var(--accent)}
 .listTabs[hidden],#ordersPane[hidden]{display:none!important}
 .oTbl td{vertical-align:middle}
@@ -603,6 +619,7 @@ body.chFs #confirmBox{z-index:55}
       </div>
       <div class="hint" id="chMsg"></div>
     </div>
+    <div class="card liveCard" id="liveCard" hidden style="margin-bottom:14px"><div class="liveBody"></div></div>
     <div class="card" id="mktCard" style="margin-bottom:14px">
       <h3><span class="dot" style="background:#f7a600"></span>กรอบราคาจากตลาด</h3>
       <div class="filters" style="align-items:center">
@@ -747,6 +764,7 @@ body.chFs #confirmBox{z-index:55}
   <section class="view" id="v-list">
     <div class="seg listTabs" id="listTabs" hidden><button data-v="journal">บันทึกเทรด</button><button data-v="orders">คำสั่งที่ส่งจริง</button></div>
     <div id="ordersPane" hidden>
+      <div class="card liveCard" id="liveCard2" hidden style="margin-bottom:12px"><div class="liveBody"></div></div>
       <div class="tbl-wrap"><table class="oTbl">
         <thead><tr><th>วันเวลา</th><th>พอร์ต</th><th>ตลาด</th><th>Position</th><th>ประเภท</th><th>ราคา</th><th>จำนวน (BTC)</th><th>Leverage</th><th>TP</th><th>SL</th><th>สถานะ</th><th>Order / หมายเหตุ</th></tr></thead>
         <tbody id="ordersList"></tbody>
@@ -993,6 +1011,7 @@ const ICONS = {
   'send':'<path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/>',
   'wallet':'<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
   'shield':'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>',
+  'activity':'<path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/>',
   'maximize':'<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>',
   'minimize':'<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>',
   'rotate-ccw':'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
@@ -1375,6 +1394,7 @@ function showView(v){
   if (v==='stats') renderStats();
   paintTradeUi();
   if (v==='list') setListTab(canTrade() ? LIST_TAB : 'journal');
+  livePoll();
   if (v==='home') renderHome();
   // กราฟโหลดตอนซ่อนอยู่ (กว้าง 0) → เปิดหน้าบันทึกเทรดครั้งแรกให้จัดมุมมองใหม่
   if (v==='form' && !FORM_SEEN){ FORM_SEEN = true; requestAnimationFrame(()=>{ try{ if (typeof resetView==='function') resetView(); }catch(e){} }); }
@@ -4222,6 +4242,68 @@ async function setUserRole(id, role){
   catch(e){ $('adm_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; renderAdmin(); }
 }
 
+// ---------- สถานะที่เปิดอยู่ (ดึงจากตลาดทุก 5 วินาที เฉพาะตอนเปิดหน้าอยู่) ----------
+const LIVE = {timer:null, busy:false, data:{}, at:null, every:5000};
+function liveWhere(){
+  if (!canTrade() || document.visibilityState!=='visible') return [];
+  const a = [];
+  if ($('v-form').classList.contains('on')) a.push('liveCard');
+  if ($('v-list').classList.contains('on') && LIST_TAB==='orders') a.push('liveCard2');
+  return a;
+}
+async function livePoll(){
+  clearTimeout(LIVE.timer);
+  const where = liveWhere();
+  ['liveCard','liveCard2'].forEach(id=>{ if (!where.includes(id)) $(id).hidden = true; });
+  if (!where.length) return;
+  if (!LIVE.busy){
+    LIVE.busy = true;
+    try{
+      if (!EX_KEYS.length) await loadExKeys().catch(()=>{});
+      await Promise.all(EX_KEYS.map(async k=>{
+        try{ const r = await tradeFn({action:'open', exchange:k.exchange, testnet:k.testnet}); LIVE.data[k.id] = {ok:true, positions:r.positions||[], orders:r.orders||[]}; }
+        catch(e){ LIVE.data[k.id] = {ok:false, error:e.message||String(e)}; }
+      }));
+      LIVE.at = new Date();
+    } finally { LIVE.busy = false; }
+    renderLive();
+  }
+  LIVE.timer = setTimeout(livePoll, LIVE.every);
+}
+function renderLive(){
+  const where = liveWhere(), px = v => num(v)!=null ? fN(v,2) : '–';
+  const cell = (l, v, c) => `<div><div class="l">${l}</div><div class="${c||''}">${v}</div></div>`;
+  let html;
+  if (!EX_KEYS.length) html = '';
+  else {
+    const accs = EX_KEYS.map(k=>{
+      const d = LIVE.data[k.id], head = `<div class="h">${EX_NAME[k.exchange]} <span class="envB ${k.testnet?'demo':'live'}">${k.testnet?'ทดลอง':'จริง'}</span></div>`;
+      if (!d) return `<div class="lvAcc">${head}<div class="lvEmpty"><span class="spin sm"></span> กำลังโหลด…</div></div>`;
+      if (!d.ok) return `<div class="lvAcc">${head}<div class="lvErr">${esc(d.error)}</div></div>`;
+      const pos = d.positions.map(p=>{ const L = p.side==='BUY', roe = p.margin ? p.pnl/p.margin : null;
+        return `<div class="lvPos">${cell('สถานะ', `<span class="badge ${L?'Long':'Short'}">${L?'Long':'Short'}</span> <span style="color:var(--muted)">${fN(p.leverage,0)}x</span>`)}${cell('จำนวน', fN(p.qty,4)+' BTC')}${cell('ราคาเข้า', px(p.entry))}${cell('ราคาปัจจุบัน', px(p.mark))}${cell('กำไร/ขาดทุน', p.pnl!=null ? money(p.pnl)+(roe!=null?' <small>('+pct(roe)+')</small>':'') : '–', 'lvPnl '+cls(p.pnl))}${cell('Liquidation', px(p.liq))}</div>`; }).join('');
+      const ords = d.orders.map(o=>{ const kind = /TAKE_PROFIT/.test(o.type) ? 'TP' : /STOP/.test(o.type) ? 'SL' : (o.close ? 'ปิด' : 'Limit');
+        return `<div class="lvOrd"><span class="badge ${o.side==='BUY'?'Long':'Short'}">${kind}</span><b>${px(o.trigger || o.price)}</b>${o.qty ? fN(o.qty,4)+' BTC' : 'ทั้งสถานะ'}<span>${esc(o.type||'')}</span>`
+          + `<button class="btn sm ghostDanger lvCx" onclick="cancelOrder('${k.id}','${esc(String(o.id))}',${!!o.algo},'${kind}','${o.side}',${num(o.trigger||o.price)||0})">ยกเลิก</button></div>`; }).join('');
+      return `<div class="lvAcc">${head}${pos || '<div class="lvEmpty">ไม่มีสถานะที่เปิดอยู่</div>'}${ords ? '<div style="margin-top:4px;font-size:11.5px;color:var(--muted)">คำสั่งที่รอ</div>'+ords : ''}</div>`;
+    }).join('');
+    html = `<div class="lvHead"><h3>${ic('activity',15)} สถานะที่เปิดอยู่</h3><span class="t"><span class="liveB on"><i></i>LIVE</span>${LIVE.at ? LIVE.at.toLocaleTimeString('th-TH') : ''}</span></div>${accs}`;
+  }
+  ['liveCard','liveCard2'].forEach(id=>{ const c = $(id); c.hidden = !where.includes(id) || !html; if (!c.hidden) c.querySelector('.liveBody').innerHTML = html; });
+}
+document.addEventListener('visibilitychange', ()=>{ if (document.visibilityState==='visible') livePoll(); });
+// ยกเลิกคำสั่งที่รอ (Limit / TP / SL) ที่ตลาด
+async function cancelOrder(kid, id, algo, kind, side, price){
+  const k = EX_KEYS.find(x=>x.id===kid); if (!k || !canTrade()) return;
+  if (!await askConfirm(`ยกเลิกคำสั่ง ${kind} ${price ? fN(price,2) : ''} ที่ ${EX_NAME[k.exchange]} (${k.testnet?'ทดลอง':'จริง'})?${kind==='SL' ? ' · ถ้ายกเลิก SL สถานะจะไม่มีจุดตัดขาดทุน' : ''}`)) return;
+  try{
+    await tradeFn({action:'cancel', exchange:k.exchange, testnet:k.testnet, orderId:id, algo, kind, side, price, portfolioId:PORT});
+    toast('ยกเลิกคำสั่ง '+kind+' แล้ว');
+    if (LIST_TAB==='orders' && $('v-list').classList.contains('on')) loadOrders();
+  }catch(e){ toast('ยกเลิกไม่สำเร็จ: '+(e.message||e), true); }
+  livePoll();
+}
+
 async function setUserTrade(id, allow){
   const u = ADMIN_USERS.find(x=>x.id===id);
   if (allow && !await askConfirm(`เปิดสิทธิ์ส่งออเดอร์ไปตลาดให้ ${u ? u.email : ''}? (ผู้ใช้จะเชื่อม API ของตัวเองและส่งคำสั่งด้วยบัญชีตัวเองได้)`)) return;
@@ -4293,6 +4375,7 @@ function setListTab(t){
   document.querySelectorAll('#listTabs button').forEach(b=>b.classList.toggle('on', b.dataset.v===t));
   $('journalPane').hidden = t!=='journal'; $('ordersPane').hidden = t!=='orders';
   if (t==='orders') loadOrders();
+  livePoll();
 }
 document.querySelectorAll('#listTabs button').forEach(b=>b.addEventListener('click',()=>setListTab(b.dataset.v)));
 let DEMO_ORDERS = [];
@@ -4308,15 +4391,15 @@ async function loadOrders(){
   }catch(e){ const m = e.message||String(e); box.innerHTML = '<tr><td colspan="12" class="empty neg">'+esc(/order_log|does not exist|schema cache/i.test(m) ? 'ยังไม่ได้ติดตั้งตารางประวัติคำสั่ง — รัน supabase/trading.sql' : m)+'</td></tr>'; }
 }
 function orderRow(o){
-  const r = o.response || {}, L = o.side==='BUY', px = v => num(v)!=null ? fN(v,2) : '–', leg = x => x==null ? '' : (x.ok ? ' <span class="pos">✓</span>' : ' <span class="neg">✗</span>');
+  const r = o.response || {}, L = o.side==='BUY', cx = o.order_type==='CANCEL', px = v => num(v)!=null ? fN(v,2) : '–', leg = x => x==null ? '' : (x.ok ? ' <span class="pos">✓</span>' : ' <span class="neg">✗</span>');
   const port = (PORTS.find(p=>String(p.id)===String(o.portfolio_id)) || {}).name || '–';
   const t = new Date(o.created_at).toLocaleString('th-TH', {day:'numeric', month:'short', year:'2-digit', hour:'2-digit', minute:'2-digit'});
   return `<tr class="${o.ok?'':'oFail'}"><td style="white-space:nowrap">${t}</td><td>${esc(port)}</td>`
     + `<td style="white-space:nowrap">${EX_NAME[o.exchange]||esc(o.exchange)} <span class="envB ${o.testnet?'demo':'live'}">${o.testnet?'ทดลอง':'จริง'}</span></td>`
-    + `<td><span class="badge ${L?'Long':'Short'}">${L?'Long':'Short'}</span></td><td>${esc(o.order_type||'–')}</td>`
+    + `<td>${o.side ? `<span class="badge ${L?'Long':'Short'}">${L?'Long':'Short'}</span>` : '–'}</td><td>${cx ? 'ยกเลิก '+esc(r.kind||'') : esc(o.order_type||'–')}</td>`
     + `<td class="mono">${px(o.price ?? r.price)}</td><td class="mono">${o.qty!=null ? fN(o.qty,4) : '–'}</td><td class="mono">${o.leverage!=null ? fN(o.leverage,2)+'x' : '–'}</td>`
     + `<td class="mono">${px(o.tp)}${o.ok?leg(r.tp):''}</td><td class="mono">${px(o.sl)}${o.ok?leg(r.sl):''}</td>`
-    + `<td>${o.ok ? '<span class="badge Win">ส่งแล้ว</span>' : '<span class="badge Loss">ไม่สำเร็จ</span>'}</td>`
+    + `<td>${!o.ok ? '<span class="badge Loss">ไม่สำเร็จ</span>' : cx ? '<span class="badge mode">ยกเลิกแล้ว</span>' : '<span class="badge Win">ส่งแล้ว</span>'}</td>`
     + `<td class="oNote">${o.ok ? '#'+esc(r.orderId||'–')+(r.status?' · '+esc(r.status):'') : esc(o.message||'')}</td></tr>`;
 }
 const EX_REGION = 'ap-southeast-1';   // เรียก Edge Function จากสิงคโปร์ (Binance บล็อก IP สหรัฐฯ)
@@ -4335,11 +4418,13 @@ async function tradeFn(body){
   return data;
 }
 // โหมดตัวอย่าง: จำลองการตอบกลับ
-let DEMO_KEYS = [];
+let DEMO_KEYS = [], DEMO_CXL = new Set();
 async function demoTradeFn(b){
   await new Promise(r=>setTimeout(r,400));
   if (b.action==='saveKey'){ const k = {id:'k'+Date.now(), exchange:b.exchange, testnet:b.exchange==='mexc'?false:!!b.testnet, key_hint:String(b.apiKey||b.token||'').slice(-4), created_at:new Date().toISOString()}; DEMO_KEYS = DEMO_KEYS.filter(x=>!(x.exchange===k.exchange && x.testnet===k.testnet)).concat(k); return {ok:true, testnet:k.testnet}; }
   if (b.action==='balance') return {ok:true, info:{currency:'USDT', available:1000, balance:1000}};
+  if (b.action==='open'){ const m = otRefPrice() || 84000, e = 84000, q = 0.0168; return {ok:true, positions: DEMO_ORDERS.length ? [{side:'SELL', qty:q, entry:e, mark:m, pnl:(e-m)*q, leverage:10, liq:e*1.095, margin:e*q/10}] : [], orders: DEMO_ORDERS.length ? [{id:'tp', side:'BUY', type:'TAKE_PROFIT_MARKET', trigger:83594.51, close:true},{id:'sl', side:'BUY', type:'STOP_MARKET', trigger:84456.01, close:true}].filter(o=>!DEMO_CXL.has(o.id)) : []}; }
+  if (b.action==='cancel'){ DEMO_CXL.add(b.orderId); DEMO_ORDERS.unshift({created_at:new Date().toISOString(), portfolio_id:b.portfolioId, exchange:b.exchange, testnet:b.testnet, side:b.side, order_type:'CANCEL', price:b.price, ok:true, response:{orderId:b.orderId, status:'CANCELED', kind:b.kind}}); return {ok:true, result:{}}; }
   if (b.action==='placeOrder'){ const result = {orderId:'DEMO-'+Date.now(), status:'NEW', qty:b.qty, price:b.price, tp:b.tp?{ok:true}:null, sl:b.sl?{ok:true}:null}; DEMO_ORDERS.unshift({created_at:new Date().toISOString(), portfolio_id:b.portfolioId, exchange:b.exchange, testnet:b.testnet, side:b.side, order_type:b.type, qty:b.qty, price:b.price, leverage:b.leverage, tp:b.tp, sl:b.sl, ok:true, response:result}); return {ok:true, result}; }
   throw new Error('ไม่รู้จักคำสั่ง');
 }
@@ -4388,7 +4473,7 @@ async function saveExKey(){
   const b = $('ex_btn'); btnBusy(b, true, 'กำลังตรวจสอบกับตลาด…'); $('ex_msg').textContent = '';
   try{
     const r = await tradeFn(body);
-    btnBusy(b, false); exPaintForm(); await loadExKeys(); exPaintList();
+    btnBusy(b, false); exPaintForm(); await loadExKeys(); exPaintList(); LIVE.data = {}; livePoll();
     $('ex_msg').innerHTML = '<span class="pos">เชื่อม '+EX_NAME[ex]+' ('+(r.testnet?'ทดลอง':'จริง')+') แล้ว</span>';
   }catch(e){ btnBusy(b, false); $('ex_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
 }
@@ -4478,6 +4563,7 @@ async function sendOrder(){
       + (warn ? '<br><span class="neg">ตั้ง TP/SL บางรายการไม่สำเร็จ — ตรวจสอบและตั้งเองในแอปตลาด</span>' : '');
     toast('ส่งคำสั่งไป '+EX_NAME[k.exchange]+(k.testnet?' (ทดลอง)':'')+' แล้ว');
     b.disabled = true;   // กันกดซ้ำ
+    setTimeout(livePoll, 1500);   // แสดงสถานะใหม่เร็ว ๆ
     if ($('ot_journal').checked){ setTimeout(()=>{ closeOrder(); save(); }, 900); }
   }catch(e){ btnBusy(b, false); $('ot_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
 }

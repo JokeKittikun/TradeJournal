@@ -76,7 +76,6 @@ a.btn{text-decoration:none;display:inline-block}
 .ic{display:inline-block;vertical-align:-2px;flex:none}
 .btn .ic{margin-right:5px}.btn.icon .ic{margin-right:0}.btn.icon{padding:4px 6px;line-height:0}
 #drawBar .ic,#drawDel .ic{vertical-align:middle}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:2px 0 10px}
 .kpi{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:8px 11px}
 .kpi .l{color:var(--muted);font-size:11px}
 .kpi .v{font-size:17px;font-weight:600;margin-top:1px}
@@ -359,6 +358,24 @@ table.mkt td:nth-child(2){text-align:right}   /* คอลัมน์ M30 ก�
 table.mkt td:last-child,table.mkt th:last-child{text-align:left;font-family:'IBM Plex Sans Thai',sans-serif}
 table.mkt tr.today td{background:rgba(247,166,0,.06)}
 .st{font-size:12px;font-weight:500}
+/* เป้าหมายพอร์ต */
+.glTop{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.glTop .v{font:600 22px 'JetBrains Mono',monospace}
+.glTop .v small{font-size:13px;color:var(--muted);font-weight:500}
+.glTop .p{font:600 15px 'JetBrains Mono',monospace;color:var(--accent)}
+.glBar{position:relative;height:12px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);overflow:hidden;margin:10px 0 8px}
+.glBar i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,#f7a600,#ffc24d);transition:width .6s ease}
+.glMeta{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.glMeta b{color:var(--text);font-weight:600}
+#goalCard.done{border-color:rgba(34,197,94,.55);background:linear-gradient(180deg,rgba(34,197,94,.08),transparent 70%),var(--panel)}
+#goalCard.done .glTop .p{color:#22c55e}
+#goalCard.done .glBar i{background:linear-gradient(90deg,#16a34a,#4ade80)}
+.glWin{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;background:rgba(34,197,94,.14);border:1px solid rgba(34,197,94,.4);color:#22c55e;font-size:12px;font-weight:600}
+.glEmpty{font-size:13px;color:var(--muted);line-height:1.7}
+.glQuick{display:flex;gap:6px;flex-wrap:wrap;margin:-4px 0 8px}
+.glQuick button{padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font:500 12px 'JetBrains Mono',monospace;cursor:pointer}
+.glQuick button:hover{border-color:var(--accent);color:var(--accent)}
+body.ro .goalBtn{display:none!important}
 /* สถานะฐานข้อมูล (Super Admin) */
 .modal.dbModal{max-width:760px}
 .dbBody{padding:26px 28px 30px}
@@ -411,7 +428,6 @@ html,body{overscroll-behavior-y:contain}
 @media (max-width:480px){ .top .demo{display:none} .top .btn{padding:6px 9px} }
 @media (max-width:720px){
   #chart{height:400px!important}
-  .kpis{grid-template-columns:repeat(2,1fr)}
   .split{grid-template-columns:1fr}
   .row3{grid-template-columns:1fr 1fr}
 }
@@ -492,12 +508,6 @@ body.chFs #confirmBox{z-index:55}
       <button class="btn sm" id="syncBtn" onclick="hardReload()" title="Hard reload (ข้ามแคช)"><i data-ic="refresh-cw"></i><span class="bl">รีเฟรช</span></button>
       <div class="portDD profDD"><button class="profBtn" id="profBtn" onclick="toggleProfMenu()" title="บัญชีและการจัดการ" aria-haspopup="menu"><span class="avatar" id="profAvatar">?</span><span class="pdot" id="profDot" hidden></span><i data-ic="chevron-down" data-sz="12"></i></button><div class="portMenu profMenu" id="profMenu" role="menu" hidden></div></div>
     </div>
-    <div class="kpis">
-      <div class="kpi"><div class="l">Balance</div><div class="v mono" id="kBal">–</div></div>
-      <div class="kpi"><div class="l">ผลตอบแทนรวม</div><div class="v mono" id="kRet">–</div></div>
-      <div class="kpi"><div class="l">Win rate</div><div class="v mono" id="kWin">–</div></div>
-      <div class="kpi"><div class="l">เทรดที่ปิดแล้ว</div><div class="v mono" id="kCnt">–</div></div>
-    </div>
   </div>
 </header>
 
@@ -513,6 +523,10 @@ body.chFs #confirmBox{z-index:55}
     </div>
     <div id="portDash" hidden>
     <button class="btn primary homeNew" onclick="showView('form')"><i data-ic="circle-plus" data-sz="16"></i>บันทึกเทรดใหม่&nbsp;·&nbsp;<span id="dashPort"></span></button>
+    <div class="card homeCard" id="goalCard">
+      <h3 style="display:flex;align-items:center">เป้าหมาย<span class="spacer" style="flex:1"></span><button class="btn sm goalBtn" id="goalBtn" onclick="openGoal()"><i data-ic="target" data-sz="14"></i><span id="goalBtnTxt">ตั้งเป้าหมาย</span></button></h3>
+      <div id="goalBody"></div>
+    </div>
     <div class="card homeCard">
       <h3>เดือนนี้ <span class="hint" id="hMonth" style="margin:0;font-weight:400"></span></h3>
       <div class="hStats" id="hStats"></div>
@@ -794,6 +808,14 @@ body.chFs #confirmBox{z-index:55}
   <div class="actions"><button class="btn" id="qe_full" style="margin-right:auto">แก้ไขทั้งหมด</button><button class="btn" onclick="closeQuickEdit()">ยกเลิก</button><button class="btn primary" id="qe_btn" onclick="saveQuickEdit()">บันทึก</button></div>
 </div></div>
 
+<div class="overlay" id="goalBox"><div class="modal" style="max-width:400px">
+  <h3 style="margin:0 0 4px;display:flex;align-items:center;gap:8px"><i data-ic="target" data-sz="18"></i> เป้าหมายพอร์ต</h3>
+  <div class="hint" id="gl_sub" style="margin:0 0 12px"></div>
+  <div class="field"><label>Balance เป้าหมาย ($)</label><input id="gl_val" type="number" step="any" min="0" inputmode="decimal" placeholder="เช่น 500"></div>
+  <div class="glQuick" id="gl_quick"></div>
+  <div class="hint" id="gl_msg" style="min-height:18px"></div>
+  <div class="actions"><button class="btn ghostDanger" id="gl_del" onclick="saveGoal(null)">ลบเป้าหมาย</button><span class="spacer" style="flex:1"></span><button class="btn" onclick="closeGoal()">ยกเลิก</button><button class="btn primary" id="gl_btn" onclick="saveGoal()">บันทึก</button></div>
+</div></div>
 <div class="overlay" id="dbBox"><div class="modal admModal dbModal">
   <div class="admHead">
     <div class="admIc"><i data-ic="database" data-sz="18"></i></div>
@@ -882,6 +904,8 @@ const ICONS = {
   'trending-up':'<path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/>',
   'trending-down':'<path d="M16 17h6v-6"/><path d="m22 17-8.5-8.5-5 5L2 7"/>',
   'database':'<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>',
+  'target':'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  'trophy':'<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
   'maximize':'<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>',
   'minimize':'<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>',
   'rotate-ccw':'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
@@ -979,11 +1003,18 @@ function sbToRow(d){
   return r;
 }
 function sbFromRow(r){ const d = {}; Object.entries(SB_COLS).forEach(([k,c])=>{ d[k] = r[c]==null ? '' : r[c]; }); return d; }
+// คอลัมน์ goal (เป้าหมายพอร์ต) เพิ่มทีหลัง → ถ้าฐานข้อมูลยังไม่มีคอลัมน์นี้ ให้ทำงานต่อได้โดยไม่มีเป้าหมาย (ไม่พังทั้งแอป)
+let GOAL_COL = true;
+async function pcols(build){
+  const base = 'id,user_id,name,start_capital,sort,created_at';
+  try{ return await sbq(build(GOAL_COL ? base+',goal' : base)); }
+  catch(e){ if (GOAL_COL && /goal/.test(e.message||'') && /exist|column/i.test(e.message||'')){ GOAL_COL = false; return sbq(build(base)); } throw e; }
+}
 // ตัวต่อฐานข้อมูล (แยกไว้ เพื่อทดสอบด้วยฐานข้อมูลจำลองได้)
 const SBDB = {
-  ports: uid => sbq(sb.from('portfolios').select('id,user_id,name,start_capital,sort,created_at').eq('user_id', uid || (SB_USER && SB_USER.id)).order('sort').order('created_at')),
-  portsByIds: ids => ids.length ? sbq(sb.from('portfolios').select('id,user_id,name,start_capital,sort,created_at').in('id', ids).order('created_at')) : Promise.resolve([]),
-  portOne: pid => sbq(sb.from('portfolios').select('id,user_id,name,start_capital,sort,created_at').eq('id', pid).maybeSingle()),
+  ports: uid => pcols(c=>sb.from('portfolios').select(c).eq('user_id', uid || (SB_USER && SB_USER.id)).order('sort').order('created_at')),
+  portsByIds: ids => ids.length ? pcols(c=>sb.from('portfolios').select(c).in('id', ids).order('created_at')) : Promise.resolve([]),
+  portOne: pid => pcols(c=>sb.from('portfolios').select(c).eq('id', pid).maybeSingle()),
   myShares: () => sbq(sb.rpc('my_shared_ports')),
   rpc: (fn, args) => sbq(sb.rpc(fn, args || {})),
   async rows(pid, cols){ if (Array.isArray(pid) && !pid.length) return []; const out=[]; for (let a=0;;a+=1000){ let q = sb.from('trades').select(cols||'*').order('seq').range(a, a+999); if (Array.isArray(pid)) q = q.in('portfolio_id', pid); else if (pid) q = q.eq('portfolio_id', pid); const part = await sbq(q); out.push(...part); if (part.length < 1000) return out; } },
@@ -1020,7 +1051,7 @@ function sbBuild(port, rows){
 function sbSummary(port, rows){
   const d = sbBuild(port, rows), c = d.trades.filter(t=>num(t.diff)!=null);
   let bal = num(port.start_capital); d.trades.forEach(t=>{ if (num(t.bal)!=null) bal = +t.bal; });
-  return {id:port.id, name:port.name, capital:num(port.start_capital), balance:bal, trades:d.trades.length, closed:c.length, wins:c.filter(t=>t.diff>0).length, losses:c.filter(t=>t.diff<0).length};
+  return {id:port.id, name:port.name, capital:num(port.start_capital), goal:num(port.goal), balance:bal, trades:d.trades.length, closed:c.length, wins:c.filter(t=>t.diff>0).length, losses:c.filter(t=>t.diff<0).length};
 }
 async function sbPorts(){
   const uid = VIEW_AS ? VIEW_AS.id : SB_USER.id;
@@ -1091,6 +1122,13 @@ async function sbCall(fn, a){
       await SBDB.updatePort(pid, {name});
       return {version:SB_VERSION, ports: await sbPorts()};
     }
+    case 'setGoal': {
+      if (!GOAL_COL) throw new Error('ยังไม่ได้เพิ่มคอลัมน์เป้าหมายในฐานข้อมูล — รัน SQL ใน supabase/schema.sql ก่อน');
+      const g = a[1]==null || a[1]==='' ? null : +a[1];
+      if (g!=null && !(g>0)) throw new Error('เป้าหมายต้องมากกว่า 0');
+      await SBDB.updatePort(a[0], {goal:g});
+      return {version:SB_VERSION, ports: await sbPorts()};
+    }
     case 'deletePort': {
       await SBDB.deletePort(a[0]);
       return {ok:true, removed:a[0], version:SB_VERSION};
@@ -1121,7 +1159,7 @@ const DEMO_PORTS = [{id:'0', name:'พอร์ตตัวอย่าง', sto
 function demoStore(){ const p = DEMO_PORTS.find(x=>x.id===String(PORT)) || DEMO_PORTS[0]; return p.store; }
 function demoList(){ return {version:7, ports: DEMO_PORTS.map(p=>{ const d = demoTrades(p.store), c = d.trades.filter(t=>num(t.diff)!=null);
   let bal = p.store.capital; d.trades.forEach(t=>{ if (num(t.bal)!=null) bal=+t.bal; });
-  return {id:p.id, name:p.name, capital:p.store.capital, balance:bal, trades:d.trades.length, closed:c.length, wins:c.filter(t=>t.diff>0).length, losses:c.filter(t=>t.diff<0).length}; })}; }
+  return {id:p.id, name:p.name, capital:p.store.capital, goal:p.goal||null, balance:bal, trades:d.trades.length, closed:c.length, wins:c.filter(t=>t.diff>0).length, losses:c.filter(t=>t.diff<0).length}; })}; }
 function demoTrades(store){
   const demo = store || demoStore();
   let cap = demo.capital; const count = {};
@@ -1151,6 +1189,7 @@ function apiRaw(fn, ...args){
     if (fn==='addPort'){ const n=String(args[0]||'').trim(); if(!n) return rej(new Error('ใส่ชื่อพอร์ต')); if (DEMO_PORTS.some(p=>p.name.toLowerCase()===n.toLowerCase())) return rej(new Error('มีพอร์ตชื่อ "'+n+'" อยู่แล้ว'));
       const id = String(Date.now()%1e6); DEMO_PORTS.push({id, name:n, store:{capital:+args[1], rows:[]}}); const o = demoList(); o.added = id; return res(o); }
     if (fn==='deletePort'){ const i = DEMO_PORTS.findIndex(x=>x.id===String(args[0])); if (i>=0) DEMO_PORTS.splice(i,1); return res(demoList()); }
+    if (fn==='setGoal'){ const p = DEMO_PORTS.find(x=>x.id===String(args[0])); if (p) p.goal = args[1]==null||args[1]==='' ? null : +args[1]; return res(demoList()); }
     if (fn==='renamePort'){ const p = DEMO_PORTS.find(x=>x.id===String(args[0])); if (p) p.name = String(args[1]).trim(); return res(demoList()); }
     const demo = demoStore();
     if (fn==='addTrade') demo.rows.push(args[0]);
@@ -1288,11 +1327,55 @@ function equityChart(canvas, prev, cap, trades, startTitle){
 }
 // ---------- หน้าแรก ----------
 let homeChart;
+// ---------- เป้าหมายพอร์ต ----------
+// ความคืบหน้า = (Balance − ทุนเริ่มต้น) / (เป้าหมาย − ทุนเริ่มต้น) · ถึง 100% = สำเร็จ
+function goalProgress(p){
+  const g = num(p.goal), cap = num(DATA.capital!=null ? DATA.capital : p.capital), bal = lastBalance();
+  if (g==null || bal==null) return null;
+  const pc = (cap!=null && g>cap) ? (bal-cap)/(g-cap) : bal/g;
+  return {g, cap, bal, pc, done: bal >= g};
+}
+function renderGoal(p){
+  const card = $('goalCard'), body = $('goalBody'), r = goalProgress(p);
+  const own = !p.access || p.access==='owner';
+  $('goalBtn').hidden = !own || !!VIEW_AS; $('goalBtnTxt').textContent = r ? 'แก้ไข' : 'ตั้งเป้าหมาย';
+  card.classList.toggle('done', !!(r && r.done));
+  if (!r){ body.innerHTML = `<div class="glEmpty">${own && !VIEW_AS ? 'ยังไม่ได้ตั้งเป้าหมาย — ตั้งยอด Balance ที่อยากไปถึง แล้วติดตามความคืบหน้าได้ที่นี่' : 'พอร์ตนี้ยังไม่ได้ตั้งเป้าหมาย'}</div>`; return; }
+  const w = Math.max(0, Math.min(100, r.pc*100)), left = r.g - r.bal;
+  body.innerHTML = `<div class="glTop"><div class="v">$${fN(r.bal)} <small>/ $${fN(r.g)}</small></div>`
+    + (r.done ? `<span class="glWin">${ic('trophy',14)} สำเร็จแล้ว · ${fN(r.pc*100,1)}%</span>` : `<div class="p">${fN(Math.max(0,r.pc*100),1)}%</div>`) + '</div>'
+    + `<div class="glBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${w.toFixed(0)}"><i style="width:${w}%"></i></div>`
+    + `<div class="glMeta"><span>เริ่ม <b>$${fN(r.cap)}</b></span><span>${r.done ? `เกินเป้า <b class="pos">+$${fN(-left)}</b>` : `อีก <b>$${fN(left)}</b> ถึงเป้า`}</span></div>`;
+}
+function openGoal(){
+  const p = curPort(); if (!p || roBlock()) return;
+  const bal = lastBalance(), cap = num(DATA.capital);
+  $('gl_sub').textContent = `พอร์ต ${p.name} · Balance ตอนนี้ $${fN(bal)} · ทุนเริ่มต้น $${fN(cap)}`;
+  $('gl_val').value = num(p.goal)!=null ? p.goal : ''; $('gl_msg').textContent = ''; $('gl_del').hidden = num(p.goal)==null;
+  const base = bal || cap || 0;
+  $('gl_quick').innerHTML = base ? [['+25%',1.25],['+50%',1.5],['x2',2],['x3',3],['x5',5]].map(([l,m])=>`<button type="button" onclick="$('gl_val').value=${Math.round(base*m*100)/100}">${l} · $${fN(base*m,0)}</button>`).join('') : '';
+  $('goalBox').classList.add('on'); setTimeout(()=>$('gl_val').focus(), 50);
+}
+function closeGoal(){ $('goalBox').classList.remove('on'); }
+async function saveGoal(clear){
+  const p = curPort(); if (!p) return;
+  const v = clear===null ? null : num($('gl_val').value);
+  if (clear!==null && !(v>0)) return $('gl_msg').innerHTML = '<span class="neg">ใส่เป้าหมายมากกว่า 0</span>';
+  const b = $('gl_btn'); btnBusy(b, true, 'กำลังบันทึก…'); $('gl_msg').textContent = '';
+  try{
+    const r = await apiRaw('setGoal', p.id, v);
+    if (r && Array.isArray(r.ports)) PORTS = r.ports; else p.goal = v;
+    btnBusy(b, false); closeGoal(); cacheSave(); renderHome(); toast(v==null ? 'ลบเป้าหมายแล้ว' : 'ตั้งเป้าหมาย $'+fN(v)+' แล้ว');
+  }catch(e){ btnBusy(b, false); $('gl_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
+}
+$('gl_val').addEventListener('keydown', e=>{ if (e.key==='Enter') saveGoal(); if (e.key==='Escape') closeGoal(); });
+
 function renderHome(){
   if (!$('v-home')) return;
   renderPorts();
   const p = curPort(); $('portDash').hidden = !p; if (!p) return;
   $('dashPort').textContent = p.name;
+  renderGoal(p);
   const ym = thToday().slice(0,7);
   const T = DATA.trades.filter(t=>String(t.date).slice(0,7)===ym);
   const c = T.filter(t=>num(t.diff)!=null), w = c.filter(t=>t.diff>0).length, l = c.filter(t=>t.diff<0).length;
@@ -1653,17 +1736,9 @@ function side(t){
   return {mode:'', pos:'', tf:''};
 }
 function closed(){ return DATA.trades.filter(t=>num(t.diff)!=null); }
-function renderAll(){ syncPortSummary(); try{ syncDrawFromData(); }catch(e){} cacheSave(); renderKpis(); renderList(); try{ renderPorts(); }catch(e){} if($('v-home').classList.contains('on')) try{ renderHome(); }catch(e){} if (typeof drawSaved==='function') try{ drawSaved(); }catch(e){} if($('v-stats').classList.contains('on')) renderStats(); recalc(); }
+function renderAll(){ syncPortSummary(); try{ syncDrawFromData(); }catch(e){} cacheSave(); renderList(); try{ renderPorts(); }catch(e){} if($('v-home').classList.contains('on')) try{ renderHome(); }catch(e){} if (typeof drawSaved==='function') try{ drawSaved(); }catch(e){} if($('v-stats').classList.contains('on')) renderStats(); recalc(); }
 function lastBalance(){
   let b = num(DATA.capital); DATA.trades.forEach(t=>{ if(num(t.bal)!=null) b=+t.bal; }); return b;
-}
-function renderKpis(){
-  const c = closed(), w = c.filter(t=>t.result==='Win').length, l = c.filter(t=>t.result==='Loss').length;
-  const bal = lastBalance(), cap = num(DATA.capital);
-  $('kBal').textContent = bal!=null ? '$'+fN(bal) : '–';
-  const r = cap ? bal/cap-1 : null; $('kRet').textContent = pct(r); $('kRet').className='v mono '+cls(r);
-  $('kWin').textContent = (w+l) ? fN(w/(w+l)*100,1)+'%' : '–';
-  $('kCnt').textContent = c.length;
 }
 function renderList(){
   const fr=$('flRes').value, ft=$('flTf').value, fp=$('flPos').value;

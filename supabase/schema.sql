@@ -13,6 +13,8 @@ create table if not exists public.portfolios (
   sort          int not null default 0,
   created_at    timestamptz not null default now()
 );
+-- เป้าหมาย Balance ของพอร์ต (ว่าง = ยังไม่ตั้ง) · เพิ่มภายหลัง รันซ้ำได้
+alter table public.portfolios add column if not exists goal numeric check (goal is null or goal > 0);
 create unique index if not exists portfolios_user_name_uq on public.portfolios (user_id, lower(name));
 create index if not exists portfolios_user_idx on public.portfolios (user_id, sort, created_at);
 

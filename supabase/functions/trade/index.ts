@@ -63,13 +63,28 @@ const roundTo = (v: number, step: number) => +(Math.round(v / step) * step).toFi
 // Binance USDⓈ-M Futures
 // ============================================================
 const BN = (t: boolean) => t ? 'https://testnet.binancefuture.com' : 'https://fapi.binance.com';
-async function bnReq(c: any, testnet: boolean, method: string, path: string, params: Record<string, unknown> = {}) {
+// Binance จำกัดตาม IP ของเซิร์ฟเวอร์: โดน 429 แล้วยังเรียกต่อ = โดนแบน (418) และแบนนานขึ้นเรื่อย ๆ (สูงสุด 3 วัน)
+// → จำเวลาที่ห้ามเรียก แล้วไม่เรียก Binance เลยจนกว่าจะพ้น (ต่อ instance ของฟังก์ชัน) · ส่ง retryAt ให้หน้าเว็บหยุดดึงด้วย
+const BN_BAN: Record<string, number> = {};
+const bnBanErr = (until: number) => { const e: any = new UserError('Binance จำกัดการเรียกจากเซิร์ฟเวอร์ชั่วคราว — ใช้ได้อีกครั้งเวลา ' + new Date(until).toLocaleTimeString('th-TH', { timeZone: 'Asia/Bangkok', hour: '2-digit', minute: '2-digit' }) + ' น.'); e.retryAt = until; return e; };
+// signed = false: คำขอที่ใช้แค่ API Key (เช่น listenKey ของ User Data Stream)
+async function bnReq(c: any, testnet: boolean, method: string, path: string, params: Record<string, unknown> = {}, signed = true) {
+  const host = BN(testnet);
+  if ((BN_BAN[host] || 0) > Date.now()) throw bnBanErr(BN_BAN[host]);
   const q = new URLSearchParams();
   Object.entries(params).forEach(([k, v]) => { if (v !== undefined && v !== null && v !== '') q.set(k, String(v)); });
-  q.set('recvWindow', '5000'); q.set('timestamp', String(Date.now()));
-  q.set('signature', await hmacHex(c.secret, q.toString()));
-  const r = await fetch(BN(testnet) + path + '?' + q, { method, headers: { 'X-MBX-APIKEY': c.key } });
+  if (signed) {
+    q.set('recvWindow', '5000'); q.set('timestamp', String(Date.now()));
+    q.set('signature', await hmacHex(c.secret, q.toString()));
+  }
+  const qs = q.toString();
+  const r = await fetch(host + path + (qs ? '?' + qs : ''), { method, headers: { 'X-MBX-APIKEY': c.key } });
   const j: any = await r.json().catch(() => ({}));
+  if (r.status === 429 || r.status === 418 || j.code === -1003) {
+    const m = /banned until (\d{12,})/i.exec(j.msg || ''), ra = +(r.headers.get('Retry-After') || 0);
+    BN_BAN[host] = Math.max(BN_BAN[host] || 0, m ? +m[1] : Date.now() + (ra > 0 ? ra * 1000 : 60_000));
+    throw bnBanErr(BN_BAN[host]);
+  }
   if (r.status === 451 || r.status === 403) bad('Binance ปฏิเสธจากตำแหน่งเซิร์ฟเวอร์ (ภูมิภาคที่ถูกจำกัด) — ติดต่อผู้ดูแล');
   if (!r.ok || (typeof j.code === 'number' && j.code < 0)) { const e: any = new UserError('Binance: ' + (j.msg || 'HTTP ' + r.status) + (j.code ? ` (${j.code})` : '')); e.code = j.code; throw e; }
   return j;
@@ -122,7 +137,7 @@ const binance = {
     const pos: any[] = await bnReq(c, testnet, 'GET', '/fapi/v2/positionRisk', { symbol: sym });
     const ords: any[] = await bnReq(c, testnet, 'GET', '/fapi/v1/openOrders', { symbol: sym });
     let algo: any[] = [];
-    try { const a: any = await bnReq(c, testnet, 'GET', '/fapi/v1/openAlgoOrders', { symbol: sym }); algo = Array.isArray(a) ? a : (a.orders || []); } catch (_) { /* ยังไม่มีระบบ Algo Order ในบัญชีนี้ */ }
+    try { const a: any = await bnReq(c, testnet, 'GET', '/fapi/v1/openAlgoOrders', { symbol: sym }); algo = Array.isArray(a) ? a : (a.orders || []); } catch (e: any) { if (e.retryAt) throw e; /* ยังไม่มีระบบ Algo Order ในบัญชีนี้ */ }
     return {
       positions: pos.filter(p => +p.positionAmt !== 0).map(p => ({ side: +p.positionAmt > 0 ? 'BUY' : 'SELL', qty: Math.abs(+p.positionAmt), entry: +p.entryPrice, mark: +p.markPrice, pnl: +p.unRealizedProfit, leverage: +p.leverage, liq: +p.liquidationPrice || null, margin: +p.isolatedMargin || null })),
       orders: ords.map(o => ({ ...o, _algo: false })).concat(algo.map(o => ({ ...o, _algo: true }))).map(o => ({ id: o._algo ? o.algoId : o.orderId, algo: o._algo, side: o.side, type: o.type || o.orderType, price: +o.price || null, trigger: +(o.stopPrice || o.triggerPrice) || null, qty: +(o.origQty || o.quantity) || null, close: o.closePosition === true || o.closePosition === 'true' || o.reduceOnly === true, time: o.time || o.createTime })),
@@ -131,6 +146,12 @@ const binance = {
   async cancel(c: any, testnet: boolean, id: string, algo: boolean) {
     if (algo) return bnReq(c, testnet, 'DELETE', '/fapi/v1/algoOrder', { algoId: id });
     return bnReq(c, testnet, 'DELETE', '/fapi/v1/order', { symbol: 'BTCUSDT', orderId: id });
+  },
+  // User Data Stream: หน้าเว็บต่อ WebSocket ของ Binance เองด้วย listenKey (ได้เหตุการณ์คำสั่ง/สถานะทันที ไม่ต้องดึงถี่)
+  // POST ครั้งแรก = สร้าง · POST ซ้ำขณะยังใช้ได้ = ได้ key เดิมและต่ออายุอีก 60 นาที (หน้าเว็บเรียกซ้ำทุก 30 นาที)
+  async listenKey(c: any, testnet: boolean) {
+    const r = await bnReq(c, testnet, 'POST', '/fapi/v1/listenKey', {}, false);
+    return { listenKey: r.listenKey };
   },
 };
 
@@ -262,6 +283,12 @@ Deno.serve(async (req) => {
     // ---------- สถานะที่เปิดอยู่ + คำสั่งที่รอ ----------
     if (b.action === 'open') return json({ ok: true, ...(await A.open(await loadCred(!!b.testnet), !!b.testnet)) });
 
+    // ---------- listenKey สำหรับ WebSocket (สร้าง / ต่ออายุ) ----------
+    if (b.action === 'listenKey') {
+      if (!A.listenKey) bad('ตลาดนี้ยังไม่รองรับการอัปเดตแบบ WebSocket');
+      return json({ ok: true, ...(await A.listenKey(await loadCred(!!b.testnet), !!b.testnet)) });
+    }
+
     // ---------- ยกเลิกคำสั่งที่รอ ----------
     if (b.action === 'cancel') {
       const testnet = !!b.testnet, id = String(b.orderId || ''); if (!id) bad('ไม่พบเลขคำสั่ง');
@@ -300,6 +327,7 @@ Deno.serve(async (req) => {
     }
     bad('ไม่รู้จักคำสั่ง');
   } catch (e: any) {
+    if (e?.retryAt) return json({ ok: false, error: e.message, retryAt: e.retryAt }, 429);   // หน้าเว็บหยุดดึงจนถึงเวลานี้
     return json({ ok: false, error: e instanceof UserError ? e.message : 'เกิดข้อผิดพลาด: ' + (e?.message || e) }, e instanceof UserError ? 400 : 500);
   }
   return json({ ok: false, error: 'unreachable' }, 500);

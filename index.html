@@ -118,7 +118,8 @@ body.syncing #syncBtn .ic{animation:spin 1s linear infinite}
 .admSearch{flex:1;min-width:180px;display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:0 10px;color:var(--muted)}
 .admSearch:focus-within{border-color:var(--accent)}
 .admSearch input{border:0;background:none;padding:8px 0;outline:none}
-.admCols,.uRow{display:grid;grid-template-columns:minmax(0,1fr) 100px 90px 104px 86px minmax(110px,auto);gap:12px;align-items:center}
+/* ทุกคอลัมน์กว้างคงที่ (ยกเว้นผู้ใช้) → หัวตารางกับทุกแถวตรงกัน ไม่ขึ้นกับจำนวนปุ่มในแถว */
+.admCols,.uRow{display:grid;grid-template-columns:minmax(0,1fr) 100px 80px 110px 76px 226px;gap:12px;align-items:center}
 .admCols{padding:6px 20px;font-size:11px;color:var(--muted);text-transform:none;letter-spacing:.2px;border-bottom:1px solid var(--line)}
 .admList{display:flex;flex-direction:column}
 .uRow{padding:12px 20px;border-bottom:1px solid var(--line);position:relative}
@@ -137,18 +138,24 @@ body.syncing #syncBtn .ic{animation:spin 1s linear infinite}
 .pill.pending{background:rgba(247,166,0,.14);color:var(--accent)}.pill.active{background:rgba(34,197,94,.12);color:var(--green)}.pill.disabled{background:rgba(239,68,68,.12);color:var(--red)}
 .rolePill{font:600 11px 'IBM Plex Sans Thai',sans-serif;padding:2px 9px;border-radius:99px;background:var(--panel2);color:var(--muted);white-space:nowrap}
 .rolePill.super_admin{background:rgba(247,166,0,.14);color:var(--accent)}.rolePill.admin{background:rgba(58,160,255,.14);color:#3aa0ff}
-.roleSel{width:auto;max-width:110px;padding:4px 8px;font-size:12px;border-radius:7px}
+.roleSel{width:100%;max-width:100px;height:28px;padding:0 8px;font-size:12px;border-radius:7px}
+.uRole,.uStat{min-width:0}
 .uData{font-size:12px;line-height:1.35}.uData .mono{font-weight:600}.uData .s{color:var(--muted);font-size:11px}
 .uSeen{font-size:12px;color:var(--muted);white-space:nowrap}
-.uActs{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
-.uActs .btn{white-space:nowrap}
+/* ปุ่มจัดการ: ช่องตายตัว [ดูพอร์ต][ส่งออเดอร์][สถานะ][ลบ] → ปุ่มชนิดเดียวกันอยู่ตำแหน่งเดียวกันทุกแถว */
+.uActs{display:grid;grid-template-columns:28px 28px minmax(0,1fr) 28px;gap:6px;align-items:center}
+.uActs .slot{display:flex;gap:6px;justify-content:flex-end;min-width:0}
+.uActs .btn{white-space:nowrap;height:28px;display:inline-flex;align-items:center;justify-content:center;gap:4px}
+.uActs .btn.icon{width:28px;padding:0}
+.uActs .btn .ic{margin-right:0}
 #du_btn:disabled{opacity:.4;cursor:not-allowed}
 .btn.ghostDanger{background:none;color:var(--red);border-color:rgba(239,68,68,.35)}
 .btn.ghostDanger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
 .admEmpty{padding:36px 20px;text-align:center;color:var(--muted);font-size:13px}
 @media (max-width:760px){
   .admCols{display:none}
-  .uRow{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"who acts" "tags tags" "data seen";gap:8px 10px}
+  .uRow{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"who who" "tags tags" "data seen" "acts acts";gap:8px 10px}
+  .uActs{padding-left:44px;max-width:300px}
   .uWho{grid-area:who}.uActs{grid-area:acts}
   .uTags{grid-area:tags;display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding-left:44px}
   .uData{grid-area:data;padding-left:44px;color:var(--muted)}
@@ -156,7 +163,6 @@ body.syncing #syncBtn .ic{animation:spin 1s linear infinite}
   .uSeen{grid-area:seen;font-size:11px;text-align:right}
 }
 @media (min-width:761px){ .uTags{display:contents} }
-@media (max-width:460px){ .uRow{grid-template-areas:"who who" "tags tags" "data seen" "acts acts"} .uActs{justify-content:flex-start;padding-left:44px} }
 .shAdd{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px}
 .shAdd select{width:auto}
 @media (max-width:420px){ .shAdd{grid-template-columns:minmax(0,1fr) auto} .shAdd .btn{grid-column:1 / -1} }
@@ -438,9 +444,11 @@ body.ro .orderBtn{display:none!important}
 .dbBody{padding:26px 28px 30px}
 .dbGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .dbCard{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
-.dbCard .l{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
-.dbCard .v{font:600 20px 'JetBrains Mono',monospace;margin:4px 0 2px}
+/* ตาม house style ของ .kpi: ป้าย 11px สีจาง · ค่าเป็น .mono 17px · ตัวเลขในข้อความใช้ .mono */
+.dbCard .l{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.dbCard .v{font-size:17px;font-weight:600;margin:3px 0 2px}
 .dbCard .s{font-size:11.5px;color:var(--muted)}
+.dbCard .s .mono,.dbRow .n .mono{font-size:11px}
 .dbBar{height:6px;border-radius:99px;background:#0d1117;margin:8px 0 4px;overflow:hidden}
 .dbBar i{display:block;height:100%;border-radius:99px;background:#22c55e}
 .dbBar i.warn{background:#f59e0b}.dbBar i.bad{background:#ef4444}
@@ -449,11 +457,12 @@ body.ro .orderBtn{display:none!important}
 .dbRow{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto;align-items:center;gap:12px;padding:10px 14px;border-top:1px solid var(--line);font-size:12.5px}
 .dbRow:first-child{border-top:0}
 .dbRow.h{font-size:11px;color:var(--muted);padding-top:9px;padding-bottom:9px;background:rgba(0,0,0,.12)}
-.dbRow .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.dbRow .n small{color:var(--muted);font-size:11px}
+.dbRow .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:500 12px 'JetBrains Mono','IBM Plex Sans Thai',monospace}
+.dbRow .n small{color:var(--muted);font-size:12px;font-weight:400}
 .dbRow .b{height:5px;border-radius:99px;background:#0d1117;overflow:hidden}
 .dbRow .b i{display:block;height:100%;border-radius:99px;background:rgba(247,166,0,.75)}
-.dbRow .z{text-align:right;font:500 12px 'JetBrains Mono',monospace;white-space:nowrap}
+.dbRow .z{text-align:right;font:500 12px 'JetBrains Mono','IBM Plex Sans Thai',monospace;white-space:nowrap}
+.dbRow.h .z{font:inherit}
 .dbNote{margin-top:16px;padding:12px 14px;border-radius:10px;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.2);font-size:12px;color:var(--muted);line-height:1.7}
 .dbNote a{color:var(--accent)}
 @media (max-width:560px){ .dbBody{padding:20px 18px 24px} .dbRow{grid-template-columns:minmax(0,1fr) minmax(0,44px) auto;gap:8px;padding:9px 12px} }
@@ -966,7 +975,7 @@ body.chFs #confirmBox{z-index:55}
 
 <div class="overlay" id="confirmBox"><div class="modal">
   <div id="confirmTxt" style="margin-bottom:16px"></div>
-  <div class="actions"><button class="btn" onclick="closeConfirm(false)">ยกเลิก</button><button class="btn primary" style="background:var(--red);border-color:var(--red);color:#fff" onclick="closeConfirm(true)">ลบ</button></div>
+  <div class="actions"><button class="btn" id="confirmNo" onclick="closeConfirm(false)">ยกเลิก</button><button class="btn primary" id="confirmOk" onclick="closeConfirm(true)">ลบ</button></div>
 </div></div>
 <!-- ลบบัญชีถาวร (Super Admin) : ต้องพิมพ์อีเมลให้ตรงก่อน -->
 <div class="overlay" id="delUserBox"><div class="modal" style="max-width:420px">
@@ -1820,7 +1829,13 @@ async function saveOptimistic(d, editRow, snap){
 }
 
 let _confirmRes;
-function askConfirm(txt){ $('confirmTxt').textContent=txt; $('confirmBox').classList.add('on'); return new Promise(r=>_confirmRes=r); }
+// ok = ชื่อปุ่มยืนยัน (ตรงกับสิ่งที่จะทำ) · danger = ปุ่มแดง (ทำลาย/ถอนสิทธิ์) · no = ชื่อปุ่มไม่ทำ (ใช้ "กลับ" เมื่อปุ่มยืนยันขึ้นต้นด้วย "ยกเลิก…")
+function askConfirm(txt, {ok='ลบ', danger=true, no='ยกเลิก'} = {}){
+  $('confirmTxt').textContent = txt;
+  const b = $('confirmOk'); b.textContent = ok; b.style.cssText = danger ? 'background:var(--red);border-color:var(--red);color:#fff' : '';
+  $('confirmNo').textContent = no;
+  $('confirmBox').classList.add('on'); return new Promise(r=>_confirmRes=r);
+}
 function closeConfirm(v){ $('confirmBox').classList.remove('on'); _confirmRes&&_confirmRes(v); }
 async function delTrade(row){
   if (roBlock()) return;
@@ -2073,7 +2088,8 @@ function openKlineWS(src, iv, onBar){
       const k=m.data; onBar({t:k.t*1000, o:+k.o, h:+k.h, l:+k.l, c:+k.c, v:(+k.q||0)*MX_CT, i:MEXC_IV_BACK[k.interval]});
     };
   } else {
-    ws = new WebSocket(src==='futures' ? `wss://fstream.binance.com/ws/btcusdt@kline_${iv}` : `wss://stream.binance.com:9443/ws/btcusdt@kline_${iv}`);
+    // Futures: ต้องใช้เส้นทาง /market (URL เดิม /ws/ ของ fstream ไม่ส่งแท่งเทียนแล้ว ตั้งแต่ 23 เม.ย. 2026)
+    ws = new WebSocket(src==='futures' ? `wss://fstream.binance.com/market/ws/btcusdt@kline_${iv}` : `wss://stream.binance.com:9443/ws/btcusdt@kline_${iv}`);
     ws.onmessage = e=>{ const k=(JSON.parse(e.data)||{}).k; if (k) onBar({t:k.t, o:+k.o, h:+k.h, l:+k.l, c:+k.c, v:+k.v, bv:+k.V, i:k.i}); };
   }
   const _close = ()=>clearInterval(ws._ping);
@@ -4330,20 +4346,25 @@ function renderAdmin(){
   const me = SB_USER && SB_USER.id;
   $('adm_list').innerHTML = list.length ? list.map(u=>{
     const self = u.id===me, sup = u.role==='super_admin', canManage = !self && !sup && (isSuper() || u.role==='user');
-    const acts = [];
+    // ช่องปุ่มตายตัว: [ดูพอร์ต][ส่งออเดอร์][สถานะ][ลบ] · ไม่มีปุ่ม = ช่องว่าง (ปุ่มแถวอื่นยังอยู่ตำแหน่งเดิม)
+    let stat = '';
     if (canManage){
-      if (u.status==='pending') acts.push(`<button class="btn sm primary" onclick="setUserStatus('${u.id}','active')">${ic('check',13,2.5)} อนุมัติ</button>`, `<button class="btn sm ghostDanger" onclick="setUserStatus('${u.id}','disabled')">ปฏิเสธ</button>`);
-      else if (u.status==='active') acts.push(`<button class="btn sm ghostDanger" onclick="setUserStatus('${u.id}','disabled')">ระงับ</button>`);
-      else acts.push(`<button class="btn sm" onclick="setUserStatus('${u.id}','active')">เปิดใช้งาน</button>`);
+      if (u.status==='pending') stat = `<button class="btn sm primary" onclick="setUserStatus('${u.id}','active')">${ic('check',13,2.5)} อนุมัติ</button><button class="btn sm ghostDanger" onclick="setUserStatus('${u.id}','disabled')">ปฏิเสธ</button>`;
+      else if (u.status==='active') stat = `<button class="btn sm ghostDanger" onclick="setUserStatus('${u.id}','disabled')">ระงับ</button>`;
+      else stat = `<button class="btn sm" onclick="setUserStatus('${u.id}','active')">เปิดใช้งาน</button>`;
     }
-    if (isSuper() && u.status==='active') acts.unshift(`<button class="btn sm tradeTg ${u.can_trade?'on':''}" title="สิทธิ์ส่งออเดอร์ไปตลาด (กดเพื่อ${u.can_trade?'ปิด':'เปิด'})" onclick="setUserTrade('${u.id}', ${!u.can_trade})">${ic('send',12)} ${u.can_trade?'ส่งออเดอร์: เปิด':'ส่งออเดอร์: ปิด'}</button>`);
-    if (isSuper() && !self && !sup) acts.push(`<button class="btn sm icon ghostDanger" title="ลบบัญชีถาวร" aria-label="ลบบัญชีถาวร" onclick="openDelUser('${u.id}')">${ic('trash-2',14)}</button>`);
-    if (isSuper() && !self && +u.ports>0) acts.unshift(`<button class="btn sm icon" title="ดูพอร์ต (อ่านอย่างเดียว)" onclick="viewUser('${u.id}','${esc(u.email)}')">${ic('eye',15)}</button>`);
+    const tradeLbl = `ส่งออเดอร์ไปตลาด: ${u.can_trade?'เปิด':'ปิด'} (กดเพื่อ${u.can_trade?'ปิด':'เปิด'})`;
+    const acts = [
+      (isSuper() && !self && +u.ports>0) ? `<button class="btn sm icon" title="ดูพอร์ต (อ่านอย่างเดียว)" aria-label="ดูพอร์ต" onclick="viewUser('${u.id}','${esc(u.email)}')">${ic('eye',15)}</button>` : '',
+      (isSuper() && u.status==='active') ? `<button class="btn sm icon tradeTg ${u.can_trade?'on':''}" title="${tradeLbl}" aria-label="${tradeLbl}" aria-pressed="${!!u.can_trade}" onclick="setUserTrade('${u.id}', ${!u.can_trade})">${ic('send',14)}</button>` : '',
+      `<div class="slot">${stat}</div>`,
+      (isSuper() && !self && !sup) ? `<button class="btn sm icon ghostDanger" title="ลบบัญชีถาวร" aria-label="ลบบัญชีถาวร" onclick="openDelUser('${u.id}')">${ic('trash-2',14)}</button>` : '',
+    ].map(h => h || '<span></span>');
     const role = (isSuper() && !self && !sup)
       ? `<select class="roleSel" onchange="setUserRole('${u.id}', this.value)" aria-label="บทบาท"><option value="user" ${u.role==='user'?'selected':''}>ผู้ใช้</option><option value="admin" ${u.role==='admin'?'selected':''}>Admin</option></select>`
       : `<span class="rolePill ${u.role}">${ROLE_TH[u.role]||u.role}</span>`;
     return `<div class="uRow ${u.status}">
-      <div class="uWho"><div class="uAv ${u.role}">${esc((u.email||'?')[0])}</div><div style="min-width:0"><div class="uEm" title="${esc(u.email)}">${esc(u.email)}${self?' <span class="me">(คุณ)</span>':''}${u.can_trade?`<span class="uTrade" title="ส่งออเดอร์ได้">${ic('send',9)} เทรดจริง</span>`:''}</div><div class="uSub">สมัคร ${fmtDate(u.created_at)}${u.approved_at && u.status==='active' ? ' · อนุมัติ '+fmtDate(u.approved_at) : ''}</div></div></div>
+      <div class="uWho"><div class="uAv ${u.role}">${esc((u.email||'?')[0])}</div><div style="min-width:0"><div class="uEm" title="${esc(u.email)}">${esc(u.email)}${self?' <span class="me">(คุณ)</span>':''}${u.can_trade && !isSuper() ?`<span class="uTrade" title="ส่งออเดอร์ได้">${ic('send',9)} เทรดจริง</span>`:''}</div><div class="uSub">สมัคร ${fmtDate(u.created_at)}${u.approved_at && u.status==='active' ? ' · อนุมัติ '+fmtDate(u.approved_at) : ''}</div></div></div>
       <div class="uTags"><div class="uRole">${role}</div><div class="uStat"><span class="pill ${u.status}">${STATUS_TH[u.status]||u.status}</span></div></div>
       <div class="uData"><span class="mono">${u.ports}</span> พอร์ต · <span class="mono">${u.trades}</span> เทรด${u.last_trade ? `<div class="s">เทรดล่าสุด ${fmtDate(u.last_trade)}</div>` : ''}</div>
       <div class="uSeen" title="${u.last_seen_at ? new Date(u.last_seen_at).toLocaleString('th-TH') : ''}">${ago(u.last_seen_at)}</div>
@@ -4353,7 +4374,7 @@ function renderAdmin(){
 }
 async function setUserStatus(id, st){
   const u = ADMIN_USERS.find(x=>x.id===id);
-  if (st==='disabled' && !await askConfirm(`ระงับบัญชี ${u ? u.email : ''}? (เข้าใช้งานไม่ได้จนกว่าจะเปิดใช้งานอีกครั้ง · ข้อมูลไม่ถูกลบ)`)) return;
+  if (st==='disabled' && !await askConfirm(`ระงับบัญชี ${u ? u.email : ''}? (เข้าใช้งานไม่ได้จนกว่าจะเปิดใช้งานอีกครั้ง · ข้อมูลไม่ถูกลบ)`, {ok: u && u.status==='pending' ? 'ปฏิเสธ' : 'ระงับบัญชี'})) return;
   $('adm_msg').textContent = '';
   try{ ADMIN_USERS = await apiRaw('setStatus', id, st); renderAdmin(); toast((u ? u.email+' · ' : '')+(STATUS_TH[st]||st)); }
   catch(e){ $('adm_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
@@ -4364,8 +4385,10 @@ async function setUserRole(id, role){
   catch(e){ $('adm_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; renderAdmin(); }
 }
 
-// ---------- สถานะที่เปิดอยู่ (ดึงจากตลาดทุก 5 วินาที เฉพาะตอนเปิดหน้าอยู่) ----------
-const LIVE = {timer:null, busy:false, data:{}, at:null, every:5000};
+// ---------- สถานะที่เปิดอยู่ (Binance = WebSocket · ตลาดอื่นดึงทุก 5 วินาที · เฉพาะตอนเปิดหน้าอยู่) ----------
+// wait[key id] = {until, fails} หยุดดึงบัญชีนั้นชั่วคราว · เก็บในเครื่อง (รีเฟรชแล้วยังพักต่อ ไม่ยิงตลาดซ้ำ)
+const LIVE = {timer:null, busy:false, data:{}, at:null, every:5000, wait:(()=>{ try{ return JSON.parse(localStorage.getItem('tjLiveWait')||'{}'); }catch(e){ return {}; } })()};
+const liveWaitSave = () => { try{ localStorage.setItem('tjLiveWait', JSON.stringify(LIVE.wait)); }catch(e){} };
 function liveWhere(){
   if (!canTrade() || document.visibilityState!=='visible') return [];
   const a = [];
@@ -4373,20 +4396,145 @@ function liveWhere(){
   if ($('v-list').classList.contains('on') && LIST_TAB==='orders') a.push('liveCard2');
   return a;
 }
+// ดึงสถานะ + คำสั่งที่รอ ของบัญชีหนึ่งผ่าน Edge Function (มีช่วงพักเมื่อผิดพลาด / ตลาดจำกัดการเรียก)
+async function liveFetch(k){
+  const w = LIVE.wait[k.id];
+  if (w && Date.now() < w.until){   // ยังอยู่ในช่วงพัก → ไม่เรียกตลาด (กันโดนแบน IP)
+    if (!LIVE.data[k.id]) LIVE.data[k.id] = {ok:false, error:'พักการดึงข้อมูลชั่วคราว', until:w.until, limited:!!w.limited};
+    return false;
+  }
+  try{
+    const r = await tradeFn({action:'open', exchange:k.exchange, testnet:k.testnet});
+    LIVE.data[k.id] = {ok:true, positions:r.positions||[], orders:r.orders||[]}; LIVE.at = new Date();
+    if (w){ delete LIVE.wait[k.id]; liveWaitSave(); }
+    return true;
+  }catch(e){ liveFail(k, e); return false; }
+}
+// ตลาดจำกัดการเรียก = พักจนถึงเวลาที่ตลาดบอก · ผิดพลาดอื่น = พักนานขึ้นเรื่อย ๆ 10 วิ → 20 → 40 … สูงสุด 5 นาที
+function liveFail(k, e){
+  const w = LIVE.wait[k.id], fails = ((w && w.fails) || 0) + 1;
+  LIVE.wait[k.id] = {fails, limited: !!e.retryAt, until: e.retryAt ? +e.retryAt + 2000 : Date.now() + Math.min(300e3, 5000 * 2**fails)}; liveWaitSave();
+  LIVE.data[k.id] = {ok:false, error:e.message||String(e), until: LIVE.wait[k.id].until, limited: !!e.retryAt};
+}
+
+// ---------- Binance: อัปเดตแบบ WebSocket แทนการดึงถี่ (Binance แนะนำ · กัน IP เซิร์ฟเวอร์โดนแบน) ----------
+// User Data Stream (listenKey จาก Edge Function) → มีเหตุการณ์คำสั่ง/สถานะ ค่อยดึงข้อมูลเต็มครั้งเดียว
+// ราคา mark จาก stream สาธารณะ (เบราว์เซอร์ต่อตรง ไม่ผ่านเซิร์ฟเวอร์) → คำนวณกำไร/ขาดทุนสดทุก 1 วินาที
+const BNWS = {};        // [key id] = {ws, keepT, retryT, snapT, lastSnap, fails, starting, noWsUntil}
+const MARK_WS = {};     // ['l' | 't'] = WebSocket ราคา mark (จริง / ทดลอง)
+// Binance แยกเส้นทาง WebSocket (URL เดิม /ws/... ปิดไปตั้งแต่ 23 เม.ย. 2026 — เปิดได้แต่ไม่มีข้อมูล):
+//   /market = ราคา (markPrice ฯลฯ) · /private = ข้อมูลบัญชี (ต้องระบุ listenKey + events)
+const BN_WS_HOST = t => t ? 'wss://fstream.binancefuture.com' : 'wss://fstream.binance.com';
+const BN_WS_EVENTS = 'ORDER_TRADE_UPDATE/ACCOUNT_UPDATE/ALGO_UPDATE';   // ALGO_UPDATE = คำสั่ง TP/SL (Algo Order)
+const LIVE_SAFETY = 2*60e3;   // ดึงข้อมูลเต็มกันพลาดทุก 2 นาที (เผื่อ WebSocket ตกหล่นบางเหตุการณ์)
+const useWs = k => k.exchange==='binance' && !DEMO && typeof WebSocket!=='undefined';
+// ดึงข้อมูลเต็ม (รวมเหตุการณ์ที่มาติด ๆ กันเป็นครั้งเดียว · ห่างกันอย่างน้อย 3 วินาที)
+function bnSnap(k, delay=0){
+  const s = BNWS[k.id]; if (!s || s.snapT) return;
+  s.snapT = setTimeout(async ()=>{
+    s.snapT = null;
+    const gap = Date.now() - (s.lastSnap||0);
+    if (gap < 3000){ bnSnap(k, 3000 - gap); return; }
+    s.lastSnap = Date.now();
+    await liveFetch(k); renderLive();
+  }, delay);
+}
+async function bnStart(k){
+  let s = BNWS[k.id];
+  if (s && (s.ws || s.starting || s.retryT)) return;
+  s = BNWS[k.id] = s || {};
+  const w = LIVE.wait[k.id];
+  if (w && Date.now() < w.until){   // ตลาดจำกัดการเรียกอยู่ → รอจนพ้นแล้วค่อยต่อ
+    if (!LIVE.data[k.id]) LIVE.data[k.id] = {ok:false, error:'พักการดึงข้อมูลชั่วคราว', until:w.until, limited:!!w.limited};
+    s.retryT = setTimeout(()=>{ s.retryT = null; livePoll(); }, w.until - Date.now() + 500);
+    return;
+  }
+  s.starting = true;
+  let key;
+  try{ key = (await tradeFn({action:'listenKey', exchange:'binance', testnet:k.testnet})).listenKey; }
+  catch(e){
+    s.starting = false;
+    if (e.retryAt){ liveFail(k, e); return; }
+    s.noWsUntil = Date.now() + 10*60e3;   // Edge Function ยังไม่รองรับ / ผิดพลาด → ใช้วิธีดึงเป็นระยะไปก่อน แล้วลองใหม่ใน 10 นาที
+    return;
+  }
+  s.starting = false;
+  if (!key || BNWS[k.id]!==s || !liveWhere().length){ return; }
+  const onMsg = ev => {
+    let m; try{ m = JSON.parse(ev.data); }catch(e){ return; }
+    if (m.e==='listenKeyExpired'){ try{ ws.close(); }catch(x){} return; }   // onclose ต่อใหม่ด้วย key ใหม่
+    if (m.e && m.e!=='TRADE_LITE') bnSnap(k, 500);   // ORDER_TRADE_UPDATE / ACCOUNT_UPDATE / ALGO_UPDATE ฯลฯ
+  };
+  const ws = new WebSocket(`${BN_WS_HOST(k.testnet)}/private/ws?listenKey=${encodeURIComponent(key)}&events=${BN_WS_EVENTS}`); s.ws = ws;
+  ws.onopen = ()=>{ s.fails = 0; s.lastSnap = 0; bnSnap(k); };
+  ws.onmessage = onMsg;
+  ws.onclose = ()=>{
+    if (s.ws!==ws) return;
+    s.ws = null; clearInterval(s.keepT); if (s.extra){ try{ s.extra.close(); }catch(e){} s.extra = null; }
+    if (BNWS[k.id]===s && liveWhere().length){ s.fails = (s.fails||0) + 1; s.retryT = setTimeout(()=>{ s.retryT = null; bnStart(k); }, Math.min(60e3, 2000 * 2**s.fails)); }
+  };
+  // Testnet: เอกสารไม่ได้ระบุเส้นทางใหม่ของข้อมูลบัญชี → ต่อเส้นทางเดิมไว้ด้วย (ได้เหตุการณ์ซ้ำก็รวมเป็นการดึงครั้งเดียวอยู่แล้ว)
+  if (k.testnet){ try{ s.extra = new WebSocket(`${BN_WS_HOST(true)}/ws/${encodeURIComponent(key)}`); s.extra.onmessage = onMsg; }catch(e){} }
+  clearInterval(s.keepT);
+  s.keepT = setInterval(()=>tradeFn({action:'listenKey', exchange:'binance', testnet:k.testnet}).catch(()=>{}), 30*60e3);   // ต่ออายุ listenKey (หมดใน 60 นาที)
+}
+function bnStop(id){
+  const s = BNWS[id]; if (!s) return;
+  delete BNWS[id];
+  clearInterval(s.keepT); clearTimeout(s.retryT); clearTimeout(s.snapT);
+  if (s.ws){ const ws = s.ws; s.ws = null; try{ ws.close(); }catch(e){} }
+  if (s.extra){ try{ s.extra.close(); }catch(e){} s.extra = null; }
+}
+function markStart(testnet){
+  const id = testnet ? 't' : 'l'; if (MARK_WS[id]) return;
+  const ws = new WebSocket(BN_WS_HOST(testnet) + '/market/ws/btcusdt@markPrice@1s'); MARK_WS[id] = ws;
+  ws.onmessage = ev => {
+    let m; try{ m = JSON.parse(ev.data); }catch(e){ return; }
+    const p = +m.p; if (!(p > 0)) return;
+    let any = false;
+    EX_KEYS.forEach(k=>{
+      if (k.exchange!=='binance' || !!k.testnet!==testnet) return;
+      const d = LIVE.data[k.id]; if (!d || !d.ok || !d.positions.length) return;
+      d.positions.forEach(x=>{ x.mark = p; x.pnl = (p - x.entry) * x.qty * (x.side==='BUY' ? 1 : -1); }); any = true;
+    });
+    if (any){ LIVE.at = new Date(); renderLiveSoon(); }
+  };
+  ws.onclose = ()=>{ if (MARK_WS[id]!==ws) return; delete MARK_WS[id]; if (liveWhere().length) setTimeout(()=>{ if (liveWhere().length) markStart(testnet); }, 3000); };
+}
+function liveStopAll(){
+  Object.keys(BNWS).forEach(bnStop);
+  Object.keys(MARK_WS).forEach(id=>{ const ws = MARK_WS[id]; delete MARK_WS[id]; try{ ws.close(); }catch(e){} });
+}
+// แสดงผลใหม่ไม่เกินเฟรมละครั้ง · ไม่วาดทับระหว่างกดปุ่มในการ์ด (กันคลิก "ยกเลิก" หาย)
+let LIVE_RAF = 0, LIVE_HOLD = false;
+function renderLiveSoon(){ if (!LIVE_RAF) LIVE_RAF = requestAnimationFrame(()=>{ LIVE_RAF = 0; if (!LIVE_HOLD) renderLive(); }); }
+['liveCard','liveCard2'].forEach(id=>{ const c = $(id); if (!c) return;
+  c.addEventListener('pointerdown', ()=>{ LIVE_HOLD = true; });
+  c.addEventListener('pointerup', ()=>setTimeout(()=>{ LIVE_HOLD = false; }, 300)); });
+// หลังส่ง/ยกเลิกคำสั่ง: ดึงข้อมูลใหม่ทันที
+function liveRefresh(k, delay=0){ if (k && BNWS[k.id] && BNWS[k.id].ws) bnSnap(k, delay); else setTimeout(livePoll, delay); }
+
 async function livePoll(){
   clearTimeout(LIVE.timer);
   const where = liveWhere();
   ['liveCard','liveCard2'].forEach(id=>{ if (!where.includes(id)) $(id).hidden = true; });
-  if (!where.length) return;
+  if (!where.length){ liveStopAll(); return; }   // ไม่ได้เปิดหน้าที่แสดงสถานะ → ปิด WebSocket
   if (!LIVE.busy){
     LIVE.busy = true;
     try{
       if (!EX_KEYS.length) await loadExKeys().catch(()=>{});
+      Object.keys(BNWS).forEach(id=>{ if (!EX_KEYS.some(k=>k.id===id)) bnStop(id); });   // ยกเลิกการเชื่อมแล้ว
       await Promise.all(EX_KEYS.map(async k=>{
-        try{ const r = await tradeFn({action:'open', exchange:k.exchange, testnet:k.testnet}); LIVE.data[k.id] = {ok:true, positions:r.positions||[], orders:r.orders||[]}; }
-        catch(e){ LIVE.data[k.id] = {ok:false, error:e.message||String(e)}; }
+        const s = BNWS[k.id];
+        if (useWs(k) && !(s && s.noWsUntil > Date.now())){
+          markStart(!!k.testnet);
+          await bnStart(k);
+          const s2 = BNWS[k.id];
+          if (s2 && s2.ws && s2.ws.readyState===1 && Date.now() - (s2.lastSnap||0) > LIVE_SAFETY) bnSnap(k);   // กันพลาด
+          if (!(s2 && s2.noWsUntil > Date.now())) return;
+        }
+        await liveFetch(k);   // ตลาดอื่น / ยังใช้ WebSocket ไม่ได้ → ดึงเป็นระยะ
       }));
-      LIVE.at = new Date();
     } finally { LIVE.busy = false; }
     renderLive();
   }
@@ -4401,7 +4549,11 @@ function renderLive(){
     const accs = EX_KEYS.map(k=>{
       const d = LIVE.data[k.id], head = `<div class="h">${EX_NAME[k.exchange]} <span class="envB ${k.testnet?'demo':'live'}">${k.testnet?'ทดลอง':'จริง'}</span></div>`;
       if (!d) return `<div class="lvAcc">${head}<div class="lvEmpty"><span class="spin sm"></span> กำลังโหลด…</div></div>`;
-      if (!d.ok) return `<div class="lvAcc">${head}<div class="lvErr">${esc(d.error)}</div></div>`;
+      if (!d.ok){
+        const hm = d.until ? new Date(d.until).toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'}) : '';
+        const msg = d.limited ? `Binance จำกัดการเรียกจากเซิร์ฟเวอร์ชั่วคราว (เรียกถี่เกินไป) — หยุดดึงข้อมูลไว้ก่อน จะดึงใหม่อัตโนมัติเวลา ${hm} น.` : esc(d.error) + (hm ? ` <span style="opacity:.8">· ลองใหม่เวลา ${hm} น.</span>` : '');
+        return `<div class="lvAcc">${head}<div class="lvErr">${msg}</div></div>`;
+      }
       const pos = d.positions.map(p=>{ const L = p.side==='BUY', roe = p.margin ? p.pnl/p.margin : null;
         return `<div class="lvPos">${cell('สถานะ', `<span class="badge ${L?'Long':'Short'}">${L?'Long':'Short'}</span> <span style="color:var(--muted)">${fN(p.leverage,0)}x</span>`)}${cell('จำนวน', fN(p.qty,4)+' BTC')}${cell('ราคาเข้า', px(p.entry))}${cell('ราคาปัจจุบัน', px(p.mark))}${cell('กำไร/ขาดทุน', p.pnl!=null ? money(p.pnl)+(roe!=null?' <small>('+pct(roe)+')</small>':'') : '–', 'lvPnl '+cls(p.pnl))}${cell('Liquidation', px(p.liq))}</div>`; }).join('');
       const ords = d.orders.map(o=>{ const kind = /TAKE_PROFIT/.test(o.type) ? 'TP' : /STOP/.test(o.type) ? 'SL' : (o.close ? 'ปิด' : 'Limit');
@@ -4417,18 +4569,18 @@ document.addEventListener('visibilitychange', ()=>{ if (document.visibilityState
 // ยกเลิกคำสั่งที่รอ (Limit / TP / SL) ที่ตลาด
 async function cancelOrder(kid, id, algo, kind, side, price){
   const k = EX_KEYS.find(x=>x.id===kid); if (!k || !canTrade()) return;
-  if (!await askConfirm(`ยกเลิกคำสั่ง ${kind} ${price ? fN(price,2) : ''} ที่ ${EX_NAME[k.exchange]} (${k.testnet?'ทดลอง':'จริง'})?${kind==='SL' ? ' · ถ้ายกเลิก SL สถานะจะไม่มีจุดตัดขาดทุน' : ''}`)) return;
+  if (!await askConfirm(`ยกเลิกคำสั่ง ${kind} ${price ? fN(price,2) : ''} ที่ ${EX_NAME[k.exchange]} (${k.testnet?'ทดลอง':'จริง'})?${kind==='SL' ? ' · ถ้ายกเลิก SL สถานะจะไม่มีจุดตัดขาดทุน' : ''}`, {ok:'ยกเลิกคำสั่ง', no:'กลับ'})) return;
   try{
     await tradeFn({action:'cancel', exchange:k.exchange, testnet:k.testnet, orderId:id, algo, kind, side, price, portfolioId:PORT});
     toast('ยกเลิกคำสั่ง '+kind+' แล้ว');
     if (LIST_TAB==='orders' && $('v-list').classList.contains('on')) loadOrders();
   }catch(e){ toast('ยกเลิกไม่สำเร็จ: '+(e.message||e), true); }
-  livePoll();
+  liveRefresh(k);
 }
 
 async function setUserTrade(id, allow){
   const u = ADMIN_USERS.find(x=>x.id===id);
-  if (allow && !await askConfirm(`เปิดสิทธิ์ส่งออเดอร์ไปตลาดให้ ${u ? u.email : ''}? (ผู้ใช้จะเชื่อม API ของตัวเองและส่งคำสั่งด้วยบัญชีตัวเองได้)`)) return;
+  if (allow && !await askConfirm(`เปิดสิทธิ์ส่งออเดอร์ไปตลาดให้ ${u ? u.email : ''}? (ผู้ใช้จะเชื่อม API ของตัวเองและส่งคำสั่งด้วยบัญชีตัวเองได้)`, {ok:'เปิดสิทธิ์', danger:false})) return;
   $('adm_msg').textContent = '';
   try{
     ADMIN_USERS = await apiRaw('setTrade', id, allow); renderAdmin();
@@ -4458,17 +4610,18 @@ function closeDbUsage(){ $('dbBox').classList.remove('on'); }
 function renderDbUsage(u){
   const pct = (a,b) => Math.min(100, a/b*100), bar = p => `<div class="dbBar"><i class="${p>=90?'bad':p>=70?'warn':''}" style="width:${Math.max(1.5,p).toFixed(1)}%"></i></div>`;
   const dbP = pct(u.db_bytes, SB_FREE.db), stP = pct(u.storage_bytes, SB_FREE.storage), mP = pct(u.seen_30d, SB_FREE.mau);
-  const card = (icn, l, v, extra) => `<div class="dbCard"><div class="l">${ic(icn,14)} ${l}</div><div class="v">${v}</div>${extra||''}</div>`;
-  $('db_sub').textContent = 'อัปเดต '+new Date(u.at).toLocaleString('th-TH')+' · เทียบโควตาแพ็กเกจฟรี';
+  const card = (icn, l, v, extra) => `<div class="dbCard"><div class="l">${ic(icn,14)} ${l}</div><div class="v mono">${v}</div>${extra||''}</div>`;
+  const m = v => `<span class="mono">${v}</span>`;   // ตัวเลขในข้อความ
+  $('db_sub').innerHTML = 'อัปเดต '+m(new Date(u.at).toLocaleString('th-TH'))+' · เทียบโควตาแพ็กเกจฟรี';
   $('db_body').innerHTML = '<div class="dbGrid">'
-    + card('database','ขนาดฐานข้อมูล', fmtBytes(u.db_bytes), bar(dbP)+`<div class="s">${dbP.toFixed(1)}% ของ 500 MB · เหลือ ${fmtBytes(Math.max(0, SB_FREE.db-u.db_bytes))}</div>`)
-    + card('download','ไฟล์ใน Storage', fmtBytes(u.storage_bytes), bar(stP)+`<div class="s">${stP.toFixed(1)}% ของ 1 GB</div>`)
-    + card('users','ผู้ใช้ที่เข้าใช้ใน 30 วัน', fN(u.seen_30d,0), bar(mP)+`<div class="s">โควตา 50,000 คน/เดือน · 7 วัน: ${fN(u.seen_7d,0)} คน</div>`)
+    + card('database','ขนาดฐานข้อมูล', fmtBytes(u.db_bytes), bar(dbP)+`<div class="s">${m(dbP.toFixed(1)+'%')} ของ ${m('500 MB')} · เหลือ ${m(fmtBytes(Math.max(0, SB_FREE.db-u.db_bytes)))}</div>`)
+    + card('download','ไฟล์ใน Storage', fmtBytes(u.storage_bytes), bar(stP)+`<div class="s">${m(stP.toFixed(1)+'%')} ของ ${m('1 GB')}</div>`)
+    + card('users','ผู้ใช้ที่เข้าใช้ใน 30 วัน', fN(u.seen_30d,0), bar(mP)+`<div class="s">โควตา ${m('50,000')} คน/เดือน · 7 วัน: ${m(fN(u.seen_7d,0))} คน</div>`)
     + '</div>'
     + '<div class="dbSec">ข้อมูลในระบบ</div><div class="dbGrid">'
-    + card('users','บัญชีทั้งหมด', fN(u.users,0), `<div class="s">ใช้งาน ${fN(u.active,0)} · รออนุมัติ ${fN(u.pending,0)} · ระงับ ${fN(u.disabled,0)}</div>`)
-    + card('chart-pie','พอร์ต', fN(u.portfolios,0), `<div class="s">แชร์ ${fN(u.shares,0)} รายการ · เส้นที่วาด ${fN(u.drawings,0)} พอร์ต</div>`)
-    + card('pencil','เทรด', fN(u.trades,0), `<div class="s">เฉลี่ย ${u.portfolios ? fN(u.trades/u.portfolios,1) : 0} เทรด/พอร์ต</div>`)
+    + card('users','บัญชีทั้งหมด', fN(u.users,0), `<div class="s">ใช้งาน ${m(fN(u.active,0))} · รออนุมัติ ${m(fN(u.pending,0))} · ระงับ ${m(fN(u.disabled,0))}</div>`)
+    + card('chart-pie','พอร์ต', fN(u.portfolios,0), `<div class="s">แชร์ ${m(fN(u.shares,0))} รายการ · เส้นที่วาด ${m(fN(u.drawings,0))} พอร์ต</div>`)
+    + card('pencil','เทรด', fN(u.trades,0), `<div class="s">เฉลี่ย ${m(u.portfolios ? fN(u.trades/u.portfolios,1) : 0)} เทรด/พอร์ต</div>`)
     + '</div>'
     + '<div class="dbSec">ตารางที่ใหญ่ที่สุด</div><div class="dbTbl"><div class="dbRow h"><span>ตาราง</span><span>สัดส่วน</span><span class="z">ขนาด</span></div>'
     + (()=>{ const ts = u.tables||[], mx = Math.max(1, ...ts.map(t=>+t.bytes||0));
@@ -4531,10 +4684,13 @@ async function tradeFn(body){
   if (!sb) throw new Error('ยังไม่ได้เข้าสู่ระบบ');
   const {data, error} = await sb.functions.invoke('trade', {body, region: EX_REGION});
   if (error){
-    let m = error.message || String(error);
-    try{ const j = await error.context.json(); if (j && j.error) m = j.error; }catch(e){}
+    let m = error.message || String(error), retryAt = 0;
+    try{ const j = await error.context.json(); if (j && j.error) m = j.error; if (j && j.retryAt) retryAt = +j.retryAt; }catch(e){}
     if (/Failed to send|not found|404/i.test(m)) m = 'ยังไม่ได้ติดตั้งระบบส่งออเดอร์ (Edge Function "trade") — ดูวิธีใน supabase/functions/trade/index.ts';
-    throw new Error(m);
+    // Edge Function รุ่นเก่า (ยังไม่ส่ง retryAt): อ่านเวลาจากข้อความของ Binance เอง
+    if (!retryAt){ const b = /banned until (\d{12,})/i.exec(m); if (b) retryAt = +b[1]; else if (/\(-1003\)|too many requests/i.test(m)) retryAt = Date.now() + 60e3; }
+    const e = new Error(m); if (retryAt) e.retryAt = retryAt;   // ตลาดจำกัดการเรียก → หยุดดึงจนถึงเวลานี้
+    throw e;
   }
   if (!data || data.ok===false) throw new Error((data && data.error) || 'ไม่สำเร็จ');
   return data;
@@ -4607,7 +4763,7 @@ async function exBalance(id){
 }
 async function delExKey(id){
   const k = EX_KEYS.find(x=>x.id===id); if (!k) return;
-  if (!await askConfirm(`ยกเลิกการเชื่อม ${EX_NAME[k.exchange]} (${k.testnet?'ทดลอง':'จริง'})? · Key จะถูกลบจากระบบ`)) return;
+  if (!await askConfirm(`ยกเลิกการเชื่อม ${EX_NAME[k.exchange]} (${k.testnet?'ทดลอง':'จริง'})? · Key จะถูกลบจากระบบ`, {ok:'ยกเลิกการเชื่อม', no:'กลับ'})) return;
   try{ if (DEMO) DEMO_KEYS = DEMO_KEYS.filter(x=>x.id!==id); else await sbq(sb.from('exchange_keys').delete().eq('id', id)); await loadExKeys(); exPaintList(); toast('ยกเลิกการเชื่อมแล้ว'); }
   catch(e){ toast('ลบไม่ได้: '+(e.message||e), true); }
 }
@@ -4685,7 +4841,7 @@ async function sendOrder(){
       + (warn ? '<br><span class="neg">ตั้ง TP/SL บางรายการไม่สำเร็จ — ตรวจสอบและตั้งเองในแอปตลาด</span>' : '');
     toast('ส่งคำสั่งไป '+EX_NAME[k.exchange]+(k.testnet?' (ทดลอง)':'')+' แล้ว');
     b.disabled = true;   // กันกดซ้ำ
-    setTimeout(livePoll, 1500);   // แสดงสถานะใหม่เร็ว ๆ
+    liveRefresh(k, 1500);   // แสดงสถานะใหม่เร็ว ๆ (รอ TP/SL ตั้งเสร็จ)
     if ($('ot_journal').checked){ setTimeout(()=>{ closeOrder(); save(); }, 900); }
   }catch(e){ btnBusy(b, false); $('ot_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
 }
@@ -4748,7 +4904,7 @@ async function changeShare(email, perm){
   catch(e){ $('sh_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
 }
 async function removeShare(uid, email){
-  if (!await askConfirm(`ยกเลิกการแชร์พอร์ตนี้กับ ${email}?`)) return;
+  if (!await askConfirm(`ยกเลิกการแชร์พอร์ตนี้กับ ${email}?`, {ok:'ยกเลิกการแชร์', no:'กลับ'})) return;
   try{ SHARES = await apiRaw('unshare', SHARE_PID, uid); renderShares(); toast('ยกเลิกการแชร์กับ '+email+' แล้ว'); }
   catch(e){ $('sh_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
 }

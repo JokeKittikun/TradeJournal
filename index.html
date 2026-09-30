@@ -358,24 +358,20 @@ table.mkt td:nth-child(2){text-align:right}   /* คอลัมน์ M30 ก�
 table.mkt td:last-child,table.mkt th:last-child{text-align:left;font-family:'IBM Plex Sans Thai',sans-serif}
 table.mkt tr.today td{background:rgba(247,166,0,.06)}
 .st{font-size:12px;font-weight:500}
-/* เป้าหมายพอร์ต */
-.glTop{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.glTop .v{font:600 22px 'JetBrains Mono',monospace}
-.glTop .v small{font-size:13px;color:var(--muted);font-weight:500}
-.glTop .p{font:600 15px 'JetBrains Mono',monospace;color:var(--accent)}
-.glBar{position:relative;height:12px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);overflow:hidden;margin:10px 0 8px}
-.glBar i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,#f7a600,#ffc24d);transition:width .6s ease}
-.glMeta{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted);flex-wrap:wrap}
-.glMeta b{color:var(--text);font-weight:600}
-#goalCard.done{border-color:rgba(34,197,94,.55);background:linear-gradient(180deg,rgba(34,197,94,.08),transparent 70%),var(--panel)}
-#goalCard.done .glTop .p{color:#22c55e}
-#goalCard.done .glBar i{background:linear-gradient(90deg,#16a34a,#4ade80)}
-.glWin{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;background:rgba(34,197,94,.14);border:1px solid rgba(34,197,94,.4);color:#22c55e;font-size:12px;font-weight:600}
-.glEmpty{font-size:13px;color:var(--muted);line-height:1.7}
-.glQuick{display:flex;gap:6px;flex-wrap:wrap;margin:-4px 0 8px}
-.glQuick button{padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font:500 12px 'JetBrains Mono',monospace;cursor:pointer}
-.glQuick button:hover{border-color:var(--accent);color:var(--accent)}
-body.ro .goalBtn{display:none!important}
+/* เป้าหมายพอร์ต (ในการ์ดพอร์ต) */
+.pGoal{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.pgTop{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11.5px;color:var(--muted)}
+.pgTop span{display:inline-flex;align-items:center;gap:5px}
+.pgTop b{font:600 12px 'JetBrains Mono',monospace;color:var(--accent)}
+.pgBar{height:8px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);overflow:hidden;margin:6px 0 5px}
+.pgBar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#f7a600,#ffc24d);transition:width .6s ease}
+.pgSub{font-size:11px;color:var(--muted)}
+.pGoal.done .pgTop span,.pGoal.done .pgTop b{color:#22c55e;font-weight:600}
+.pGoal.done .pgBar i{background:linear-gradient(90deg,#16a34a,#4ade80)}
+.pCard:has(.pGoal.done){border-color:rgba(34,197,94,.55)}
+.pfQuick{display:flex;gap:6px;flex-wrap:wrap;margin:-4px 0 8px}
+.pfQuick button{padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font:500 12px 'JetBrains Mono',monospace;cursor:pointer}
+.pfQuick button:hover{border-color:var(--accent);color:var(--accent)}
 /* สถานะฐานข้อมูล (Super Admin) */
 .modal.dbModal{max-width:760px}
 .dbBody{padding:26px 28px 30px}
@@ -523,10 +519,6 @@ body.chFs #confirmBox{z-index:55}
     </div>
     <div id="portDash" hidden>
     <button class="btn primary homeNew" onclick="showView('form')"><i data-ic="circle-plus" data-sz="16"></i>บันทึกเทรดใหม่&nbsp;·&nbsp;<span id="dashPort"></span></button>
-    <div class="card homeCard" id="goalCard">
-      <h3 style="display:flex;align-items:center">เป้าหมาย<span class="spacer" style="flex:1"></span><button class="btn sm goalBtn" id="goalBtn" onclick="openGoal()"><i data-ic="target" data-sz="14"></i><span id="goalBtnTxt">ตั้งเป้าหมาย</span></button></h3>
-      <div id="goalBody"></div>
-    </div>
     <div class="card homeCard">
       <h3>เดือนนี้ <span class="hint" id="hMonth" style="margin:0;font-weight:400"></span></h3>
       <div class="hStats" id="hStats"></div>
@@ -559,7 +551,6 @@ body.chFs #confirmBox{z-index:55}
         <label hidden style="display:none;align-items:center;gap:6px;margin:0;font-size:12px;color:var(--text);width:auto"><input type="checkbox" id="chSaved" onchange="drawSaved()" style="width:auto">เทรดที่บันทึกแล้ว</label>
         <label hidden style="display:none;align-items:center;gap:6px;margin:0;width:auto;font-size:12px;color:var(--muted)">ไปวันที่<input type="text" id="chDate" class="dp" style="width:128px;padding:4px 8px" placeholder="เลือกวันที่"></label>
         <span id="chHist" class="hint" style="display:none;margin:0;padding:4px 8px;border-radius:8px;background:#10243f;color:#9cc4ff"></span>
-        <button class="btn sm" id="chReset" onclick="resetView()" title="รีเซ็ตมุมมอง (เหมือนดับเบิลคลิกบนกราฟ)"><i data-ic="rotate-ccw"></i>Reset</button>
       </div>
       <div id="chart" style="height:360px;border:1px solid var(--line);border-radius:10px;overflow:hidden;position:relative"></div>
       <div class="hint" id="chLegend" style="display:flex;gap:14px;flex-wrap:wrap">
@@ -795,6 +786,8 @@ body.chFs #confirmBox{z-index:55}
   <h3 style="margin:0 0 12px" id="pf_title">เพิ่มพอร์ต</h3>
   <div class="field"><label>ชื่อพอร์ต</label><input type="text" id="pf_name" maxlength="60" placeholder="เช่น BTC หลัก, ทดลองระบบใหม่"></div>
   <div class="field" id="pf_capWrap"><label>ทุนเริ่มต้น ($)</label><input type="number" step="any" id="pf_cap" placeholder="เช่น 100"></div>
+  <div id="pf_goalWrap"><div class="field"><label>เป้าหมาย Balance ($) <span class="hint" style="margin:0;font-weight:400">ไม่บังคับ · เว้นว่าง = ไม่ตั้ง</span></label><input type="number" step="any" min="0" id="pf_goal" inputmode="decimal" placeholder="เช่น 500"></div>
+  <div class="pfQuick" id="pf_quick"></div></div>
   <div class="hint" id="pf_msg" style="margin:4px 0 12px"></div>
   <div class="actions"><button class="btn danger" id="pf_del" hidden onclick="startDeletePort()" style="margin-right:auto"><i data-ic="trash-2"></i>ลบพอร์ต</button><button class="btn" onclick="closePortForm()">ยกเลิก</button><button class="btn primary" id="pf_btn" onclick="submitPortForm()">สร้างพอร์ต</button></div>
 </div></div>
@@ -808,14 +801,6 @@ body.chFs #confirmBox{z-index:55}
   <div class="actions"><button class="btn" id="qe_full" style="margin-right:auto">แก้ไขทั้งหมด</button><button class="btn" onclick="closeQuickEdit()">ยกเลิก</button><button class="btn primary" id="qe_btn" onclick="saveQuickEdit()">บันทึก</button></div>
 </div></div>
 
-<div class="overlay" id="goalBox"><div class="modal" style="max-width:400px">
-  <h3 style="margin:0 0 4px;display:flex;align-items:center;gap:8px"><i data-ic="target" data-sz="18"></i> เป้าหมายพอร์ต</h3>
-  <div class="hint" id="gl_sub" style="margin:0 0 12px"></div>
-  <div class="field"><label>Balance เป้าหมาย ($)</label><input id="gl_val" type="number" step="any" min="0" inputmode="decimal" placeholder="เช่น 500"></div>
-  <div class="glQuick" id="gl_quick"></div>
-  <div class="hint" id="gl_msg" style="min-height:18px"></div>
-  <div class="actions"><button class="btn ghostDanger" id="gl_del" onclick="saveGoal(null)">ลบเป้าหมาย</button><span class="spacer" style="flex:1"></span><button class="btn" onclick="closeGoal()">ยกเลิก</button><button class="btn primary" id="gl_btn" onclick="saveGoal()">บันทึก</button></div>
-</div></div>
 <div class="overlay" id="dbBox"><div class="modal admModal dbModal">
   <div class="admHead">
     <div class="admIc"><i data-ic="database" data-sz="18"></i></div>
@@ -1327,55 +1312,26 @@ function equityChart(canvas, prev, cap, trades, startTitle){
 }
 // ---------- หน้าแรก ----------
 let homeChart;
-// ---------- เป้าหมายพอร์ต ----------
+// ---------- เป้าหมายพอร์ต (แสดงในการ์ดพอร์ต · ตั้งค่าในหน้าต่างแก้ไขพอร์ต) ----------
 // ความคืบหน้า = (Balance − ทุนเริ่มต้น) / (เป้าหมาย − ทุนเริ่มต้น) · ถึง 100% = สำเร็จ
-function goalProgress(p){
-  const g = num(p.goal), cap = num(DATA.capital!=null ? DATA.capital : p.capital), bal = lastBalance();
-  if (g==null || bal==null) return null;
-  const pc = (cap!=null && g>cap) ? (bal-cap)/(g-cap) : bal/g;
-  return {g, cap, bal, pc, done: bal >= g};
+function goalHtml(p){
+  const g = num(p.goal), cap = num(p.capital), bal = num(p.balance);
+  if (g==null || bal==null) return '';
+  const pc = (cap!=null && g>cap) ? (bal-cap)/(g-cap) : bal/g, done = bal >= g, w = Math.max(0, Math.min(100, pc*100));
+  return `<div class="pGoal ${done?'done':''}"><div class="pgTop"><span>${done ? ic('trophy',12)+' สำเร็จแล้ว' : ic('target',12)+' เป้าหมาย $'+fN(g)}</span><b>${fN(Math.max(0,pc*100),1)}%</b></div>`
+    + `<div class="pgBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${w.toFixed(0)}"><i style="width:${w}%"></i></div>`
+    + `<div class="pgSub">${done ? 'เกินเป้า $'+fN(g)+' ไป +$'+fN(bal-g) : 'อีก $'+fN(g-bal)+' ถึงเป้า'}</div></div>`;
 }
-function renderGoal(p){
-  const card = $('goalCard'), body = $('goalBody'), r = goalProgress(p);
-  const own = !p.access || p.access==='owner';
-  $('goalBtn').hidden = !own || !!VIEW_AS; $('goalBtnTxt').textContent = r ? 'แก้ไข' : 'ตั้งเป้าหมาย';
-  card.classList.toggle('done', !!(r && r.done));
-  if (!r){ body.innerHTML = `<div class="glEmpty">${own && !VIEW_AS ? 'ยังไม่ได้ตั้งเป้าหมาย — ตั้งยอด Balance ที่อยากไปถึง แล้วติดตามความคืบหน้าได้ที่นี่' : 'พอร์ตนี้ยังไม่ได้ตั้งเป้าหมาย'}</div>`; return; }
-  const w = Math.max(0, Math.min(100, r.pc*100)), left = r.g - r.bal;
-  body.innerHTML = `<div class="glTop"><div class="v">$${fN(r.bal)} <small>/ $${fN(r.g)}</small></div>`
-    + (r.done ? `<span class="glWin">${ic('trophy',14)} สำเร็จแล้ว · ${fN(r.pc*100,1)}%</span>` : `<div class="p">${fN(Math.max(0,r.pc*100),1)}%</div>`) + '</div>'
-    + `<div class="glBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${w.toFixed(0)}"><i style="width:${w}%"></i></div>`
-    + `<div class="glMeta"><span>เริ่ม <b>$${fN(r.cap)}</b></span><span>${r.done ? `เกินเป้า <b class="pos">+$${fN(-left)}</b>` : `อีก <b>$${fN(left)}</b> ถึงเป้า`}</span></div>`;
+// ปุ่มลัดตั้งเป้าหมาย (คิดจาก Balance ตอนนี้ หรือทุนเริ่มต้นตอนสร้างพอร์ต)
+function paintGoalQuick(base){
+  $('pf_quick').innerHTML = base>0 ? [['+25%',1.25],['+50%',1.5],['x2',2],['x3',3],['x5',5]].map(([l,m])=>`<button type="button" onclick="$('pf_goal').value=${Math.round(base*m*100)/100}">${l} · $${fN(base*m,0)}</button>`).join('') : '';
 }
-function openGoal(){
-  const p = curPort(); if (!p || roBlock()) return;
-  const bal = lastBalance(), cap = num(DATA.capital);
-  $('gl_sub').textContent = `พอร์ต ${p.name} · Balance ตอนนี้ $${fN(bal)} · ทุนเริ่มต้น $${fN(cap)}`;
-  $('gl_val').value = num(p.goal)!=null ? p.goal : ''; $('gl_msg').textContent = ''; $('gl_del').hidden = num(p.goal)==null;
-  const base = bal || cap || 0;
-  $('gl_quick').innerHTML = base ? [['+25%',1.25],['+50%',1.5],['x2',2],['x3',3],['x5',5]].map(([l,m])=>`<button type="button" onclick="$('gl_val').value=${Math.round(base*m*100)/100}">${l} · $${fN(base*m,0)}</button>`).join('') : '';
-  $('goalBox').classList.add('on'); setTimeout(()=>$('gl_val').focus(), 50);
-}
-function closeGoal(){ $('goalBox').classList.remove('on'); }
-async function saveGoal(clear){
-  const p = curPort(); if (!p) return;
-  const v = clear===null ? null : num($('gl_val').value);
-  if (clear!==null && !(v>0)) return $('gl_msg').innerHTML = '<span class="neg">ใส่เป้าหมายมากกว่า 0</span>';
-  const b = $('gl_btn'); btnBusy(b, true, 'กำลังบันทึก…'); $('gl_msg').textContent = '';
-  try{
-    const r = await apiRaw('setGoal', p.id, v);
-    if (r && Array.isArray(r.ports)) PORTS = r.ports; else p.goal = v;
-    btnBusy(b, false); closeGoal(); cacheSave(); renderHome(); toast(v==null ? 'ลบเป้าหมายแล้ว' : 'ตั้งเป้าหมาย $'+fN(v)+' แล้ว');
-  }catch(e){ btnBusy(b, false); $('gl_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
-}
-$('gl_val').addEventListener('keydown', e=>{ if (e.key==='Enter') saveGoal(); if (e.key==='Escape') closeGoal(); });
 
 function renderHome(){
   if (!$('v-home')) return;
   renderPorts();
   const p = curPort(); $('portDash').hidden = !p; if (!p) return;
   $('dashPort').textContent = p.name;
-  renderGoal(p);
   const ym = thToday().slice(0,7);
   const T = DATA.trades.filter(t=>String(t.date).slice(0,7)===ym);
   const c = T.filter(t=>num(t.diff)!=null), w = c.filter(t=>t.diff>0).length, l = c.filter(t=>t.diff<0).length;
@@ -3743,6 +3699,7 @@ function renderPorts(){
       ${!own && p.owner && !VIEW_AS ? `<div class="pOwner">ของ ${esc(p.owner)}</div>` : ''}
       <div class="pBal mono">${bal!=null?'$'+fN(bal):'–'}</div>
       <div class="pMeta">${p.trades!=null?`<span class="${cls(ret)}">${pct(ret)}</span> · ${p.trades} เทรด · Win ${wl?fN(p.wins/wl*100,1)+'%':'–'}`:'แตะเพื่อเปิด'}</div>
+      ${goalHtml(p)}
     </div>`; };
   const mine = PORTS.filter(p=>!p.access || p.access==='owner' || VIEW_AS), shared = VIEW_AS ? [] : PORTS.filter(p=>p.access && p.access!=='owner');
   $('addPortBtn').hidden = !!VIEW_AS;
@@ -3758,10 +3715,12 @@ function openPortForm(id){
   $('pf_btn').style.cssText = ''; $('pf_name').placeholder = 'เช่น BTC หลัก, ทดลองระบบใหม่';
   $('pf_del').hidden = !PF_EDIT;
   const p = PF_EDIT ? PORTS.find(x=>String(x.id)===PF_EDIT) : null;
-  $('pf_title').textContent = p ? 'เปลี่ยนชื่อพอร์ต' : 'เพิ่มพอร์ต';
-  $('pf_btn').textContent = p ? 'บันทึกชื่อ' : 'สร้างพอร์ต';
+  $('pf_title').textContent = p ? 'แก้ไขพอร์ต' : 'เพิ่มพอร์ต';
+  $('pf_btn').textContent = p ? 'บันทึก' : 'สร้างพอร์ต';
   $('pf_name').value = p ? p.name : ''; $('pf_cap').value = '';
-  $('pf_capWrap').hidden = !!p;
+  $('pf_capWrap').hidden = !!p; $('pf_goalWrap').hidden = false;
+  $('pf_goal').value = p && num(p.goal)!=null ? p.goal : '';
+  paintGoalQuick(p ? num(p.balance) : 0);
   $('pf_msg').textContent = '';
   $('portBox').classList.add('on'); setTimeout(()=>$('pf_name').focus(), 50);
 }
@@ -3771,7 +3730,7 @@ function startDeletePort(){
   const p = PORTS.find(x=>String(x.id)===PF_EDIT); if (!p) return;
   PF_DEL = true;
   $('pf_title').textContent = 'ลบพอร์ต';
-  $('pf_del').hidden = true;
+  $('pf_del').hidden = true; $('pf_goalWrap').hidden = true;
   $('pf_name').value = ''; $('pf_name').placeholder = p.name;
   $('pf_msg').innerHTML = `<span class="neg">${ic('triangle-alert',12)} ลบพอร์ต "<b>${esc(p.name)}</b>" พร้อมเทรดทั้งหมด${p.trades?` (${p.trades} เทรด)`:''} · กู้คืนไม่ได้</span><br>พิมพ์ชื่อพอร์ตด้านบนเพื่อยืนยัน (แนะนำให้ดาวน์โหลดข้อมูลเก็บไว้ก่อน)`;
   $('pf_btn').textContent = 'ลบถาวร';
@@ -3805,14 +3764,24 @@ async function submitPortForm(){
   const name = $('pf_name').value.trim(), cap = num($('pf_cap').value);
   if (!name) return $('pf_msg').innerHTML = '<span class="neg">ใส่ชื่อพอร์ต</span>';
   if (!PF_EDIT && (cap==null || cap<=0)) return $('pf_msg').innerHTML = '<span class="neg">ใส่ทุนเริ่มต้นมากกว่า 0</span>';
+  const goalTxt = $('pf_goal').value.trim(), goal = goalTxt==='' ? null : num(goalTxt);
+  if (goalTxt!=='' && !(goal>0)) return $('pf_msg').innerHTML = '<span class="neg">เป้าหมายต้องมากกว่า 0 (หรือเว้นว่าง)</span>';
+  const old = PF_EDIT ? PORTS.find(x=>String(x.id)===PF_EDIT) : null;
   const b = $('pf_btn'); b.classList.add('loading');
   try{
     const pid = PF_EDIT;
     const r = pid
       ? await safeWrite('renamePort', [pid, name], async()=>{ const x = await apiRaw('listPorts'); const q = x.ports.find(q=>String(q.id)===pid); return (q && q.name===name) ? x : null; })
       : await safeWrite('addPort', [name, cap], async()=>{ const x = await apiRaw('listPorts'); const q = x.ports.find(q=>q.name===name); if (!q) return null; x.added = q.id; return x; });
-    PORTS = r.ports || PORTS; closePortForm();
-    if (PF_EDIT){ toast('เปลี่ยนชื่อพอร์ตแล้ว'); renderPorts(); }
+    PORTS = r.ports || PORTS;
+    // เป้าหมาย: บันทึกเมื่อเปลี่ยน (พอร์ตใหม่ = หลังสร้างเสร็จ)
+    const gid = pid || r.added, gOld = old ? num(old.goal) : null;
+    if (gid!=null && goal!==gOld){
+      try{ const g = await apiRaw('setGoal', gid, goal); if (g && Array.isArray(g.ports)) PORTS = g.ports; }
+      catch(e){ toast('บันทึกเป้าหมายไม่ได้: '+(e.message||e), true); }
+    }
+    closePortForm();
+    if (PF_EDIT){ toast('บันทึกพอร์ตแล้ว'); renderPorts(); cacheSave(); }
     else {
       toast('สร้างพอร์ต "'+name+'" แล้ว');
       if (r.added!=null && r.data){ setPort(r.added); DATA = r.data; renderAll(); resetForm(); renderHome(); }   // ได้ข้อมูลมาพร้อมกัน ไม่ต้องโหลดซ้ำ
@@ -3821,7 +3790,8 @@ async function submitPortForm(){
   }catch(e){ $('pf_msg').innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
   b.classList.remove('loading');
 }
-['pf_name','pf_cap'].forEach(id=>$(id).addEventListener('keydown',e=>{ if (e.key==='Enter') submitPortForm(); }));
+$('pf_cap').addEventListener('input', ()=>{ if (!PF_EDIT) paintGoalQuick(num($('pf_cap').value)); });   // พอร์ตใหม่: ปุ่มลัดคิดจากทุนเริ่มต้นที่พิมพ์
+['pf_name','pf_cap','pf_goal'].forEach(id=>$(id).addEventListener('keydown',e=>{ if (e.key==='Enter') submitPortForm(); }));
 
 async function load(){
   if (!DEMO){

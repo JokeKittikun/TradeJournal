@@ -365,7 +365,7 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
 .btn,.logo{white-space:nowrap}
 @media (max-width:480px){ .top .demo{display:none} .top .btn{padding:6px 9px} }
 @media (max-width:720px){
-  #chart{height:300px!important}
+  #chart{height:400px!important}
   .kpis{grid-template-columns:repeat(2,1fr)}
   .split{grid-template-columns:1fr}
   .row3{grid-template-columns:1fr 1fr}
@@ -383,6 +383,11 @@ table.mkt tr.today td{background:rgba(247,166,0,.06)}
 #drawBar button.on{background:rgba(247,166,0,.16);color:var(--accent)}
 #chart.drawing{cursor:crosshair}
 #drawBar .dbSep{height:1px;background:var(--line);margin:2px 3px}
+/* กราฟเตี้ย (มือถือ) ปุ่มไม่พอแนวตั้ง → จัดเป็น 2 คอลัมน์ ให้เห็นครบทุกปุ่ม */
+#drawBar.two{display:grid;grid-template-columns:repeat(2,auto);gap:2px}
+#drawBar.two .dbSep{grid-column:1 / -1;margin:2px 3px}
+#chart.bar2 #chInfo{left:84px}
+@media (pointer:coarse){ #chart.bar2 #chInfo{left:96px} }
 /* เมนู Indicator */
 #indMenu{position:absolute;left:46px;z-index:8;min-width:250px;max-width:calc(100% - 60px);max-height:calc(100% - 12px);overflow:auto;padding:6px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
 #indMenu .ih{font-size:11px;color:var(--muted);padding:4px 8px 6px}
@@ -1967,7 +1972,7 @@ function ensureChart(){
   });
   BAND = {els:[]};
   LWC.timeScale().subscribeVisibleLogicalRangeChange(lr=>{ placeBand(); levelCheck(); if (lr && lr.from < OLD_EDGE) oldCheck(); });
-  new ResizeObserver(()=>{ placeBand(); placePanels(); }).observe($('chart'));
+  new ResizeObserver(()=>{ placeBand(); placePanels(); fitDrawBar(); }).observe($('chart'));
   if (!window.__ovLoop){ window.__ovLoop = true; requestAnimationFrame(overlayLoop); }   // เริ่มครั้งเดียว
   // ปิดเส้น/ป้ายราคาล่าสุดของ series แล้ววาดเองด้วย price line ตัวเดียว → เส้นประกับป้ายราคาอยู่ระดับเดียวกันเสมอ
   setTimeout(initDraw, 0);
@@ -2286,6 +2291,7 @@ function toggleIndMenu(force){
   }
   paintIndMenu();
   m.style.top = '6px';   // ชิดบน (เลื่อนดูในเมนูได้ถ้ายาวกว่ากราฟ)
+  const bar = $('drawBar'); if (bar) m.style.left = (bar.offsetLeft + bar.offsetWidth + 6)+'px';
   $('indBtn') && $('indBtn').classList.add('on');
 }
 function paintIndMenu(){
@@ -2407,7 +2413,7 @@ function indLayout(){
   if (!LWC) return;
   const bv = hasBuyVol(), el = $('chart'), mob = innerWidth <= 720, fs = isChartFs();
   const list = [['vol', IND.vol, 'Volume'], ['cvd', IND.cvd && bv, 'CVD'+({week:' (สัปดาห์)', all:' (สะสม)'}[IND.cvdR]||'')], ['macd', IND.macd, 'MACD '+IND.macdP.join(' ')], ['rsi', IND.rsi, 'RSI '+IND.rsiP], ['stoch', IND.stoch, 'Stoch '+IND.stochP.join(' ')]].filter(x=>x[1]);
-  const base = mob ? 300 : 360, ph = mob ? 72 : 88;
+  const base = mob ? 400 : 360, ph = mob ? 72 : 88;
   if (fs) el.style.removeProperty('height');   // เต็มจอ: ให้ CSS ยืดเต็มพื้นที่
   else if (list.length) el.style.setProperty('height', (base + ph*list.length)+'px', 'important');   // เพิ่มความสูงตามจำนวนช่อง แท่งราคาไม่ถูกบีบ
   else { el.style.removeProperty('height'); el.style.height = '360px'; }
@@ -2775,6 +2781,7 @@ function initDraw(){
   bar.innerHTML = DRAW_TOOLS.map(([k,ic,tt])=>`<button type="button" data-tool="${k}" title="${tt}">${ic}</button>`).join('')
     + `<div class="dbSep"></div><button type="button" data-tool="ind" id="indBtn" title="Indicator (Volume / CVD / VWAP / Volume Profile)" aria-label="Indicator">${ic('chart-column',16,1.75)}</button><button type="button" data-tool="fs" id="chFsBtn" title="ขยายกราฟเต็มจอ" aria-label="ขยายกราฟเต็มจอ">${ic(isChartFs()?'minimize':'maximize',16,1.75)}</button>`;
   $('chart').appendChild(bar);
+  requestAnimationFrame(fitDrawBar);
   // ใช้ pointerup (แตะบน iPad/มือถือตอบสนองแน่นอน แม้กราฟกำลังจับนิ้วอยู่)
   bar.addEventListener('pointerdown', e=>e.stopPropagation());
   bar.addEventListener('pointerup', e=>{
@@ -2900,6 +2907,14 @@ function moveXh(x, y){
   paintInfo({point:{x, y}, time:bar.time, seriesData:new Map([[CS, bar]])});
 }
 function setTool(k){ if (k!=='cursor' && DRAW.xh) setXh(false); DRAW.tool=k; DRAW.pending=null; if (k!=='measure') DRAW.measure=null; if (k!=='cursor') DRAW.sel=-1; paintDrawBar(); renderDraw(); }
+// ปุ่มในกล่องเครื่องมือสูงเกินกราฟ → แบ่ง 2 คอลัมน์ (เช็กใหม่ทุกครั้งที่กราฟเปลี่ยนขนาด)
+function fitDrawBar(){
+  const bar = $('drawBar'), el = $('chart'); if (!bar || !el) return;
+  bar.classList.remove('two');
+  const need = bar.scrollHeight + 12 > el.clientHeight - (LWC ? LWC.timeScale().height() : 26);
+  bar.classList.toggle('two', need); el.classList.toggle('bar2', need);
+  const m = $('indMenu'); if (m) m.style.left = (bar.offsetLeft + bar.offsetWidth + 6)+'px';
+}
 function paintDrawBar(){ document.querySelectorAll('#drawBar button').forEach(b=>{ if (b.dataset.tool==='fs' || b.dataset.tool==='ind') return; b.classList.toggle('on', b.dataset.tool===DRAW.tool); if (b.dataset.tool==='cursor') b.classList.toggle('lock', !!DRAW.xh && DRAW.tool==='cursor'); }); $('chart').classList.toggle('drawing', DRAW.tool!=='cursor'); paintPan(); }
 // กันหน้าเว็บเลื่อนตามนิ้ว ขณะ: เลือกเส้นอยู่ / ลากเส้น / ใช้เครื่องมือวาด / โหมดเล็ง
 function drawNoPan(){ return !!DRAW.xh || DRAW.tool!=='cursor' || DRAW.sel>=0 || !!DRAW.drag || !!DRAW.xhDrag || !!DRAW.pending; }

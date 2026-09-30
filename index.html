@@ -417,15 +417,16 @@ body.ro .orderBtn{display:none!important}
 .modal.exModal{max-width:640px}
 .exBody{padding:22px 24px 26px}
 .exRow{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);margin-bottom:8px}
-.exRow .n{font-weight:600}.exRow .k{font:500 12px 'JetBrains Mono',monospace;color:var(--muted)}
-.exRow .b{font:500 12px 'JetBrains Mono',monospace;color:var(--muted);margin-left:auto;text-align:right}
+/* ตาม house style: ข้อความ/ป้าย = IBM Plex Sans Thai · เฉพาะตัวเลข/รหัส = .mono */
+.exRow .n{font-weight:600}.exRow .k{font-size:11.5px;color:var(--muted);margin-top:2px}.exRow .k .mono{font-size:11.5px}
+.exRow .b{font-size:12px;color:var(--muted);margin-left:auto;text-align:right}.exRow .b .mono{font-weight:600;color:var(--text)}
 .envB{padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600}
 .envB.demo{background:rgba(56,189,248,.12);color:#7dd3fc;border:1px solid rgba(56,189,248,.35)}
 .envB.live{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.4)}
 .exForm .seg{margin-bottom:10px}
 .exSeg button{flex:1}
 .exHelp{font-size:12px;color:var(--muted);line-height:1.7;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:4px 0 8px}
-.exHelp b{color:var(--text)}
+.exHelp b{color:var(--text)}.exHelp a{color:var(--accent)}
 .modal.otModal{max-width:460px}
 .otHead{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .otHead b{display:flex;align-items:center;gap:6px;font-size:15px}
@@ -4735,7 +4736,7 @@ async function openEx(){
 }
 function closeEx(){ $('exBox').classList.remove('on'); }
 function exPaintList(){
-  $('ex_list').innerHTML = EX_KEYS.length ? EX_KEYS.map(k=>`<div class="exRow"><div><div class="n">${EX_NAME[k.exchange]||k.exchange} <span class="envB ${k.testnet?'demo':'live'}">${k.testnet?'ทดลอง':'จริง'}</span></div><div class="k">Key ••••${esc(k.key_hint||'')}</div></div>
+  $('ex_list').innerHTML = EX_KEYS.length ? EX_KEYS.map(k=>`<div class="exRow"><div><div class="n">${EX_NAME[k.exchange]||k.exchange} <span class="envB ${k.testnet?'demo':'live'}">${k.testnet?'ทดลอง':'จริง'}</span></div><div class="k">API Key <span class="mono">••••${esc(k.key_hint||'')}</span></div></div>
       <div class="b" id="exb_${k.id}"><button class="btn sm" onclick="exBalance('${k.id}')">ดูยอดเงิน</button></div>
       <button class="btn sm icon ghostDanger" title="ยกเลิกการเชื่อม" onclick="delExKey('${k.id}')">${ic('trash-2',14)}</button></div>`).join('')
     : '<div class="glEmpty" style="padding:4px 2px 2px">ยังไม่ได้เชื่อมบัญชีตลาด</div>';
@@ -4771,7 +4772,7 @@ async function saveExKey(){
 async function exBalance(id){
   const k = EX_KEYS.find(x=>x.id===id), el = $('exb_'+id); if (!k || !el) return;
   el.innerHTML = '<span class="spin sm"></span>';
-  try{ const r = await tradeFn({action:'balance', exchange:k.exchange, testnet:k.testnet}); el.textContent = 'ใช้ได้ '+fN(r.info.available)+' '+(r.info.currency||''); }
+  try{ const r = await tradeFn({action:'balance', exchange:k.exchange, testnet:k.testnet}); el.innerHTML = 'ใช้ได้ <span class="mono">'+fN(r.info.available)+'</span> '+esc(r.info.currency||''); }
   catch(e){ el.innerHTML = '<span class="neg">'+esc(e.message||String(e))+'</span>'; }
 }
 async function delExKey(id){

@@ -1397,7 +1397,11 @@ function showView(v){
   livePoll();
   if (v==='home') renderHome();
   // กราฟโหลดตอนซ่อนอยู่ (กว้าง 0) → เปิดหน้าบันทึกเทรดครั้งแรกให้จัดมุมมองใหม่
-  if (v==='form' && !FORM_SEEN){ FORM_SEEN = true; requestAnimationFrame(()=>{ try{ if (typeof resetView==='function') resetView(); }catch(e){} }); }
+  if (v==='form' && !FORM_SEEN){ FORM_SEEN = true; requestAnimationFrame(()=>{ try{
+    if (!CH_ANCHOR && CM_ROW==null && applyChView(loadChView(CH_IV))) refitScale();   // กลับไปตำแหน่งที่เลื่อนไว้
+    else if (typeof resetView==='function') resetView();
+    armChView();
+  }catch(e){} }); }
 }
 // กราฟ Equity (ใช้ทั้งหน้าพอร์ตและหน้าสรุปผล): แกนราคาเป็นจำนวนเต็ม · แกน x เป็นวันที่ · hover/แตะ ดูรายละเอียดแต่ละเทรด
 // ---------- เพิ่ม/ลดทุน แยกจากกำไรการเทรด ----------
@@ -2225,6 +2229,48 @@ const HI_TF = iv => iv==='4h' || iv==='1d';   // TF ใหญ่: ไม่ว�
 const NEED30 = iv => iv==='1h' || HI_TF(iv);  // ต้องใช้แท่ง 30m แยก เพื่อคำนวณกรอบ M30
 function loadChPrefs(){ try{ const p=JSON.parse(localStorage.getItem('chPrefs')||'{}'); if(p.i && INT_MS[p.i]) $('chInt').value=p.i; }catch(e){} }
 function saveChPrefs(){ try{ localStorage.setItem('chPrefs', JSON.stringify({i:$('chInt').value})); }catch(e){} }
+// จำตำแหน่งที่เลื่อนกราฟไว้ (แยกตาม TF) → รีเฟรชแล้วกลับมาที่เดิม
+// ขอบขวาเห็นแท่งล่าสุด = จำระยะจากแท่งล่าสุด (มีแท่งใหม่ก็ยังชิดขวาเหมือนเดิม) · เลื่อนไปดูย้อนหลัง = จำเวลาของแท่งซ้ายสุด
+let CH_VIEW_T = 0;
+function saveChView(lr){
+  if (!lr || !CH_BARS.length || CM_ROW!=null || CH_ANCHOR || !CH_VIEW_OK || CH_VIEW_PEND || !LWC.timeScale().width()) return;   // กราฟซ่อนอยู่ (กว้าง 0) = ไม่จำ
+  clearTimeout(CH_VIEW_T);
+  CH_VIEW_T = setTimeout(()=>{
+    const L = CH_BARS.length - 1, span = lr.to - lr.from, off = lr.to - L;
+    const i = Math.max(0, Math.min(L, Math.floor(lr.from))), v = {span};
+    if (off >= 0) v.off = off; else { v.t = CH_BARS[i].time; v.frac = lr.from - i; }
+    try{ localStorage.setItem('chView:'+CH_IV, JSON.stringify(v)); }catch(e){}
+  }, 300);
+}
+function loadChView(iv){ try{ return JSON.parse(localStorage.getItem('chView:'+iv)||'null'); }catch(e){ return null; } }
+function applyChView(v){
+  if (!v || !LWC || !CH_BARS.length || !(v.span > 0)) return false;
+  const L = CH_BARS.length - 1;
+  let from;
+  if (v.off != null) from = L + v.off - v.span;
+  else if (v.t != null){
+    if (v.t < CH_BARS[0].time){
+      // ตำแหน่งที่จำไว้เก่ากว่าแท่งที่โหลดมา → ไปขอบซ้ายเพื่อโหลดแท่งเก่าเพิ่ม แล้วค่อยกลับมาที่ตำแหน่งเดิม (ใน prependBars)
+      if (OLD.done) return false;
+      CH_VIEW_PEND = v;
+      try{ LWC.timeScale().setVisibleLogicalRange({from: 0, to: v.span}); oldCheck(); return true; }catch(e){ CH_VIEW_PEND = null; return false; }
+    }
+    from = barAt(CH_BARS, v.t) + (v.frac||0);
+  }
+  else return false;
+  CH_VIEW_PEND = null;
+  try{ LWC.timeScale().setVisibleLogicalRange({from, to: from + v.span}); return true; }catch(e){ return false; }
+}
+let CH_VIEW_PEND = null;   // ตำแหน่งที่รอโหลดแท่งเก่าให้ถึงก่อน
+// หลังเติมแท่งเก่า: ถึงตำแหน่งที่จำไว้แล้ว → ไปที่นั่น · ยังไม่ถึง → อยู่ขอบซ้ายเพื่อโหลดต่อ · โหลดไม่ได้อีก → ไปแท่งเก่าสุด
+function chViewPendStep(){
+  const v = CH_VIEW_PEND; if (!v) return;
+  if (v.t >= CH_BARS[0].time){ applyChView(v); refitScale(); return; }
+  if (OLD.done || CH_BARS.length >= OLD_MAX_BARS){ CH_VIEW_PEND = null; try{ LWC.timeScale().setVisibleLogicalRange({from: 0, to: v.span}); }catch(e){} refitScale(); return; }
+  try{ LWC.timeScale().setVisibleLogicalRange({from: 0, to: v.span}); }catch(e){}
+}
+let CH_VIEW_OK = false;   // เริ่มจำตำแหน่งหลังกราฟแสดงครั้งแรกแล้ว (ไม่ให้ตำแหน่งเริ่มต้นทับค่าที่จำไว้)
+function armChView(req){ setTimeout(()=>{ if (req==null || req===CH_REQ) CH_VIEW_OK = true; }, 500); }
 function ensureChart(){
   if (LWC) return true;
   if (typeof LightweightCharts==='undefined'){ $('chMsg').textContent='โหลดไลบรารีกราฟไม่ได้ (เช็กอินเทอร์เน็ต)'; return false; }
@@ -2236,8 +2282,9 @@ function ensureChart(){
     crosshair:{mode:0, horzLine:{visible:true, labelVisible:true, color:'rgba(139,152,168,0.6)', style:LightweightCharts.LineStyle.Dashed, labelBackgroundColor:'#2a3441'}, vertLine:{visible:true, labelVisible:true, color:'rgba(139,152,168,0.6)', style:LightweightCharts.LineStyle.Dashed, labelBackgroundColor:'#2a3441'}},
   });
   BAND = {els:[]};
-  LWC.timeScale().subscribeVisibleLogicalRangeChange(lr=>{ placeBand(); levelCheck(); if (lr && lr.from < OLD_EDGE) oldCheck(); });
+  LWC.timeScale().subscribeVisibleLogicalRangeChange(lr=>{ placeBand(); levelCheck(); if (lr && lr.from < OLD_EDGE) oldCheck(); saveChView(lr); });
   new ResizeObserver(()=>{ placeBand(); placePanels(); fitDrawBar(); }).observe($('chart'));
+  ['pointerdown','wheel'].forEach(ev=>$('chart').addEventListener(ev, ()=>{ CH_VIEW_PEND = null; }, {passive:true}));   // ผู้ใช้เลื่อนเอง → ยกเลิกการกลับไปตำแหน่งที่จำไว้
   if (!window.__ovLoop){ window.__ovLoop = true; requestAnimationFrame(overlayLoop); }   // เริ่มครั้งเดียว
   // ปิดเส้น/ป้ายราคาล่าสุดของ series แล้ววาดเองด้วย price line ตัวเดียว → เส้นประกับป้ายราคาอยู่ระดับเดียวกันเสมอ
   setTimeout(initDraw, 0);
@@ -2308,6 +2355,7 @@ async function loadChart(){
   const req = ++CH_REQ, days=chDayList(), now=Date.now();
   CH_ALL = true;
   const iv = $('chInt').value; CH_IV = iv; oldReset();
+  CH_VIEW_OK = false; CH_VIEW_PEND = null; const view = CH_ANCHOR ? null : loadChView(iv);
   const dates = days.slice().reverse();
   const rowFrom = Date.parse(dates[0]+'T07:00:00+07:00'), live = chIsLive(), to = live ? now : Math.min(now, Date.parse(days[0]+'T00:00:00+07:00')+864e5-1);
   const from = HI_TF(iv) ? Math.min(rowFrom, to - TF_DAYS[iv]*864e5) : rowFrom, from30 = HI_TF(iv) ? rowFrom : from;
@@ -2322,7 +2370,7 @@ async function loadChart(){
     const step = INT_MS[iv]/1000;
     paintMarkers();
     drawLevels(); drawSaved(); renderList(); try{ renderAutoRes(); }catch(e){} renderBreakout();
-    if (!shown){ if (CH_ANCHOR) focusDay(CH_ANCHOR, 1); else centerLast(); refitScale(); }   // เริ่มที่ แท่งล่าสุดอยู่ 80% จากซ้าย (ครั้งแรกเท่านั้น ไม่ให้กระโดดตอนเติมแท่งล่าสุด)
+    if (!shown){ if (CH_ANCHOR) focusDay(CH_ANCHOR, 1); else if (!applyChView(view)) centerLast(); refitScale(); if (LWC.timeScale().width()) armChView(req); }   // กราฟซ่อนอยู่ → ไปจำตอนเปิดหน้าบันทึกเทรดครั้งแรก   // เริ่มที่ แท่งล่าสุดอยู่ 80% จากซ้าย (ครั้งแรกเท่านั้น ไม่ให้กระโดดตอนเติมแท่งล่าสุด)
     if (CH_BARS.length){ $('chPrice').textContent = f2(CH_BARS[CH_BARS.length-1].close,2); updLast(CH_BARS[CH_BARS.length-1]); }
     shown = true;
   };
@@ -2880,6 +2928,7 @@ function prependBars(add, add30){
   if (add30 && CH_30){ const f = CH_30.length ? CH_30[0].time : Infinity; CH_30 = add30.filter(b=>b.time < f).concat(CH_30); }
   CS.setData(CH_BARS); indAll();
   if (lr) try{ LWC.timeScale().setVisibleLogicalRange({from: lr.from + add.length, to: lr.to + add.length}); }catch(e){}
+  chViewPendStep();
   if (!HI_TF(CH_IV)){
     // เพิ่มวันที่ใหม่ (กรอบ M30/H1 ของวันเก่า)
     const firstDay = thDate((add[0].time - CH_TZ)*1000), rows = [];
@@ -3536,7 +3585,8 @@ function closeChartModal(){
   CM_ROW = null; setCmMode(false); drawSaved();
   const prev = CM_PREV || {anchor:null}; CM_PREV = null;
   if (CH_ANCHOR !== prev.anchor){ CH_ANCHOR = prev.anchor; setDateVal('chDate', CH_ANCHOR || todayTH()); loadChart(); }
-  else resetChart();
+  else if (CH_ANCHOR || !applyChView(loadChView(CH_IV))) resetChart();   // กลับไปตำแหน่งที่เลื่อนไว้ก่อนเปิดดูเทรด
+  else refitScale();
 }
 document.addEventListener('keydown', e=>{ if (e.key==='Escape' && $('chartModal').classList.contains('on')) closeChartModal(); });
 // แท่งล่าสุดอยู่ที่ 80% ของความกว้างกราฟ (เว้นที่ว่างด้านขวาเล็กน้อย)

@@ -4581,15 +4581,34 @@ function renderLive(){
 }
 document.addEventListener('visibilitychange', ()=>{ if (document.visibilityState==='visible') livePoll(); });
 // ยกเลิกคำสั่งที่รอ (Limit / TP / SL) ที่ตลาด
+const isTpSl = o => /TAKE_PROFIT|STOP/.test(o.type||'');
 async function cancelOrder(kid, id, algo, kind, side, price){
   const k = EX_KEYS.find(x=>x.id===kid); if (!k || !canTrade()) return;
-  if (!await askConfirm(`ยกเลิกคำสั่ง ${kind} ${price ? fN(price,2) : ''} ที่ ${EX_NAME[k.exchange]} (${k.testnet?'ทดลอง':'จริง'})?${kind==='SL' ? ' · ถ้ายกเลิก SL สถานะจะไม่มีจุดตัดขาดทุน' : ''}`, {ok:'ยกเลิกคำสั่ง', no:'กลับ'})) return;
+  const d0 = LIVE.data[kid], hasTpSl = kind==='Limit' && d0 && d0.ok && d0.orders.some(isTpSl);
+  if (!await askConfirm(`ยกเลิกคำสั่ง ${kind} ${price ? fN(price,2) : ''} ที่ ${EX_NAME[k.exchange]} (${k.testnet?'ทดลอง':'จริง'})?${kind==='SL' ? ' · ถ้ายกเลิก SL สถานะจะไม่มีจุดตัดขาดทุน' : ''}${hasTpSl ? ' · ถ้ายังไม่มีสถานะเปิด TP/SL ที่รออยู่จะถูกยกเลิกด้วย' : ''}`, {ok:'ยกเลิกคำสั่ง', no:'กลับ'})) return;
   try{
     await tradeFn({action:'cancel', exchange:k.exchange, testnet:k.testnet, orderId:id, algo, kind, side, price, portfolioId:PORT});
     toast('ยกเลิกคำสั่ง '+kind+' แล้ว');
+    if (hasTpSl) await cancelOrphanTpSl(k);
     if (LIST_TAB==='orders' && $('v-list').classList.contains('on')) loadOrders();
   }catch(e){ toast('ยกเลิกไม่สำเร็จ: '+(e.message||e), true); }
   liveRefresh(k);
+}
+// ยกเลิก Limit แล้ว: ถ้าไม่มีสถานะเปิดและไม่มี Limit เข้าอื่นรออยู่ → TP/SL (ปิดทั้งสถานะ) ที่ค้างไม่มีประโยชน์ และอาจไปปิดสถานะใหม่ในอนาคต → ยกเลิกด้วย
+// ดึงสถานะล่าสุดก่อนตัดสินใจ (Limit อาจถูกจับคู่บางส่วนไปแล้ว → มีสถานะ → เก็บ TP/SL ไว้)
+async function cancelOrphanTpSl(k){
+  let d; try{ d = await tradeFn({action:'open', exchange:k.exchange, testnet:k.testnet}); }catch(e){ toast('ตรวจสถานะไม่ได้ — TP/SL ยังค้างอยู่ ตรวจและยกเลิกเอง', true); return; }
+  LIVE.data[k.id] = {ok:true, positions:d.positions||[], orders:d.orders||[]}; LIVE.at = new Date();
+  const ords = d.orders||[];
+  if ((d.positions||[]).length || ords.some(o=>!isTpSl(o) && !o.close)) return;
+  const tpsl = ords.filter(isTpSl); if (!tpsl.length) return;
+  let fail = 0;
+  for (const o of tpsl){
+    const kind = /TAKE_PROFIT/.test(o.type) ? 'TP' : 'SL';
+    try{ await tradeFn({action:'cancel', exchange:k.exchange, testnet:k.testnet, orderId:String(o.id), algo:!!o.algo, kind, side:o.side, price:num(o.trigger||o.price)||0, portfolioId:PORT}); }
+    catch(e){ fail++; }
+  }
+  fail ? toast(`ยกเลิก TP/SL ไม่สำเร็จ ${fail} รายการ — ตรวจและยกเลิกเองในการ์ดสถานะ`, true) : toast('ยกเลิก TP/SL ที่ค้างอยู่แล้ว');
 }
 
 async function setUserTrade(id, allow){

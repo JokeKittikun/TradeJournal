@@ -927,7 +927,7 @@ body.chFs #confirmBox{z-index:55}
     <div class="seg" id="ot_type"><button data-v="MARKET">Market</button><button data-v="LIMIT">Limit</button></div>
   </div>
   <div class="otGrid">
-    <div class="field" id="ot_priceWrap"><label>ราคา Limit</label><input id="ot_price" type="number" step="any" inputmode="decimal"></div>
+    <div class="field" id="ot_priceWrap"><label>ราคา Limit <a id="ot_priceReset" onclick="otPriceReset()" style="cursor:pointer;color:var(--accent);font-weight:400" hidden>· ใช้ราคาจากฟอร์ม</a></label><input id="ot_price" type="number" step="any" inputmode="decimal"></div>
     <div class="field"><label id="ot_marginL">มาร์จิ้น (USDT)</label><input id="ot_margin" type="number" step="any" inputmode="decimal"></div>
     <div class="field"><label>Leverage (x)</label><input id="ot_lev" type="number" step="any" inputmode="decimal"></div>
     <div class="field" id="ot_qtyWrap"><label>จำนวน (BTC)</label><input id="ot_qty" type="number" step="any" inputmode="decimal"></div>
@@ -4781,7 +4781,7 @@ async function delExKey(id){
   catch(e){ toast('ลบไม่ได้: '+(e.message||e), true); }
 }
 // ---------- หน้าต่างส่งออเดอร์ (ค่าเริ่มต้นจากฟอร์มบันทึกเทรด) ----------
-const OT = {side:'BUY', type:'MARKET'};
+const OT = {side:'BUY', type:'MARKET', formPx:null};   // formPx = ราคาที่กรอกในฟอร์ม (ค่าเริ่มต้นของ Limit)
 function otRefPrice(){ return CH_BARS.length ? CH_BARS[CH_BARS.length-1].close : null; }
 async function openOrder(){
   if (roBlock()) return;
@@ -4790,7 +4790,8 @@ async function openOrder(){
   const d = readForm(), c = compute(Object.assign({}, d)), man = seg.mode==='Manual';
   const entry = man ? num(d.open) : (num(c.retest)!=null ? c.retest : num(c.avg));
   OT.side = seg.pos==='Long' ? 'BUY' : 'SELL'; OT.type = entry!=null ? 'LIMIT' : 'MARKET';
-  $('ot_price').value = entry!=null ? +(+entry).toFixed(2) : '';
+  OT.formPx = entry!=null ? +(+entry).toFixed(2) : null;
+  $('ot_price').value = OT.formPx ?? '';
   $('ot_margin').value = num($('f_capital').value) ?? '';
   const lv = man ? c.mLev : c.aLev; $('ot_lev').value = lv ? +(+lv).toFixed(2) : '';
   const tp = man ? c.mTp : c.tp, sl = man ? c.mSl : c.sl;
@@ -4807,6 +4808,7 @@ async function openOrder(){
 }
 function closeOrder(){ $('otBox').classList.remove('on'); }
 function otAcc(){ return EX_KEYS.find(k=>k.id===$('ot_acc').value) || null; }
+function otPriceReset(){ $('ot_price').value = OT.formPx ?? ''; otCalcQty(); otPaint(); }
 function otPx(){ return OT.type==='LIMIT' ? num($('ot_price').value) : otRefPrice(); }
 function otCalcQty(){ const m = num($('ot_margin').value), l = num($('ot_lev').value), px = otPx(); $('ot_qty').value = (m>0 && l>0 && px>0) ? +(m*l/px).toFixed(4) : ''; }
 function otPaint(){
@@ -4815,6 +4817,7 @@ function otPaint(){
   document.querySelectorAll('#ot_side button').forEach(b=>b.classList.toggle('on', b.dataset.v===OT.side));
   document.querySelectorAll('#ot_type button').forEach(b=>{ b.classList.toggle('on', b.dataset.v===OT.type); b.disabled = deriv && b.dataset.v==='LIMIT'; });
   $('ot_priceWrap').style.visibility = OT.type==='LIMIT' ? '' : 'hidden';
+  $('ot_priceReset').hidden = OT.formPx==null || num($('ot_price').value)===OT.formPx;   // แก้ราคาแล้ว → กดกลับไปใช้ราคาจากฟอร์มได้
   $('ot_qtyWrap').style.visibility = deriv ? 'hidden' : '';
   $('ot_marginL').textContent = deriv ? 'Stake (เงินเดิมพัน)' : 'มาร์จิ้น (USDT)';
   const env = $('ot_env');
@@ -4833,7 +4836,9 @@ function otPaint(){
   $('ot_btn').textContent = k && !k.testnet ? 'ส่งคำสั่ง (เงินจริง)' : 'ส่งคำสั่ง';
 }
 document.querySelectorAll('#ot_side button').forEach(b=>b.addEventListener('click',()=>{ OT.side = b.dataset.v; otPaint(); }));
-document.querySelectorAll('#ot_type button').forEach(b=>b.addEventListener('click',()=>{ if (b.disabled) return; OT.type = b.dataset.v; otCalcQty(); otPaint(); }));
+document.querySelectorAll('#ot_type button').forEach(b=>b.addEventListener('click',()=>{ if (b.disabled) return; OT.type = b.dataset.v;
+  if (OT.type==='LIMIT' && num($('ot_price').value)==null){ const r = OT.formPx ?? otRefPrice(); if (r!=null) $('ot_price').value = +(+r).toFixed(2); }   // ไม่มีราคา → เริ่มจากราคาฟอร์ม/ราคาล่าสุด
+  otCalcQty(); otPaint(); }));
 ['ot_price','ot_margin','ot_lev'].forEach(id=>$(id).addEventListener('input', ()=>{ otCalcQty(); otPaint(); }));
 ['ot_qty','ot_tp','ot_sl'].forEach(id=>$(id).addEventListener('input', otPaint));
 async function sendOrder(){

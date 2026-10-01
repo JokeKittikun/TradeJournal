@@ -4622,12 +4622,14 @@ async function openDbUsage(){
 function closeDbUsage(){ $('dbBox').classList.remove('on'); }
 function renderDbUsage(u){
   const pct = (a,b) => Math.min(100, a/b*100), bar = p => `<div class="dbBar"><i class="${p>=90?'bad':p>=70?'warn':''}" style="width:${Math.max(1.5,p).toFixed(1)}%"></i></div>`;
-  const dbP = pct(u.db_bytes, SB_FREE.db), stP = pct(u.storage_bytes, SB_FREE.storage), mP = pct(u.seen_30d, SB_FREE.mau);
+  const dbT = +u.db_total_bytes || +u.db_bytes, dbSys = Math.max(0, dbT - (+u.db_bytes||0));   // นับแบบ Supabase (รวมฐานข้อมูลระบบ)
+  const dbP = pct(dbT, SB_FREE.db), stP = pct(u.storage_bytes, SB_FREE.storage), mP = pct(u.seen_30d, SB_FREE.mau);
   const card = (icn, l, v, extra) => `<div class="dbCard"><div class="l">${ic(icn,14)} ${l}</div><div class="v mono">${v}</div>${extra||''}</div>`;
   const m = v => `<span class="mono">${v}</span>`;   // ตัวเลขในข้อความ
   $('db_sub').innerHTML = 'อัปเดต '+m(new Date(u.at).toLocaleString('th-TH'))+' · เทียบโควตาแพ็กเกจฟรี';
   $('db_body').innerHTML = '<div class="dbGrid">'
-    + card('database','ขนาดฐานข้อมูล', fmtBytes(u.db_bytes), bar(dbP)+`<div class="s">${m(dbP.toFixed(1)+'%')} ของ ${m('500 MB')} · เหลือ ${m(fmtBytes(Math.max(0, SB_FREE.db-u.db_bytes)))}</div>`)
+    + card('database','ขนาดฐานข้อมูล', fmtBytes(dbT), bar(dbP)+`<div class="s">${m(dbP.toFixed(1)+'%')} ของ ${m('500 MB')} · เหลือ ${m(fmtBytes(Math.max(0, SB_FREE.db-dbT)))}</div>`
+      + (dbSys ? `<div class="s">ข้อมูลแอป ${m(fmtBytes(u.db_bytes))} · ระบบ Postgres ${m(fmtBytes(dbSys))}</div>` : ''))
     + card('download','ไฟล์ใน Storage', fmtBytes(u.storage_bytes), bar(stP)+`<div class="s">${m(stP.toFixed(1)+'%')} ของ ${m('1 GB')}</div>`)
     + card('users','ผู้ใช้ที่เข้าใช้ใน 30 วัน', fN(u.seen_30d,0), bar(mP)+`<div class="s">โควตา ${m('50,000')} คน/เดือน · 7 วัน: ${m(fN(u.seen_7d,0))} คน</div>`)
     + '</div>'
@@ -4641,7 +4643,7 @@ function renderDbUsage(u){
         return ts.map(t=>{ const [sc, ...nm] = String(t.name).split('.');
           return `<div class="dbRow"><span class="n" title="${esc(t.name)}"><small>${esc(sc)}.</small>${esc(nm.join('.'))}</span><span class="b"><i style="width:${Math.max(3,(+t.bytes||0)/mx*100).toFixed(1)}%"></i></span><span class="z">${fmtBytes(t.bytes)}</span></div>`; }).join(''); })()
     + '</div>'
-    + `<div class="dbNote">ขนาดฐานข้อมูลรวมข้อมูลระบบของ Supabase ด้วย (ประมาณ 10–20 MB แม้ยังไม่มีข้อมูล) · ปริมาณรับส่งข้อมูล (Egress 5 GB/เดือน) และผู้ใช้รายเดือนที่แม่นยำ ดูได้ที่ <a href="${SB_USAGE_URL}" target="_blank" rel="noopener">Supabase → Usage</a></div>`;
+    + `<div class="dbNote">ขนาดฐานข้อมูลนับแบบเดียวกับ Supabase: รวมฐานข้อมูลระบบของ Postgres (template0/template1 ประมาณ 15 MB คงที่) ด้วย · ปริมาณรับส่งข้อมูล (Egress 5 GB/เดือน) และผู้ใช้รายเดือนที่แม่นยำ ดูได้ที่ <a href="${SB_USAGE_URL}" target="_blank" rel="noopener">Supabase → Usage</a></div>`;
 }
 document.addEventListener('keydown', e=>{ if (e.key==='Escape' && $('dbBox').classList.contains('on')) closeDbUsage(); });
 

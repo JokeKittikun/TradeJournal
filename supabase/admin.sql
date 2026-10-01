@@ -233,6 +233,8 @@ begin
   if not public.is_super() then raise exception 'เฉพาะ Super Admin ดูสถานะฐานข้อมูลได้'; end if;
   select json_build_object(
     'db_bytes', pg_database_size(current_database()),
+    -- ขนาดรวมทุกฐานข้อมูล (รวม template0/template1 ของ Postgres) = ตัวเลขที่ Supabase ใช้นับโควตา
+    'db_total_bytes', (select sum(pg_database_size(datname)) from pg_database),
     'tables', (select coalesce(json_agg(t order by t.bytes desc), '[]'::json) from (
         select n.nspname || '.' || c.relname as name, pg_total_relation_size(c.oid) as bytes
           from pg_class c join pg_namespace n on n.oid = c.relnamespace

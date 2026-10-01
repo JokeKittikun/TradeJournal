@@ -4400,8 +4400,9 @@ async function setUserRole(id, role){
 
 // ---------- สถานะที่เปิดอยู่ (Binance = WebSocket · ตลาดอื่นดึงทุก 5 วินาที · เฉพาะตอนเปิดหน้าอยู่) ----------
 // wait[key id] = {until, fails} หยุดดึงบัญชีนั้นชั่วคราว · เก็บในเครื่อง (รีเฟรชแล้วยังพักต่อ ไม่ยิงตลาดซ้ำ)
-const LIVE = {timer:null, busy:false, data:{}, at:null, every:5000, wait:(()=>{ try{ return JSON.parse(localStorage.getItem('tjLiveWait')||'{}'); }catch(e){ return {}; } })()};
-const liveWaitSave = () => { try{ localStorage.setItem('tjLiveWait', JSON.stringify(LIVE.wait)); }catch(e){} };
+// tjLiveWait2: ตั้งแต่มีการสลับ region จะพักเมื่อทุก region โดนจำกัดเท่านั้น → ไม่ใช้ค่าพักเดิม (tjLiveWait) ที่นับแค่สิงคโปร์
+const LIVE = {timer:null, busy:false, data:{}, at:null, every:5000, wait:(()=>{ try{ return JSON.parse(localStorage.getItem('tjLiveWait2')||'{}'); }catch(e){ return {}; } })()};
+const liveWaitSave = () => { try{ localStorage.setItem('tjLiveWait2', JSON.stringify(LIVE.wait)); }catch(e){} };
 function liveWhere(){
   if (!canTrade() || document.visibilityState!=='visible') return [];
   const a = [];

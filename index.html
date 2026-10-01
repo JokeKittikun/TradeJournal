@@ -4692,12 +4692,14 @@ function orderRow(o){
     + `<td>${!o.ok ? '<span class="badge Loss">ไม่สำเร็จ</span>' : cx ? '<span class="badge mode">ยกเลิกแล้ว</span>' : '<span class="badge Win">ส่งแล้ว</span>'}</td>`
     + `<td class="oNote">${o.ok ? '#'+esc(r.orderId||'–')+(r.status?' · '+esc(r.status):'') : esc(o.message||'')}</td></tr>`;
 }
-const EX_REGION = 'ap-southeast-1';   // เรียก Edge Function จากสิงคโปร์ (Binance บล็อก IP สหรัฐฯ)
+// เรียก Edge Function จากเอเชีย (Binance บล็อก IP สหรัฐฯ) · IP ของแต่ละ region ใช้ร่วมกับลูกค้า Supabase อื่น
+// → region ไหนโดน Binance จำกัด ให้สลับไป region ถัดไป และจำไว้ข้ามจนพ้นเวลา (สิงคโปร์เร็วสุด จึงลองก่อน)
+const EX_REGIONS = ['ap-southeast-1', 'ap-northeast-1', 'ap-northeast-2'];   // สิงคโปร์ → โตเกียว → โซล
+const EX_RWAIT = (()=>{ try{ return JSON.parse(localStorage.getItem('tjRegionWait')||'{}'); }catch(e){ return {}; } })();   // [region] = {until, geo}
+const exRWaitSave = () => { try{ localStorage.setItem('tjRegionWait', JSON.stringify(EX_RWAIT)); }catch(e){} };
 let EX_KEYS = [], EX_SEL = {ex:'binance', demo:true};
-async function tradeFn(body){
-  if (DEMO) return demoTradeFn(body);
-  if (!sb) throw new Error('ยังไม่ได้เข้าสู่ระบบ');
-  const {data, error} = await sb.functions.invoke('trade', {body, region: EX_REGION});
+async function tradeFnAt(body, region){
+  const {data, error} = await sb.functions.invoke('trade', {body, region});
   if (error){
     let m = error.message || String(error), retryAt = 0;
     try{ const j = await error.context.json(); if (j && j.error) m = j.error; if (j && j.retryAt) retryAt = +j.retryAt; }catch(e){}
@@ -4705,10 +4707,33 @@ async function tradeFn(body){
     // Edge Function รุ่นเก่า (ยังไม่ส่ง retryAt): อ่านเวลาจากข้อความของ Binance เอง
     if (!retryAt){ const b = /banned until (\d{12,})/i.exec(m); if (b) retryAt = +b[1]; else if (/\(-1003\)|too many requests/i.test(m)) retryAt = Date.now() + 60e3; }
     const e = new Error(m); if (retryAt) e.retryAt = retryAt;   // ตลาดจำกัดการเรียก → หยุดดึงจนถึงเวลานี้
+    if (/ภูมิภาคที่ถูกจำกัด/.test(m)) e.geo = true;              // Binance ไม่รับจาก region นี้
     throw e;
   }
   if (!data || data.ok===false) throw new Error((data && data.error) || 'ไม่สำเร็จ');
   return data;
+}
+// ออเดอร์ที่โดนจำกัด (429/418) Binance ไม่ได้รับ → ลอง region ถัดไปได้โดยไม่ส่งซ้ำ (TP/SL ที่ล้มเหลวไม่ throw จึงไม่ถูกส่งซ้ำ)
+async function tradeFn(body){
+  if (DEMO) return demoTradeFn(body);
+  if (!sb) throw new Error('ยังไม่ได้เข้าสู่ระบบ');
+  let last = null;
+  for (const r of EX_REGIONS){
+    const w = EX_RWAIT[r];
+    if (w && Date.now() < w.until) continue;
+    try{ const d = await tradeFnAt(body, r); if (w){ delete EX_RWAIT[r]; exRWaitSave(); } return d; }
+    catch(e){
+      if (e.retryAt) EX_RWAIT[r] = {until: +e.retryAt};
+      else if (e.geo) EX_RWAIT[r] = {until: Date.now() + 24*3600e3, geo: true};
+      else throw e;   // ผิดพลาดอื่น (Key ผิด, ยอดเงินไม่พอ ฯลฯ) → ไม่ลอง region อื่น
+      exRWaitSave(); last = e;
+    }
+  }
+  // ทุก region ใช้ไม่ได้ → ให้หน้าเว็บพักจนถึง region แรกที่จะกลับมาใช้ได้
+  const ts = EX_REGIONS.map(r=>EX_RWAIT[r]).filter(w=>w && !w.geo).map(w=>w.until);
+  const e = new Error(last ? last.message : 'Binance จำกัดการเรียกจากเซิร์ฟเวอร์ชั่วคราว');
+  if (ts.length) e.retryAt = Math.min(...ts);
+  throw e;
 }
 // โหมดตัวอย่าง: จำลองการตอบกลับ
 let DEMO_KEYS = [], DEMO_CXL = new Set();
